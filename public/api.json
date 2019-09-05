@@ -1,0 +1,24 @@
+{"web":
+	{
+		"client_id":"233139093073-t6s55j51ch1hs9g3ngsh3uber4rs7jnl.apps.googleusercontent.com",
+		"project_id":"login-budgetinq",
+		"auth_uri":"https://accounts.google.com/o/oauth2/auth",
+		"token_uri":"https://oauth2.googleapis.com/token",
+		"auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+		"client_secret":"8FPpIfQzjyLtoYGgLiE65eKV",
+		"redirect_uris":[
+			"http://localhost:8000/auth/google/callback",
+			"https://www.chandradasilva.com/auth/google/callback",
+			"http://www.chandradasilva.com/auth/google/callback",
+			"https://budget.chandradasilva.com/auth/google/callback",
+			"http://budget.chandradasilva.com"
+		],
+		"javascript_origins":[
+				"http://localhost:8000",
+				"https://www.chandradasilva.com",
+				"http://www.chandradasilva.com",
+				"https://budget.chandradasilva.com",
+				"http://budget.chandradasilva.com"
+		]
+	}
+}
