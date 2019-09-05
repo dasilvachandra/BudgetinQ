@@ -16,37 +16,52 @@
 </head>
 
 <body>
-    <div class="container mt-5">
-        <nav class="navbar navbar-light bg-light">
-            <h5 class="mr-5 logo"><a href="{{ url('/') }}">BudgetinQ</a></h5>
-            <form class="form-inline">
-                @guest
-                @else
-                <a class="btn btn-primary" href="#"> <i class="fa fa-google"></i> {{ Auth::user()->name }}</a>
-                <a class="dropdown-item" href="{{ route('logout') }}">Logout</a></a>
-                @endguest
-            </form>
+    <div class="container mt-2">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+            <a class="navbar-brand" href="{{ url('/') }}">
+                <img src="{{asset('front_end/img/b.png')}}" width="30" height="30" class="d-inline-block align-top"
+                    alt="">udgetinQ
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    @guest
+                    @else
+                    <li class="nav-item">
+                        <a class="nav-link">{{ Auth::user()->name }}</a>
+                    </li>
+
+                    <a class="btn btn-outline-danger my-2 my-sm-0 " href="{{ route('logout') }}">Logout</a></a>
+                    @endguest
+                </ul>
+            </div>
         </nav>
+
         <div class="card mt-1" style="background-color: #050A27">
             <div class="row main mt-5 ml-2 mb-5">
                 <div class="col-lg-8">
                     <p class="">
-                        <b>BudgeTinQ</b> adalah aplikasi untuk mengatur keuangan anda sehari-hari.
+                        <b>Aplikasi</b> pengatur keuangan harian.
                     </p>
                 </div>
                 <div class="col-lg-4">
                     <h1 class="display-5">
                         @guest
-                        <a class="btn btn-primary" href="{{url('auth/google')}}"> <i class="fa fa-google"></i> Login
-                            With Google</a>
+                        <a class="btn btn-success" href="{{url('auth/google')}}">
+                            <img src="{{asset('front_end/img/btn_google_light_focus_ios.svg')}}" width="30" height="30"
+                                alt="">
+                            Login With Google</a>
                         @else
 
                         @endguest
-
-
-
                     </h1>
                 </div>
+
+                <!-- <img src="{{asset('front_end/img/wellcome.jpg')}}" alt=""> -->
             </div>
         </div>
     </div>
