@@ -17,8 +17,15 @@
 
 <body>
     <div class="container mt-5">
-        <nav class="nav mt-3 ml-4">
-            <h4 class="mr-5 logo"><a href="{{ url('/') }}">BudgetinQ</a></h4>
+        <nav class="navbar navbar-light bg-light">
+            <h5 class="mr-5 logo"><a href="{{ url('/') }}">BudgetinQ</a></h5>
+            <form class="form-inline">
+                @guest
+                @else
+                <a class="btn btn-primary" href="#"> <i class="fa fa-google"></i> {{ Auth::user()->name }}</a>
+                <a class="dropdown-item" href="{{ route('logout') }}">Logout</a></a>
+                @endguest
+            </form>
         </nav>
         <div class="card mt-1" style="background-color: #050A27">
             <div class="row main mt-5 ml-2 mb-5">
@@ -29,7 +36,15 @@
                 </div>
                 <div class="col-lg-4">
                     <h1 class="display-5">
-                        <button type="button" class="btn btn-primary">Login or Register With Google</button>
+                        @guest
+                        <a class="btn btn-primary" href="{{url('auth/google')}}"> <i class="fa fa-google"></i> Login
+                            With Google</a>
+                        @else
+
+                        @endguest
+
+
+
                     </h1>
                 </div>
             </div>
