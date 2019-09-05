@@ -7,32 +7,36 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,400,700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{{asset('front_end/css/style.css')}}">
+
     <title>Wellcome</title>
 </head>
 
 <body>
-
     <div class="container mt-5">
-        <div class="card" style="background-color: #050A27">
-            <div class="card-body">
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Active</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                    </li>
-                </ul>
+        <nav class="nav mt-3 ml-4">
+            <h4 class="mr-5 logo"><a href="{{ url('/') }}">BudgetinQ</a></h4>
+        </nav>
+        <div class="card mt-1" style="background-color: #050A27">
+            <div class="row main mt-5 ml-2 mb-5">
+                <div class="col-lg-8">
+                    <p class="">
+                        <b>BudgeTinQ</b> adalah aplikasi untuk mengatur keuangan anda sehari-hari.
+                    </p>
+                </div>
+                <div class="col-lg-4">
+                    <h1 class="display-5">
+                        <button type="button" class="btn btn-primary">Login or Register With Google</button>
+                    </h1>
+                </div>
             </div>
         </div>
     </div>
+
+
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
