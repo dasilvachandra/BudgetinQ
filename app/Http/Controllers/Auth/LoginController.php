@@ -15,7 +15,7 @@ class LoginController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    protected $redirectTo = '/';
+    protected $redirectTo = '/dashboard/';
 
     public function redirectToProvider()
     {
@@ -65,6 +65,11 @@ class LoginController extends Controller
 
     public function logout(Request $request) {
         Auth::logout();
+        return redirect('/');
+    }
+
+    public function showLoginForm()
+    {
         return redirect('/');
     }
 
