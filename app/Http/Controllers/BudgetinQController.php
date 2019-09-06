@@ -20,16 +20,12 @@ class BudgetinQController  extends Controller
     public function dashboard($time=null)
     {
         $time = $time ?: date("F, Y");
-        
         $pengeluaran = new Pengeluaran;
         $pendapatan = new Pendapatan;
-
-        $danamasuk = $pendapatan->danamasuk($this->timeByMonth($time));
+        $saldoBulanlalu=$pendapatan->totalDanaMasuk($this->monthBefore($time))-$pengeluaran->totalDanaKeluar($this->monthBefore($time));
         $danakeluar = $pengeluaran->danakeluar($this->timeByMonth($time));
+        $danamasuk = $saldoBulanlalu+$pendapatan->danamasuk($this->timeByMonth($time));
         $saldo=$danamasuk-$danakeluar;
-        // dd($danamasuk);
-
-        // dd($danakeluar);
         $data=array(
             'danakeluar' => $this->rupiah($danakeluar),
             'danamasuk' => $this->rupiah($danamasuk),
