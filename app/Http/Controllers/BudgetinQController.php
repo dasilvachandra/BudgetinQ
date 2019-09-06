@@ -17,22 +17,24 @@ class BudgetinQController  extends Controller
         $this->middleware('auth');
     }
 
-    public function dashboard()
+    public function dashboard($time=null)
     {
-        // echo date("F, Y");
-        $time = "July, 2019";
+        $time = $time ?: date("F, Y");
+        
         $pengeluaran = new Pengeluaran;
         $pendapatan = new Pendapatan;
 
         $danamasuk = $pendapatan->danamasuk($this->timeByMonth($time));
         $danakeluar = $pengeluaran->danakeluar($this->timeByMonth($time));
         $saldo=$danamasuk-$danakeluar;
+        // dd($danamasuk);
 
         // dd($danakeluar);
         $data=array(
             'danakeluar' => $this->rupiah($danakeluar),
             'danamasuk' => $this->rupiah($danamasuk),
-            'saldo' => $this->rupiah($saldo)
+            'saldo' => $this->rupiah($saldo),
+            'monthYear' => $time
         );
         return view('BudgetinQ.dashboard')->with($data);
     }

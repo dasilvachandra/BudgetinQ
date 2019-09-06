@@ -17,7 +17,8 @@
 
   <!-- Custom styles for this template-->
   <link href="{{asset('front_end/css/sb-admin-2.min.css')}}" rel="stylesheet">
-
+    <!-- Bootstrap DatePicker Css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet" />
 </head>
 
 <body id="page-top">
@@ -154,6 +155,19 @@
           </button>
 
           <!-- Topbar Search -->
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="input-group date bs_datepicker_component_container" id="selectMonth">
+                <div class="form-line">
+                    <input type="text"  class="form-control bg-light border-0 small time" id="time" value="{{$monthYear}}"   autoComplete="off" placeholder="Please choose a date..." >
+                </div>
+                <div class="input-group-append">
+                <button class="btn btn-primary" type="button">
+                  <i class="fas fa-calendar fa-sm"></i>
+                </button>
+              </div>
+            </div>
+        </div>
+
           <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
             <div class="input-group">
               <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
@@ -662,6 +676,30 @@
   <!-- Page level custom scripts -->
   <script src="{{asset('front_end/js/demo/chart-area-demo.js')}}"></script>
   <script src="{{asset('front_end/js/demo/chart-pie-demo.js')}}"></script>
+
+
+<script src="{{asset('front_end/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js')}}"></script>
+
+<script>
+    $('#selectMonth').datepicker({
+        autoclose: true,
+        container: '#selectMonth',
+        format: "MM, yyyy",
+        viewMode: "months", 
+        minViewMode: "months",
+        startDate: new Date("2017-01-01"),
+        endDate: new Date(),
+        onClose: function(dateText, inst) { 
+            $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+        }
+    })
+
+    $('#time').change(function(){
+        time = $("#time").val();
+        window.location = "/dashboard/"+time;
+        // returnDataHome($("#time").val(),"/data");
+    });
+</script>
 
 </body>
 
