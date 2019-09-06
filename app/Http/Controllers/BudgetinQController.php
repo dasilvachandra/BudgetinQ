@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth;
+use App\Pendapatan;
+use App\Pengeluaran;
 
 class BudgetinQController  extends Controller
 {
@@ -12,16 +14,26 @@ class BudgetinQController  extends Controller
 
     public function __construct()
     {
-        
-        // $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        // dd($actual_link);
-
         $this->middleware('auth');
     }
 
     public function dashboard()
     {
-        $data='';
+        // echo date("F, Y");
+        $time = "July, 2019";
+        $pengeluaran = new Pengeluaran;
+        $pendapatan = new Pendapatan;
+
+        $danamasuk = $pendapatan->danamasuk($this->timeByMonth($time));
+        $danakeluar = $pengeluaran->danakeluar($this->timeByMonth($time));
+        $saldo=$danamasuk-$danakeluar;
+
+        // dd($danakeluar);
+        $data=array(
+            'danakeluar' => $this->rupiah($danakeluar),
+            'danamasuk' => $this->rupiah($danamasuk),
+            'saldo' => $this->rupiah($saldo)
+        );
         return view('BudgetinQ.dashboard')->with($data);
     }
 }
