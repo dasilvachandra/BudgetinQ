@@ -41,7 +41,23 @@ class Pengeluaran extends Model
                 waktu between ( select min(waktu) as waktu from transaksi where id=?) and ?;
         ';
         return DB::select($q,[$id_user,$email,$id_user,$time])[0]->total;
-
     }
 
+    public function totalPerHari($time)
+    {
+        $id=Auth::user()->id;
+        $q = " SELECT ifnull(sum(jumlah),0) as total from pengeluaran inner join transaksi on id_pengeluaran=jenis_transaksi where waktu =  ? and id=?";
+        $result = DB::select($q,[$time,$id])[0]->total;
+        return $result;
+    }
+
+    public function totalPerHariGroup($range_date)
+    {
+        $id=Auth::user()->id;
+        $start_default = $range_date['start_default'];
+        $end_default = $range_date['end_default'];
+        $q = "SELECT waktu, ifnull(sum(jumlah),0) as total from pengeluaran inner join transaksi on id_pengeluaran=jenis_transaksi where waktu BETWEEN ? and ? and id=? group by waktu;";
+        $result = DB::select($q,[$start_default,$end_default,$id]);
+        return $result;
+    }
 }
