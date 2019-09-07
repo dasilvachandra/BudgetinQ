@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Auth;
 use App\Pendapatan;
 use App\Pengeluaran;
-
+use App\Kategori;
 class BudgetinQController  extends Controller
 {
     public $date;
@@ -26,16 +26,24 @@ class BudgetinQController  extends Controller
         $danakeluar = $pengeluaran->danakeluar($this->timeByMonth($time));
         $danamasuk = $saldoBulanlalu+$pendapatan->danamasuk($this->timeByMonth($time));
         $saldo=$danamasuk-$danakeluar;
+        $gcPengeluaran = DB::table('group_category')->where('pengeluaran', '1')->get();
+        $gcPendapatan = DB::table('group_category')->where('pendapatan', '1')->get();
+        $textColor=['#4e73df','#f6c23e','#1cc88a','#e74a3b','#fd7e14','#36b9cc','#6f42c1','#858796'];
+
+        // dd($groupCategory);
         $data=array(
             'danakeluar' => $this->rupiah($danakeluar),
             'danamasuk' => $this->rupiah($danamasuk),
             'saldo' => $this->rupiah($saldo),
-            'monthYear' => $time
+            'monthYear' => $time,
+            'gcPengeluaran' => $gcPengeluaran,
+            'gcPendapatan' => $gcPendapatan,
+            'textColor' => $textColor
         );
         return view('BudgetinQ.dashboard')->with($data);
     }
     // PER GROUP BY WAKTU
-    public function chartArea(Request $request){
+public function chartArea(Request $request){
         $pengeluaran = new Pengeluaran;
         $rules = array(
             'time' => 'required|max:255'
@@ -64,7 +72,7 @@ class BudgetinQController  extends Controller
             'totalPerHari' => $totalPerHari,
         );
         return $data;
-    }
+}
 
     // PER HARI 01-31
     // public function chartArea(Request $request){
@@ -94,4 +102,22 @@ class BudgetinQController  extends Controller
     //     );
     //     return $data;
     // }
+
+
+    public function chartPie(Request $request){
+        $pengeluaran = new Pengeluaran;
+        $rules = array(
+            'time' => 'required|max:255'
+        );
+        $customMessages = [
+            'time.required' => 'time error'
+        ];
+        $validator = $this->validate($request, $rules, $customMessages);
+        $time = $this->dateFilter($validator['time']);
+        return $time;
 }
+
+}
+
+
+

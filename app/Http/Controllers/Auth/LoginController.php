@@ -6,6 +6,7 @@ use Socialite;
 use App\User; 
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
@@ -51,16 +52,15 @@ class LoginController extends Controller
             return $authUser;
         }
 
-        // $data['nama'] = $user->name; 
-        // $data['email'] = $user->email;
-        // $data['time'] = date("d F, Y H:i:s");
-        // $data="";
-        // $jumlahusers = DB::select('select max(id)+1 as id from users;');
-        // $iduserbaru=$jumlahusers[0]->id;
-        // $data=[$iduserbaru,$user->name,$user->email,strtoupper($provider),$user->id,$user->avatar_original];
-        // DB::select('INSERT INTO users (id, name, email, provider,provider_id,picture) VALUES (?, ?, ?, ?,?,?)', $data);
-        // $authUser = User::where('provider_id', $user->id)->first();
-        // return $authUser;
+        $data['nama'] = $user->name; 
+        $data['email'] = $user->email;
+        $data['time'] = date("d F, Y H:i:s");
+        $data="";
+        $iduserbaru=DB::select('select max(id)+1 as id from users;')[0]->id;
+        $data=[$iduserbaru,$user->name,$user->email,strtoupper($provider),$user->id,$user->avatar_original,date("Y-m-d H:i:s"),date("Y-m-d H:i:s")];
+        DB::select('INSERT INTO users (id, name, email, provider,provider_id,picture,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?)', $data);
+        $authUser = User::where('provider_id', $user->id)->first();
+        return $authUser;
     }
 
     public function logout(Request $request) {

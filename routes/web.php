@@ -26,4 +26,5 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/dashboard/{time}', 'BudgetinQController@dashboard');
 
     Route::post('/chartArea', 'BudgetinQController@chartArea'); 
+    Route::post('/chartPie', 'BudgetinQController@chartPie'); 
 });
