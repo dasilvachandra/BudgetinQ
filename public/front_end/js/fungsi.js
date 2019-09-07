@@ -22,3 +22,4 @@ function ajaxGet(url, callback) {
         }
     });
 }
+
