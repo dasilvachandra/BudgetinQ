@@ -1,5 +1,4 @@
 app.controller('danamasukController', function ($scope, $rootScope, $routeParams) {
-    // console.log("danamasukController");
     $scope.category = function (data, gcID) {
         a = data.filter(function (b) {
             return b.group_category_id == gcID;
@@ -19,4 +18,10 @@ app.controller('danamasukController', function ($scope, $rootScope, $routeParams
     };
 
     ajaxPost('/dataGC', data, returnData);
+    function danamasukRefresh(data) {
+        console.log(data);
+    }
+    $scope.danamasukStore = function (url, formID) {
+        ajaxPost(url, $(formID).serialize(), danamasukRefresh);
+    };
 });

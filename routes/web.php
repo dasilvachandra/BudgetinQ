@@ -32,6 +32,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/danamasuk', 'BudgetinQController@danamasuk');
     Route::get('/danamasuk/{time}', 'BudgetinQController@danamasuk');
     Route::post('/dataGC', 'BudgetinQController@dataGC'); 
+    Route::post('/danamasuk/store', 'PendapatanController@store'); 
     
 
     // DANAKELUAR
