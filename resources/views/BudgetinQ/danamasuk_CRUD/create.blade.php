@@ -19,7 +19,7 @@
 			<div class="input-group-append ">
 				<span class="input-group-addon"><i class="material-icons mr-0">label_outline</i></span>
 				<input type="text" class="form-control form-control-user" ng-model="selectedTime" name="nama_pendapatan"
-					required placeholder="Dana Name">
+					required placeholder="Deskripsi Pemasukkan">
 			</div>
 		</div>
 	</div>

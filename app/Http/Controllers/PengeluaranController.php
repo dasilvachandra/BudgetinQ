@@ -49,10 +49,11 @@ class PengeluaranController extends Controller
         // dd($request);
         $customMessages = [
             'price.required' => 'Jumlah dana masih kosong',
-            'nama_pengeluaran.required' => 'Nama pengeluaran masih kosong',
+            'nama_pengeluaran.required' => 'Deskripsi pengeluaran masih kosong',
             'jenis_pengeluaran.required' => 'Kategori masih kosong',
         ];
         $validator = $this->validate($request, $rules, $customMessages);
+        dd($validator);
         $picture_name = null;
         if ($request->picture != null) {
             $image = $request->file('picture');

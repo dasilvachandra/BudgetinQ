@@ -15,11 +15,11 @@
 			</div>
 		</div>
 		<div class="col-sm-6">
-			<b>Deskripsi Pemasukkan</b>
+			<b>Deskripsi Pengeluaran</b>
 			<div class="input-group-append ">
 				<span class="input-group-addon"><i class="material-icons mr-0">label_outline</i></span>
 				<input type="text" class="form-control form-control-user" ng-model="selectedTime" name="nama_pengeluaran"
-					required placeholder="Dana Name">
+					required placeholder="Deskripsi Pengeluaran">
 			</div>
 		</div>
 	</div>
