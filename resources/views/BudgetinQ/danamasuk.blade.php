@@ -2,19 +2,27 @@
 @section('title','Dana Masuk')
 @section('content')
 <div class="card o-hidden border-0 shadow-lg my-5" ng-controller="danamasukController as Ctrl">
+
     <div class="card-body p-0">
         <!-- Nested Row within Card Body -->
         <div class="row">
-            <div class="col-lg-6 shadow">
+            <div class="col-lg-12 shadow">
                 <div class="p-4">
-                    @include('BudgetinQ.danamasuk_CRUD.create')
-                </div>
-            </div>
-            <div class="col-lg-6 shadow">
-                <div class="p-4">
+                    <a href="#" class="btn btn-primary btn-icon-split mb-2" data-toggle="modal"
+                        data-target="#danamasukCreateModal">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span class="text">Tambah Pemasukkan</span>
+                    </a>
                     @include('BudgetinQ.danamasuk_CRUD.table')
                 </div>
             </div>
+
+            <div class="col-lg-12">
+                @include('BudgetinQ.danamasuk_CRUD.create')
+            </div>
+
         </div>
     </div>
 </div>

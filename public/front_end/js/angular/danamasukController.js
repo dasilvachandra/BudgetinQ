@@ -6,8 +6,8 @@ app.controller('danamasukController', function ($scope, $rootScope, $routeParams
         return a;
     };
     function returnData(data) {
-        $scope.cPendapatan = data['cPendapatan'];
-        $scope.gcPendapatan = data['gcPendapatan'];
+        $scope.cPemasukkan = data['cPendapatan'];
+        $scope.gcPemasukkan = data['gcPendapatan'];
         tablePendapatan(data['list_pemasukkan']);
         $scope.$apply();
     }
@@ -19,6 +19,9 @@ app.controller('danamasukController', function ($scope, $rootScope, $routeParams
 
     ajaxPost('/dataGC', data, returnData);
     function danamasukRefresh(data) {
+        tablePendapatan(data['list_pemasukkan']);
+        document.getElementById("closeModPengCreate").click();
+        showNotification('bg-green', "Succsessfully", "bottom", "right", "animated rotateInDownRight", "animated rotateOutDownRight");
     }
     $scope.danamasukStore = function (url, formID) {
         ajaxPost(url, $(formID).serialize(), danamasukRefresh);

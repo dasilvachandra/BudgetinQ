@@ -11,6 +11,10 @@ class Transaksi extends Model
 	protected $table ="transaksi";
 	// protected $fillable = ['nama_pengeluaran','jumlah'];
 	// if(gabung = 1,concat('-',jumlah),jumlah) as
+	public function insert($data){
+		DB::select('INSERT INTO transaksi (id_transaksi, jenis_transaksi, waktu,created_at,updated_at,id) VALUES (?, ?, ?, ?, ?,?)', $data);
+	}
+
     public function selectAllByGroup($id_user,$group_category){
     	 $q = "select * from 
 				(
@@ -22,5 +26,8 @@ class Transaksi extends Model
 		$id_user=Auth::user()->id;
 		$data = DB::select($q,[$id_user,$group_category,$id_user,$group_category]);
 		return $data;
+	}
+	public function patch($data){
+        DB::select('UPDATE transaksi set waktu = ? WHERE jenis_transaksi = ? and id = ? ', $data);
     }
 }

@@ -47,7 +47,7 @@
     $(document).ready(function () {
         $('#dataTable').DataTable();
     });
-
+    input_rupiah("input_rupiah")
 
 </script>
 

@@ -13,6 +13,7 @@ class Pendapatan extends Model
     public function selectAll($range_date){
         
         $q=" SELECT 
+        id_pendapatan,
         DATE_FORMAT(waktu, '%d %M, %Y') waktu,
         nama_pendapatan,
         jumlah ,

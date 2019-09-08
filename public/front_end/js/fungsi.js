@@ -35,27 +35,30 @@ function datePickerForm(by) {
 }
 
 function input_rupiah(id) {
-    nilaiInputUang = document.getElementById(id).value;
-    document.getElementById(id).value = "" + fRupiah(nilaiInputUang);
-    var dengan_rupiah = document.getElementById(id);
-    dengan_rupiah.addEventListener('keyup', function (e) {
-        dengan_rupiah.value = fRupiah(this.value, 'Rp ');
-    });
+    if (document.getElementById(id)) {
+        nilaiInputUang = document.getElementById(id).value;
+        document.getElementById(id).value = "" + fRupiah(nilaiInputUang);
+        var dengan_rupiah = document.getElementById(id);
+        dengan_rupiah.addEventListener('keyup', function (e) {
+            dengan_rupiah.value = fRupiah(this.value, 'Rp ');
+        });
 
-    function fRupiah(angka, prefix) {
-        var number_string = angka.replace(/[^,\d]/g, '').toString(),
-            split = number_string.split('.'),
-            sisa = split[0].length % 3,
-            rupiah = split[0].substr(0, sisa),
-            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+        function fRupiah(angka, prefix) {
+            var number_string = angka.replace(/[^,\d]/g, '').toString(),
+                split = number_string.split('.'),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 
-        if (ribuan) {
-            separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+            rupiah = split[1] != undefined ? rupiah + '.' + split[1] : rupiah;
+            return prefix == "" ? ' ' + rupiah : (rupiah ? '' + rupiah : '');
         }
-        rupiah = split[1] != undefined ? rupiah + '.' + split[1] : rupiah;
-        return prefix == "" ? ' ' + rupiah : (rupiah ? '' + rupiah : '');
     }
+
 }
 
 function showNotification(colorName, text, placementFrom, placementAlign, animateEnter, animateExit) {
@@ -96,6 +99,7 @@ function showNotification(colorName, text, placementFrom, placementAlign, animat
 }
 
 function selectCell(id) {
+
     var table = $(id).DataTable();
     $(id + ' tbody').on('click', 'tr', function () {
         if ($(this).hasClass('selected')) {
@@ -113,4 +117,22 @@ function formatRupiah(angka) {
     var angkarev = angka.toString().split('').reverse().join('');
     for (var i = 0; i < angkarev.length; i++) if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + ',';
     return '' + rupiah.split('', rupiah.length - 1).reverse().join('');
+}
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+function dateMonthYear(mydate) {
+    var dd = mydate.getDate();
+    var mm = mydate.getMonth();
+    var yy = mydate.getFullYear();
+    var dayName = days[mydate.getDay()];
+    return dd + " " + monthNames[mm] + ", " + yy;
+}
+function monthYear(d) {
+    var mydate = new Date(d);
+    var dd = mydate.getDate();
+    var mm = mydate.getMonth();
+    var yy = mydate.getFullYear();
+    var dayName = days[mydate.getDay()];
+    return monthNames[mm] + ", " + yy;
 }

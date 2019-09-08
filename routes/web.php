@@ -29,7 +29,7 @@ Route::group(['middleware' => ['auth']], function() {
     // API
     Route::post('/chartArea', 'BudgetinQController@chartArea'); 
     Route::post('/chartPie', 'BudgetinQController@chartPie'); 
-    Route::post('/dataGC', 'BudgetinQController@dataGC'); 
+    // Route::post('/dataGC', 'BudgetinQController@dataGC'); 
 
     // INPUT DANAMASUK
     Route::get('/danamasuk', 'BudgetinQController@danamasuk');
@@ -37,8 +37,22 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/danamasuk/store', 'PendapatanController@store'); 
     
 
-    // DANAKELUAR
+    // DANAKELUAR VIEW
     Route::get('/danakeluar', 'BudgetinQController@danakeluar');
     Route::get('/danakeluar/{time}', 'BudgetinQController@danakeluar');
+    Route::get('/danakeluar/{time}/{day}', 'BudgetinQController@danakeluar');
+    // DANAKELUAR CRUD
     Route::post('/danakeluar/store', 'PengeluaranController@store'); 
+    Route::get('/danakeluar/edit/{id}', 'PengeluaranController@edit'); 
+    Route::post('/danakeluar/delete', 'PengeluaranController@delete'); 
+    Route::post('/danakeluar/update', 'PengeluaranController@update'); 
+
+    // DANAKELUAR RESPONSE
+    Route::get('/dkr', 'BudgetinQController@danakeluarResponse');
+    Route::get('/dkr/{time}', 'BudgetinQController@danakeluarResponse');
+    Route::get('/dkr/{time}/{day}', 'BudgetinQController@danakeluarResponse');
+
+    // GROUP CATEGORY
+    Route::get('/GC/{gcid}/{c}', 'BudgetinQController@category');
+
 });

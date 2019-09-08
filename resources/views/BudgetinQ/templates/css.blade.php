@@ -9,9 +9,12 @@
 
 <!-- Custom styles for this template-->
 <link href="{{asset('front_end/css/sb-admin-2.min.css')}}" rel="stylesheet">
+<link href="{{asset('front_end/css/custom.css')}}" rel="stylesheet">
 
 
 <!-- Bootstrap DatePicker Css -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
+<!-- DATATABLES -->
+<link href="{{asset('front_end/vendor/datatables/dataTables.bootstrap4.min.css')}} " rel="stylesheet">
 @yield('css')

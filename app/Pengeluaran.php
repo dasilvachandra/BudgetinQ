@@ -10,14 +10,24 @@ class Pengeluaran extends Model
 {
 	protected $table ="pengeluaran";
     public $timestamps = false;
-
+    public function insert($data){
+        // dd($data);
+        DB::select('INSERT INTO pengeluaran (id_pengeluaran, nama_pengeluaran, jumlah,picture,id_jenis_pengeluaran) VALUES (?, ?, ?, ?, ?)', $data);
+    }
+    public function checkDuplicate($data){
+        return DB::select('SELECT nama_pengeluaran, id_jenis_pengeluaran, waktu,jumlah 
+        from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
+        where id=? and waktu = ? and nama_pengeluaran = ? and jumlah = ? and id_jenis_pengeluaran = ?', $data);
+    }
     public function selectAll($range_date){
         
         $q=" SELECT 
+        id_pengeluaran,
         DATE_FORMAT(waktu, '%d %M, %Y') waktu,
         nama_pengeluaran,
         jumlah ,
-        jenis_pengeluaran
+        jenis_pengeluaran,
+        group_category_id
         from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
         inner join jenis_pengeluaran using(id_jenis_pengeluaran)
         where transaksi.id=? and waktu between ? and ? ;
@@ -26,8 +36,39 @@ class Pengeluaran extends Model
         $start_default = $range_date['start_default'];
         $end_default = $range_date['end_default'];
         return DB::select($q,[$id,$start_default,$end_default]);
-	}
-    
+    }
+    public function selectByID($id){
+                
+            $qSelectByID = "
+            SELECT 
+                users.id,
+                transaksi.id_transaksi,
+                -- concat(dayname(transaksi.waktu), ', ', DATE_FORMAT(transaksi.waktu, '%d/%m/%Y')) waktu,
+                transaksi.waktu,
+                pengeluaran.picture,
+                pengeluaran.id_pengeluaran,
+                pengeluaran.nama_pengeluaran,
+                pengeluaran.jumlah,
+                jenis_pengeluaran,
+                id_jenis_pengeluaran,
+                group_category_id,
+                group_category
+            FROM 
+                transaksi inner join pengeluaran on transaksi.jenis_transaksi=pengeluaran.id_pengeluaran 
+                inner join jenis_pengeluaran using(id_jenis_pengeluaran) inner join group_category using(group_category_id) inner join
+                users on users.id=transaksi.id 
+            WHERE 
+                transaksi.jenis_transaksi = pengeluaran.id_pengeluaran and 
+                users.id = transaksi.id and 
+                users.email = ? and pengeluaran.id_pengeluaran = ?
+                order by transaksi.waktu,transaksi.created_at asc ;";
+        // echo $qSelectByID;
+        $email=Auth::user()->email;
+        $data = DB::select($qSelectByID,[$email,$id]);
+        // dd($data);
+        return $data;
+    }
+
     public function danakeluar($range_date)
     {
         $start_default = $range_date['start_default'];
@@ -43,6 +84,7 @@ class Pengeluaran extends Model
         ';
         return DB::select($q,[$id_user,$email,$start_default,$end_default])[0]->total;
     }
+
 
     public function totalDanaKeluar($time)
     {
@@ -76,5 +118,35 @@ class Pengeluaran extends Model
         $q = "SELECT waktu, ifnull(sum(jumlah),0) as total from pengeluaran inner join transaksi on id_pengeluaran=jenis_transaksi where waktu BETWEEN ? and ? and id=? group by waktu;";
         $result = DB::select($q,[$start_default,$end_default,$id]);
         return $result;
+    }
+
+    public function remove($data){
+        DB::select('DELETE pengeluaran, transaksi 
+            from pengeluaran 
+            inner join transaksi on id_pengeluaran = jenis_transaksi 
+            inner join users using (id) 
+            where id_pengeluaran = ? and id=? and email = ?;
+            ', $data
+        );
+    }
+
+    public function patch($data){
+        DB::select('UPDATE pengeluaran set nama_pengeluaran = ?, jumlah = ? , picture = ?, id_jenis_pengeluaran = ? WHERE id_pengeluaran = ?', $data);
+    }
+    
+    public function selectRange($start_default,$end_default){
+        $id=Auth::user()->id;
+        $q=" SELECT 
+        id_pengeluaran,
+        DATE_FORMAT(waktu, '%d %M, %Y') waktu,
+        nama_pengeluaran,
+        jumlah ,
+        jenis_pengeluaran,
+        group_category_id
+        from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
+        inner join jenis_pengeluaran using(id_jenis_pengeluaran)
+        where transaksi.id=? and waktu between ? and ? ;
+        ";
+        return DB::select($q,[$id,$start_default,$end_default]);
     }
 }

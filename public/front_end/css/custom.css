@@ -1,0 +1,16 @@
+table.dataTable tbody tr.selected {
+	color: white !important;
+	background-color: #3F65D4 !important;
+}
+table.dataTable tbody tr.selected a {
+	text-decoration: none;
+	color: white !important;
+}
+table.dataTable tbody tr.selected a:hover {
+	text-decoration: none;
+	font-weight:bold;
+	color: white !important;
+}
+a {
+	text-decoration: none !important;
+}

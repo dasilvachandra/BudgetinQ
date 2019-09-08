@@ -142,14 +142,31 @@ class BudgetinQController  extends Controller
         return view('BudgetinQ.danamasuk')->with($data);
     }
 
-    public function danakeluar($time=null){
+    public function danakeluar($time=null,$day=null){
         $time = $time ?: date("F, Y");
-        $pengeluaran = new Pengeluaran;
+        $day = $day ?: date("d");
         $data=array(
             'monthYear' => $time
         );
         return view('BudgetinQ.danakeluar')->with($data);
     }
+
+    public function danakeluarResponse($time=null,$day=null){
+        $time = $time ?: date("F, Y");
+        $pengeluaran = new Pengeluaran;
+        $waktu = $this->timeByMonth($time);
+        $list_pengeluaran = $pengeluaran->selectAll($waktu);
+        if ($day) {
+            $waktu = $this->timeByMonth($day.' '.$time); 
+            $list_pengeluaran = $pengeluaran->selectRange($waktu['end_default'],$waktu['end_default']);
+        }
+        $data=array(
+            'cPengeluaran' => DB::table('jenis_pengeluaran')->where('id', Auth::user()->id)->get(),
+            'gcPengeluaran' => DB::table('group_category')->where('pengeluaran', '1')->get(),
+            'list_pengeluaran' => $list_pengeluaran
+        );
+        return response()->json($data);
+    }  
 
     public function dataGC(Request $request){
         $pengeluaran = new Pengeluaran;

@@ -33,7 +33,7 @@ class PengeluaranController extends Controller
     }
     public function store(Request $request)
     {
-        $id_user=Auth::user()->id;
+        $id=Auth::user()->id;
         $pengeluaran = new Pengeluaran;
         $transaksi = new Transaksi;
         $jenis_pengeluaran = new JenisPengeluaran;
@@ -44,70 +44,60 @@ class PengeluaranController extends Controller
             'time' => 'required|max:255',
             'jumlah' => 'required|max:255',
             'nama_pengeluaran' => 'required|min:2|max:255',
-            'jenis_pengeluaran' => 'required|max:100',
+            'id_jenis_pengeluaran' => 'required|max:100',
         );
         // dd($request);
         $customMessages = [
             'price.required' => 'Jumlah dana masih kosong',
             'nama_pengeluaran.required' => 'Deskripsi pengeluaran masih kosong',
-            'jenis_pengeluaran.required' => 'Kategori masih kosong',
+            'id_jenis_pengeluaran.required' => 'Kategori masih kosong',
         ];
         $validator = $this->validate($request, $rules, $customMessages);
-        dd($validator);
-        $picture_name = null;
-        if ($request->picture != null) {
-            $image = $request->file('picture');
-            // $fileName   = date('ymdhis').'.'.$image->getClientOriginalName();
-            $temp = explode(".", $image->getClientOriginalName());
-
-            $picture_name = $request->id_pengeluaran.'-'.base64_encode(round(microtime(true)) . '.' . end($temp)).'.jpg';
-            $destination_path = $_SERVER['DOCUMENT_ROOT'].'/front_end/images/upload_pengeluaran/';
-            $image->move($destination_path,$picture_name);
-            // dd($destination_path);
-        }
-
-        $id_jenis_pengeluaran = $validator['jenis_pengeluaran'];
-
-        if (count($jenis_pengeluaran->selectByID($validator['jenis_pengeluaran']))==0 && count($jenis_pengeluaran->selectByName($validator['jenis_pengeluaran']))==0) {
-            if (count($jenis_pengeluaran->selectAll())>=10) {
-                return redirect()->to("/")->withInput($request->input()); 
-            }else{
-                $id_jenis_pengeluaran = 'JPG_'.uniqid();
-                $dataJenisPengeluaran = array($id_jenis_pengeluaran, $request->jenis_pengeluaran, date("Y-m-d H:i:s"), date("Y-m-d H:i:s"),$id_user);
-                $jenis_pengeluaran->insertData($dataJenisPengeluaran);
-            }
-        }
-
         $id_pengeluaran = 'PENG_'.uniqid();
-        $nama_pengeluaran = $request->nama_pengeluaran;
-        $jumlah = intval(preg_replace('/[^0-9]+/', '', $request->jumlah));
-        $picture= $picture_name;
-        
+        $nama_pengeluaran = $validator['nama_pengeluaran'];
+        $jumlah = intval(preg_replace('/[^0-9]+/', '', $validator['jumlah']));
+        $picture = "";
+        $id_jenis_pengeluaran = $validator['id_jenis_pengeluaran'];
 
-        $dataPengeluaran = array($id_pengeluaran,$nama_pengeluaran,$jumlah,$picture,$id_jenis_pengeluaran);
-        DB::select('INSERT INTO pengeluaran (id_pengeluaran, nama_pengeluaran, jumlah,picture,id_jenis_pengeluaran) VALUES (?, ?, ?, ?, ?)', $dataPengeluaran);
-
-        $id_transaksi = 'TR_'.uniqid();
+        // select nama_pengeluaran, id_jenis_pengeluaran, waktu,jumlah from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran where id=1;
+        $id_transaksi = "TR_".uniqid();
         $jenis_transaksi = $id_pengeluaran;
         $waktu = date("Y-m-d", strtotime($this->dateFilter($validator['time'])));
-        $created_at = date("Y-m-d H:i:s");
-        $updated_at = date("Y-m-d H:i:s");
-        $id = $id_user;
+        $checkDuplicate=$pengeluaran->checkDuplicate([$id,$waktu,$nama_pengeluaran,$jumlah,$id_jenis_pengeluaran]);
+        if (count($checkDuplicate)==0) {
+            $pengeluaran->insert([$id_pengeluaran, $nama_pengeluaran, $jumlah,$picture,$id_jenis_pengeluaran]);
+            $transaksi->insert([$id_transaksi, $jenis_transaksi, $waktu,date("Y-m-d H:i:s"),date("Y-m-d H:i:s"),$id]);
+            $data = array(
+                'pesan' => '1',
+                'list_pengeluaran' => $pengeluaran->selectAll($this->timeByMonth($waktu))
+            );
+            return response()->json($data);
+        }else{
+            return response()->json(['errors' => ['Data sudah ada']], 422);
+        }
+        
+        // return redirect()->to('/danakeluar');
+    }
 
-        $dataTransaksi = array($id_transaksi,$jenis_transaksi,$waktu,$created_at,$updated_at,$id);
-        DB::select('INSERT INTO transaksi (id_transaksi, jenis_transaksi, waktu,created_at,updated_at,id) VALUES (?, ?, ?, ?, ?,?)', $dataTransaksi);
-        $d=$this->timeByMonth($validator['time']);
-        // $start_default = $d['start_default'];
-        $end_default = $d['end_default'];
-        $data=$this->dataDefault($validator['time']);
-        $total_per_hari = $pengeluaran->totalByDate($end_default,$end_default)[0]->total_per_hari;
-        $data['total_per_hari'] = $total_per_hari;
-        $data['pengeluaranHariIni'] = $pengeluaran->selectRange($end_default,$end_default);
-        $data['time'] = $validator['time'];
+    public function edit($id)
+    {
+        $pengeluaran = new Pengeluaran;
+        $id_user=Auth::user()->id;
+        // $data = DB::select('select * from pengeluaran inner join transaksi on jenis_transaksi=id_pengeluaran where id_pengeluaran = ?', [$id]);        $d=$this->timeByMonth($data[0]->waktu);
+        $editData = $pengeluaran->selectByID($id);
+        // dd($editData);
+        $data = array(
+            'editData' => $editData
+        );
         return response()->json($data);
     }
-    public function destroy(Request $request)
+
+
+    public function delete(Request $request)
     {
+        $pengeluaran = new Pengeluaran;
+        $id_user=Auth::user()->id; 
+        $email=Auth::user()->email; 
         $rules = array(
             'id' => 'required|max:255'
         );
@@ -115,34 +105,10 @@ class PengeluaranController extends Controller
             'id.required' => 'id failed'
         ];
         $validator = $this->validate($request, $rules, $customMessages);
-        $id = $validator['id'];
-        $pengeluaran = new Pengeluaran;
-        $pengeluaranByID = $pengeluaran->selectByID($id);
-        if (count($pengeluaranByID)==0) {
-            $time = date("d F, Y"); 
-            $data=$this->dataDefault($time,$time);
-            return back()->with($data);
-        }
-        $id_user=Auth::user()->id; 
-        $email=Auth::user()->email; 
-        // dd($id);
-        $time = date("d F, Y", strtotime($pengeluaranByID[0]->waktu)); 
-        DB::select('
-            DELETE pengeluaran, transaksi 
-            from pengeluaran 
-            inner join transaksi on id_pengeluaran = jenis_transaksi 
-            inner join users using (id) 
-            where id_pengeluaran = ? and id=? and email = ?;
-            ', [$id,$id_user,$email]
+        $pengeluaran->remove([$validator['id'],$id_user,$email]);
+        $data = array(
+            'pesan' => '0'
         );
-
-        
-        $end_default =  $pengeluaranByID[0]->waktu;
-        // $d=$this->timeByMonth($validator['time']);
-        // $start_default = $d['start_default'];
-        $data=$this->dataDefault($time);
-        $data['total_per_hari'] = $pengeluaran->totalByDate($end_default,$end_default)[0]->total_per_hari;
-        $data['pengeluaranHariIni'] = $pengeluaran->selectRange($end_default,$end_default);
         return response()->json($data);
     }
 
@@ -162,28 +128,13 @@ class PengeluaranController extends Controller
         return $data;
     }
 
-    public function edit($id)
-    {
-        $pengeluaran = new Pengeluaran;
-        $id_user=Auth::user()->id;
-        // $data = DB::select('select * from pengeluaran inner join transaksi on jenis_transaksi=id_pengeluaran where id_pengeluaran = ?', [$id]);        $d=$this->timeByMonth($data[0]->waktu);
-        $editData = $pengeluaran->selectByID($id);
-        $time = date("d F, Y", strtotime($editData[0]->waktu)); 
-        $d=$this->timeByMonth($time);
-        $start_default = $d['start_default'];
-        $end_default = $d['end_default'];
-        $dataPengeluaran=$pengeluaran->selectRange($end_default,$end_default);
-        $data=$this->dataDefault($time);
-        $data['time']=$time;
-        $data['editData']=$pengeluaran->selectByID($id);
-        $data['pengeluaran']=$dataPengeluaran;
-        return $data;
-    }
-
     public function update(Request $request)
     {
         // dd($request);
-        // dd($request->id_jenis_pengeluaran);
+        // dd($request->id_pengeluaran);
+        $pengeluaran = new Pengeluaran;
+        $transaksi = new Transaksi;
+        $id=Auth::user()->id;
         $rules = array(
             'picture' => 'image|mimes:jpeg,png,jpg|max:2048',
             'time' => 'required|max:255',
@@ -200,63 +151,24 @@ class PengeluaranController extends Controller
         ];
 
         $validator = $this->validate($request, $rules, $customMessages);
-        $picture_name = null;
-        $id_pengeluaran=$request->id_pengeluaran;
-        $pengeluaran = new Pengeluaran;
-        $pengeluaranByID = $pengeluaran->selectByID($id_pengeluaran);
-        $picture_name = $pengeluaranByID[0]->picture;
-        if ($picture_name==null) {
-            $picture_name = "noimage.png";
-        }
-
-        if ($request->picture != null ) {
-            $destination_path = $_SERVER['DOCUMENT_ROOT'].'/front_end/images/upload_pengeluaran/';
-            if(file_exists($destination_path.$picture_name) && $picture_name != "noimage.png"){
-                unlink($destination_path.$picture_name);
-            }
-            $image = $request->file('picture');
-            // $fileName   = date('ymdhis').'.'.$image->getClientOriginalName();
-            $temp = explode(".", $image->getClientOriginalName());
-            $picture_name = $request->id_pengeluaran.'-'.base64_encode(round(microtime(true)) . '.' . end($temp)).'.jpg';
-            // $image->move(public_path('/front_end/images/upload_pengeluaran/'),$picture_name);
-            $image->move($destination_path,$picture_name);
-            
-        }
-
-        $waktu = date("Y-m-d", strtotime($this->dateFilter($validator['time'])));
-        $jumlah = $this->number($validator['jumlah']); 
+        $id_pengeluaran = $validator['id_pengeluaran'];
         $nama_pengeluaran = $validator['nama_pengeluaran'];
+        $jumlah = intval(preg_replace('/[^0-9]+/', '', $validator['jumlah']));
+        $picture = "";
         $id_jenis_pengeluaran = $validator['id_jenis_pengeluaran'];
-        $id=Auth::user()->id;
 
-        $dataPengeluaran = array(
-            $nama_pengeluaran,
-            $jumlah,
-            $picture_name,
-            $id_jenis_pengeluaran,
-            $id_pengeluaran
+        $id_transaksi = DB::table('transaksi')->where('jenis_transaksi', $id_pengeluaran)->first()->id_transaksi;
+        $jenis_transaksi = $id_pengeluaran;
+        $waktu = date("Y-m-d", strtotime($this->dateFilter($validator['time'])));
+        $pengeluaran->patch([$nama_pengeluaran, $jumlah,$picture,$id_jenis_pengeluaran,$id_pengeluaran]);
+        $transaksi->patch([$waktu, $jenis_transaksi, $id]);
+        
+        $data = array(
+            'pesan' => '1',
+            'list_pengeluaran' => $pengeluaran->selectAll($this->timeByMonth($waktu))
         );
-
-        $dataTransaksi = array(
-            $waktu,
-            $id_pengeluaran,
-            $id
-        );
-        // dd($dataPengeluaran);
-
-        DB::select('UPDATE pengeluaran set nama_pengeluaran = ?, jumlah = ? , picture = ?, id_jenis_pengeluaran = ? WHERE id_pengeluaran = ?', $dataPengeluaran);
-        DB::select('UPDATE transaksi set waktu = ? WHERE jenis_transaksi = ? and id = ? ', $dataTransaksi);
-       
-        $time = $this->dateFilter($validator['time']);
-
-        $data=$this->dataDefault($time);
-        $d=$this->timeByMonth($time);
-        $start_default = $d['start_default'];
-        $end_default = $d['end_default'];
-        $data['time'] = $validator['time'];
-        $data['pengeluaranHariIni'] = $pengeluaran->selectRange($end_default,$end_default);
-        $data['total_per_hari'] = $pengeluaran->totalByDate($end_default,$end_default)[0]->total_per_hari;
         return response()->json($data);
+
     }
 
     public function deletePicture($id,$picture){
