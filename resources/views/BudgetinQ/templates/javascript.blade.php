@@ -44,6 +44,10 @@
         window.location = "/" + pathname + "/" + time;
         // returnDataHome($("#time").val(),"/data");
     });
+    $(document).ready(function () {
+        $('#dataTable').DataTable();
+    });
+
 
 </script>
 
@@ -52,5 +56,8 @@
 <!-- Nofity -->
 <script src="{{asset('front_end/plugins/bootstrap-notify/bootstrap-notify.js')}} "></script>
 
+<!-- DATATABLES -->
+<script src="{{asset('front_end/vendor/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('front_end/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
 
 @yield('javascript')

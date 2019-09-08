@@ -1,7 +1,6 @@
-<div class="text-center">
-	<h1 class="h4 text-gray-900 mb-4">Add Pemasukkan!</h1>
+<div class="card-header py-3 mb-4">
+	<h6 class="m-0 font-weight-bold text-primary">Add Pemasukkan!</h6>
 </div>
-
 <form class="user" id="form_create_pendapatan" method="POST">
 	{{csrf_field()}}
 	<div class="form-group row">

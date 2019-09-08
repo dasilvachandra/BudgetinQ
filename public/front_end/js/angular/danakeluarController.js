@@ -5,11 +5,10 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         });
         return a;
     };
-    // FIRST
     function returnData(data) {
-
         $scope.cPengeluaran = data['cPengeluaran'];
         $scope.gcPengeluaran = data['gcPengeluaran'];
+        tablePengeluaran(data['list_pengeluaran']);
         $scope.$apply();
     }
 
@@ -19,15 +18,43 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
     };
 
     ajaxPost('/dataGC', data, returnData);
-
-    //REFRESH 
     function danakeluarRefresh(data) {
-        console.log(data);
     }
-
-    // CREATE
     $scope.danakeluarStore = function (url, formID) {
         ajaxPost(url, $(formID).serialize(), danakeluarRefresh);
     };
-
+    // TABLE
+    function tablePengeluaran(data) {
+        id = '#tablePengeluaran';
+        if (!$.fn.DataTable.isDataTable(id)) {
+            var table = $(id).addClass('nowrap').DataTable({
+                "aaData": data,
+                processing: true,
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                columns: [
+                    { data: 'waktu', name: 'waktu' },
+                    { data: 'nama_pengeluaran', name: 'nama_pengeluaran' },
+                    { data: 'jumlah', name: 'jumlah' },
+                    { data: 'jenis_pengeluaran', name: 'jenis_pengeluaran' },
+                ],
+                language: {
+                    searchPlaceholder: "Search..."
+                },
+                columnDefs: [
+                    { targets: 2, data: "price", render: function (data, type, row, meta) { return formatRupiah(data) } },
+                    { width: 100, targets: 0 },
+                    { width: 100, targets: 1 }
+                ]
+            });
+        } else {
+            table = $(id).DataTable();
+            table.clear();
+            table.rows.add(data);
+            table.draw();
+            selectCell(id);
+        }
+        selectCell(id);
+    }
 });

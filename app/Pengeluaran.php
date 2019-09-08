@@ -10,6 +10,23 @@ class Pengeluaran extends Model
 {
 	protected $table ="pengeluaran";
     public $timestamps = false;
+
+    public function selectAll($range_date){
+        
+        $q=" SELECT 
+        DATE_FORMAT(waktu, '%d %M, %Y') waktu,
+        nama_pengeluaran,
+        jumlah ,
+        jenis_pengeluaran
+        from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
+        inner join jenis_pengeluaran using(id_jenis_pengeluaran)
+        where transaksi.id=? and waktu between ? and ? ;
+        ";
+        $id=Auth::user()->id;
+        $start_default = $range_date['start_default'];
+        $end_default = $range_date['end_default'];
+        return DB::select($q,[$id,$start_default,$end_default]);
+	}
     
     public function danakeluar($range_date)
     {

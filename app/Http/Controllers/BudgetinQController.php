@@ -153,6 +153,7 @@ class BudgetinQController  extends Controller
 
     public function dataGC(Request $request){
         $pengeluaran = new Pengeluaran;
+        $pendapatan = new Pendapatan;
         $id=Auth::user()->id;
         $rules = array(
             'time' => 'required|max:255'
@@ -162,18 +163,22 @@ class BudgetinQController  extends Controller
         ];
 
         $validator = $this->validate($request, $rules, $customMessages);
-        $time = $this->dateFilter($validator['time']);
+        $time = $this->timeByMonth($validator['time']);
         
         $gcPengeluaran = DB::table('group_category')->where('pengeluaran', '1')->get();
         $gcPendapatan = DB::table('group_category')->where('pendapatan', '1')->get();
         $cPendapatan = DB::table('jenis_pendapatan')->where('id', $id)->get();
         $cPengeluaran = DB::table('jenis_pengeluaran')->where('id', $id)->get();
+        $list_pemasukkan = $pendapatan->selectAll($time);
+        $list_pengeluaran = $pengeluaran->selectAll($time);
 
         $data=array(
             'cPendapatan' => $cPendapatan,
             'cPengeluaran' => $cPengeluaran,
             'gcPengeluaran' => $gcPengeluaran,
-            'gcPendapatan' => $gcPendapatan
+            'gcPendapatan' => $gcPendapatan,
+            'list_pengeluaran' => $list_pengeluaran,
+            'list_pemasukkan' => $list_pemasukkan,
         );
 
 

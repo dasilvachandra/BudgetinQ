@@ -6,9 +6,9 @@ app.controller('danamasukController', function ($scope, $rootScope, $routeParams
         return a;
     };
     function returnData(data) {
-
         $scope.cPendapatan = data['cPendapatan'];
         $scope.gcPendapatan = data['gcPendapatan'];
+        tablePendapatan(data['list_pemasukkan']);
         $scope.$apply();
     }
 
@@ -19,9 +19,42 @@ app.controller('danamasukController', function ($scope, $rootScope, $routeParams
 
     ajaxPost('/dataGC', data, returnData);
     function danamasukRefresh(data) {
-        console.log(data);
     }
     $scope.danamasukStore = function (url, formID) {
         ajaxPost(url, $(formID).serialize(), danamasukRefresh);
     };
+    // TABLE
+    function tablePendapatan(data) {
+        id = '#tablePendapatan';
+        if (!$.fn.DataTable.isDataTable(id)) {
+            var table = $(id).addClass('nowrap').DataTable({
+                "aaData": data,
+                processing: true,
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                columns: [
+                    { data: 'waktu', name: 'waktu' },
+                    { data: 'nama_pendapatan', name: 'nama_pendapatan' },
+                    { data: 'jumlah', name: 'jumlah' },
+                    { data: 'jenis_pendapatan', name: 'jenis_pendapatan' },
+                ],
+                language: {
+                    searchPlaceholder: "Search..."
+                },
+                columnDefs: [
+                    { targets: 2, data: "price", render: function (data, type, row, meta) { return formatRupiah(data) } },
+                    { width: 100, targets: 0 },
+                    { width: 100, targets: 1 }
+                ]
+            });
+        } else {
+            table = $(id).DataTable();
+            table.clear();
+            table.rows.add(data);
+            table.draw();
+            selectCell(id);
+        }
+        selectCell(id);
+    }
 });
