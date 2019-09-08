@@ -25,17 +25,20 @@ Route::group(['middleware' => ['auth']], function() {
     // DASHBOARD
     Route::get('/dashboard', 'BudgetinQController@dashboard');
     Route::get('/dashboard/{time}', 'BudgetinQController@dashboard');
+
+    // API
     Route::post('/chartArea', 'BudgetinQController@chartArea'); 
     Route::post('/chartPie', 'BudgetinQController@chartPie'); 
+    Route::post('/dataGC', 'BudgetinQController@dataGC'); 
 
     // INPUT DANAMASUK
     Route::get('/danamasuk', 'BudgetinQController@danamasuk');
     Route::get('/danamasuk/{time}', 'BudgetinQController@danamasuk');
-    Route::post('/dataGC', 'BudgetinQController@dataGC'); 
     Route::post('/danamasuk/store', 'PendapatanController@store'); 
     
 
     // DANAKELUAR
     Route::get('/danakeluar', 'BudgetinQController@danakeluar');
     Route::get('/danakeluar/{time}', 'BudgetinQController@danakeluar');
+    Route::post('/danakeluar/store', 'PengeluaranController@store'); 
 });
