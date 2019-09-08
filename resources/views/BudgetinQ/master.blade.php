@@ -20,32 +20,31 @@
     <div id="content-wrapper" class="d-flex flex-column">
       <!-- Main Content -->
       <div id="content">
-
         <!-- Topbar -->
         <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
           <!-- Sidebar Toggle (Topbar) -->
           <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
             <i class="fa fa-bars"></i>
           </button>
           <!-- Topbar Search -->
           @include('BudgetinQ.templates.search')
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+            @include('BudgetinQ.templates.top_bar')
+          </ul>
         </nav>
         <!-- End of Topbar -->
-
         <!-- Begin Page Content -->
         <div class="container-fluid">
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-
+            <!-- Topbar Select Month-->
             @include('BudgetinQ.templates.selectMonth')
 
             <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
           </div>
-
-          <!-- Topbar Select Month-->
 
 
           <!-- Content Row -->
@@ -59,11 +58,7 @@
 
       <!-- Footer -->
       <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright &copy; BudgetinQ @php echo date("Y") @endphp</span>
-          </div>
-        </div>
+        @include('BudgetinQ.templates.footer')
       </footer>
       <!-- End of Footer -->
 

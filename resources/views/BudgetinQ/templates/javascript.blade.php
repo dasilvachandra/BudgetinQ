@@ -14,9 +14,11 @@
 
 <!-- Page level custom scripts -->
 <script src="{{asset('front_end/js/fungsi.js')}}"></script>
-@yield('javascript')
 
+<script src="{{asset('front_end/js/moment.js')}}"></script>
+<!-- datepicker -->
 <script src="{{asset('front_end/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js')}}"></script>
+<script src="{{asset('front_end/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js')}}"></script>
 
 <script>
     $('#selectMonth').datepicker({
@@ -40,6 +42,9 @@
         window.location = "/" + pathname + "/" + time;
         // returnDataHome($("#time").val(),"/data");
     });
+
 </script>
 
 <script src="{{asset('front_end/js/angular/router.js')}}"></script>
+
+@yield('javascript')

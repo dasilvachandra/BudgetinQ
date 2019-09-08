@@ -151,6 +151,35 @@ class BudgetinQController  extends Controller
         return view('BudgetinQ.danakeluar')->with($data);
     }
 
+    public function dataGC(Request $request){
+        $pengeluaran = new Pengeluaran;
+        $id=Auth::user()->id;
+        $rules = array(
+            'time' => 'required|max:255'
+        );
+        $customMessages = [
+            'time.required' => 'time error'
+        ];
+
+        $validator = $this->validate($request, $rules, $customMessages);
+        $time = $this->dateFilter($validator['time']);
+        
+        $gcPengeluaran = DB::table('group_category')->where('pengeluaran', '1')->get();
+        $gcPendapatan = DB::table('group_category')->where('pendapatan', '1')->get();
+        $cPendapatan = DB::table('jenis_pendapatan')->where('id', $id)->get();
+        $cPengeluaran = DB::table('jenis_pengeluaran')->where('id', $id)->get();
+
+        $data=array(
+            'cPendapatan' => $cPendapatan,
+            'cPengeluaran' => $cPengeluaran,
+            'gcPengeluaran' => $gcPengeluaran,
+            'gcPendapatan' => $gcPendapatan
+        );
+
+
+        return $data;
+    }
+
 }
 
 
