@@ -29,5 +29,11 @@ class Transaksi extends Model
 	}
 	public function patch($data){
         DB::select('UPDATE transaksi set waktu = ? WHERE jenis_transaksi = ? and id = ? ', $data);
-    }
+	}
+	
+	public function sPeriode(){
+		$id=Auth::user()->id;
+		$q='select max(waktu) awal, min(waktu) akhir,  period_diff(date_format(max(waktu),"%Y%m"),date_format(min(waktu),"%Y%m")) as periode from transaksi where id=?';
+		return DB::select($q,[$id]);
+	}
 }

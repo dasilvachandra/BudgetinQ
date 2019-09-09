@@ -121,6 +121,7 @@ app.run(function ($rootScope, $location) {
     var host = new URL(url).host;
     var pathname = new URL(url).pathname.split("/");
     // var pathname = new URL(url).pathname.split("/")[1];
+    $rootScope.host = host;
     $rootScope.pathname = pathname;
     $rootScope.url = pathname[1];
     datePickerForm('.datepickerForm');

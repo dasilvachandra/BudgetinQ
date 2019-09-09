@@ -27,7 +27,8 @@ class Pengeluaran extends Model
         nama_pengeluaran,
         jumlah ,
         jenis_pengeluaran,
-        group_category_id
+        group_category_id,
+        id_jenis_pengeluaran
         from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
         inner join jenis_pengeluaran using(id_jenis_pengeluaran)
         where transaksi.id=? and waktu between ? and ? ;
@@ -142,7 +143,8 @@ class Pengeluaran extends Model
         nama_pengeluaran,
         jumlah ,
         jenis_pengeluaran,
-        group_category_id
+        group_category_id,
+        id_jenis_pengeluaran
         from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
         inner join jenis_pengeluaran using(id_jenis_pengeluaran)
         where transaksi.id=? and waktu between ? and ? ;

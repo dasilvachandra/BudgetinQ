@@ -35,13 +35,9 @@ class JenisPengeluaran extends Model
             where id=? and waktu=?),"0") as jumlah
     ';
     public function selectAll(){
-        $qSelectAll="SELECT a.id_jenis_pengeluaran, a.jenis_pengeluaran, sum(b.jumlah) as total, if(b.jumlah>0,count(a.id_jenis_pengeluaran),'0') as jumlah_data, group_category.group_category from jenis_pengeluaran as a left join group_category using(group_category_id) left join (select id_jenis_pengeluaran, jumlah from pengeluaran inner join transaksi on id_pengeluaran = jenis_transaksi) as b on a.id_jenis_pengeluaran = b.id_jenis_pengeluaran where a.id=? group by a.id_jenis_pengeluaran ORDER BY group_category.group_category asc;";
-
-        $id_user=Auth::user()->id;
-        $email=Auth::user()->email;
-        $data = DB::select($qSelectAll,[$id_user,$email]);
-        // dd($data);
-        return $data;
+        $q="SELECT id_jenis_pengeluaran, jenis_pengeluaran, count(jumlah) as jt, sum(jumlah) as total, group_category, group_category_id from jenis_pengeluaran inner join group_category using(group_category_id) inner join pengeluaran using (id_jenis_pengeluaran) inner join transaksi on id_pengeluaran = jenis_transaksi where transaksi.id=? group by jenis_pengeluaran;";
+        $id=Auth::user()->id;
+        return DB::select($q,[$id]);
     }
 
     public function selectByID($id)

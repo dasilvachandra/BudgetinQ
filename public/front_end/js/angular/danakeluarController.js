@@ -23,8 +23,11 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
     }
 
     function danakeluarRefresh(data) {
+        console.log(data);
         if (data['pesan'] == '1') {
-            window.location = window.location.href;
+            // url = '/danakeluar/' + $rootScope.pathname[2] + "/" + data['day'];
+            // window.location = window.location.href;
+            window.location = data['link'];
         }
     }
 
@@ -64,7 +67,9 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
                     { targets: 2, data: "jumlah", render: function (data, type, row, meta) { return formatRupiah(data) } },
                     {
                         targets: 3, data: "waktu", render: function (data, type, row, meta) {
-                            return "<a href='/GC/" + row['group_category_id'] + "/ " + data + "'>" + data + "</a>";
+                            var mydate = new Date(row['waktu']);
+                            mY = monthYear(mydate);
+                            return "<a href='/kategori/danakeluar/" + row['group_category_id'] + "/" + row['id_jenis_pengeluaran'] + "/ " + mY + "/'>" + data + "</a>";
                         }
                     },
                     { width: 200, targets: 0 },
@@ -93,7 +98,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
             var check = confirm("Are you sure you want to delete this?");
             if (check) {
                 table.$('tr.selected').css("background-color", "yellow");
-                table.$('tr.selected').fadeOut(2000);
+                table.$('tr.selected').fadeOut(100);
                 // table.row('.selected').remove().draw(false);
                 url = "/danakeluar/delete";
                 data = {
@@ -140,8 +145,13 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         } else {
             var id = data['id_pengeluaran'];
             if (confirm("Are you sure you want to Edit this?")) {
-                url = "/danakeluar/edit/" + id;
-                ajaxGet(url, getDataEdit);
+                url = "/danakeluar/edit/";
+                // console.log(url);
+                data = {
+                    "_token": $('meta[name="csrf-token"]').attr('content'),
+                    'id_pengeluaran': id
+                };
+                ajaxPost(url, data, getDataEdit);
             }
         }
     }

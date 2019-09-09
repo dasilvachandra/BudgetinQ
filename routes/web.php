@@ -22,37 +22,44 @@ Route::get('auth/{provider}/callback','Auth\LoginController@handleProviderCallba
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 Route::group(['middleware' => ['auth']], function() {
-    // DASHBOARD
-    Route::get('/dashboard', 'BudgetinQController@dashboard');
-    Route::get('/dashboard/{time}', 'BudgetinQController@dashboard');
+    // DASHBOARD VIEW
+    Route::get('/dashboard', 'BudgetinQController@dashboard'); // view Dashboard
+    Route::get('/dashboard/{time}', 'BudgetinQController@dashboard'); // view Dashboard
 
     // API
-    Route::post('/chartArea', 'BudgetinQController@chartArea'); 
-    Route::post('/chartPie', 'BudgetinQController@chartPie'); 
+    Route::post('/chartArea', 'BudgetinQController@chartArea'); // return labels, totalPerHari
+    Route::post('/chartPie', 'BudgetinQController@chartPie'); // return ? on progress.... 
     // Route::post('/dataGC', 'BudgetinQController@dataGC'); 
 
     // INPUT DANAMASUK
-    Route::get('/danamasuk', 'BudgetinQController@danamasuk');
-    Route::get('/danamasuk/{time}', 'BudgetinQController@danamasuk');
-    Route::post('/danamasuk/store', 'PendapatanController@store'); 
-    
+    Route::get('/danamasuk', 'BudgetinQController@danamasuk'); // on progress.... 
+    Route::get('/danamasuk/{time}', 'BudgetinQController@danamasuk'); // on progress.... 
+    Route::post('/danamasuk/store', 'PendapatanController@store');  // on progress.... 
 
     // DANAKELUAR VIEW
-    Route::get('/danakeluar', 'BudgetinQController@danakeluar');
-    Route::get('/danakeluar/{time}', 'BudgetinQController@danakeluar');
-    Route::get('/danakeluar/{time}/{day}', 'BudgetinQController@danakeluar');
+    Route::get('/danakeluar', 'BudgetinQController@danakeluar'); // view danakeluar
+    Route::get('/danakeluar/{time}', 'BudgetinQController@danakeluar'); // view danakeluar
+    Route::get('/danakeluar/{time}/{day}', 'BudgetinQController@danakeluar'); // view danakeluar
     // DANAKELUAR CRUD
-    Route::post('/danakeluar/store', 'PengeluaranController@store'); 
-    Route::get('/danakeluar/edit/{id}', 'PengeluaranController@edit'); 
-    Route::post('/danakeluar/delete', 'PengeluaranController@delete'); 
-    Route::post('/danakeluar/update', 'PengeluaranController@update'); 
+    Route::post('/danakeluar/store', 'PengeluaranController@store'); // CREATE danakeluar
+    Route::post('/danakeluar/edit', 'PengeluaranController@edit'); // EDIT danakeluar
+    Route::post('/danakeluar/update', 'PengeluaranController@update'); //UPDATE danakeluar
+    Route::post('/danakeluar/delete', 'PengeluaranController@delete'); // DELETE danakeluar
 
     // DANAKELUAR RESPONSE
-    Route::get('/dkr', 'BudgetinQController@danakeluarResponse');
-    Route::get('/dkr/{time}', 'BudgetinQController@danakeluarResponse');
-    Route::get('/dkr/{time}/{day}', 'BudgetinQController@danakeluarResponse');
+    Route::get('/dkr', 'BudgetinQController@danakeluarResponse'); // return cPengeluaran, gcPengeluaran, list_pengeluaran 
+    Route::get('/dkr/{time}', 'BudgetinQController@danakeluarResponse'); // return cPengeluaran, gcPengeluaran, list_pengeluaran
+    Route::get('/dkr/{time}/{day}', 'BudgetinQController@danakeluarResponse'); // return cPengeluaran, gcPengeluaran, list_pengeluaran
 
-    // GROUP CATEGORY
-    Route::get('/GC/{gcid}/{c}', 'BudgetinQController@category');
+    //CATEGORY DANAKELUAR VIEW
+    Route::get('/kategori/danakeluar', 'BudgetinQController@categoryDK'); // view category danakeluar
+    Route::get('/kategori/danakeluar/{id_group_kategori}', 'BudgetinQController@categoryDK'); // view category danakeluar
+    Route::get('/kategori/danakeluar/{id_group_kategori}/{id_kategori}', 'BudgetinQController@categoryDK'); // view category danakeluar
+    Route::get('/kategori/danakeluar/{id_group_kategori}/{id_kategori}/{time}', 'BudgetinQController@categoryDK'); // view category danakeluar
+    
+    //CATEGORY DANAKELUAR RESPONSE
+    Route::get('/kategoriDKR', 'BudgetinQController@categoryDKResponse');
+    // Route::get('/kategoriDKR/{time}/{day}', 'BudgetinQController@danakeluarResponse');
+    // KategoriDKController
 
 });

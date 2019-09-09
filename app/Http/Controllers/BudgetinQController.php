@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Auth;
 use App\Pendapatan;
 use App\Pengeluaran;
-use App\Kategori;
+use App\Transaksi;
+use App\JenisPengeluaran;
 class BudgetinQController  extends Controller
 {
     public $date;
@@ -103,7 +104,6 @@ class BudgetinQController  extends Controller
     //     return $data;
     // }
 
-
     public function chartPie(Request $request){
         $pengeluaran = new Pengeluaran;
         $rules = array(
@@ -117,34 +117,19 @@ class BudgetinQController  extends Controller
         return $time;
     }
     
-    public function danamasuk($time=null){
+    public function danamasuk($time=null,$day=null){
         $time = $time ?: date("F, Y");
-        $pengeluaran = new Pengeluaran;
-        $pendapatan = new Pendapatan;
-        $saldoBulanlalu=$pendapatan->totalDanaMasuk($this->monthBefore($time))-$pengeluaran->totalDanaKeluar($this->monthBefore($time));
-        $danakeluar = $pengeluaran->danakeluar($this->timeByMonth($time));
-        $danamasuk = $saldoBulanlalu+$pendapatan->danamasuk($this->timeByMonth($time));
-        $saldo=$danamasuk-$danakeluar;
-        $gcPengeluaran = DB::table('group_category')->where('pengeluaran', '1')->get();
-        $gcPendapatan = DB::table('group_category')->where('pendapatan', '1')->get();
-        $textColor=['#4e73df','#f6c23e','#1cc88a','#e74a3b','#fd7e14','#36b9cc','#6f42c1','#858796'];
-
-        // dd($groupCategory);
+        $day = $day ?: date("d");
         $data=array(
-            'danakeluar' => $this->rupiah($danakeluar),
-            'danamasuk' => $this->rupiah($danamasuk),
-            'saldo' => $this->rupiah($saldo),
-            'monthYear' => $time,
-            'gcPengeluaran' => $gcPengeluaran,
-            'gcPendapatan' => $gcPendapatan,
-            'textColor' => $textColor
+            'monthYear' => $time
         );
         return view('BudgetinQ.danamasuk')->with($data);
     }
 
     public function danakeluar($time=null,$day=null){
-        $time = $time ?: date("F, Y");
+        $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
         $day = $day ?: date("d");
+        // 'title' => DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran', $cID)->first()->jenis_pengeluaran
         $data=array(
             'monthYear' => $time
         );
@@ -200,6 +185,53 @@ class BudgetinQController  extends Controller
 
 
         return $data;
+    }
+
+    public function categoryDK($gcID=null,$cID=null,$time=null){
+        $transaksi = new Transaksi;
+        $jenis_pengeluaran = new JenisPengeluaran;
+        $time = $time ?: date("F, Y");
+        if($gcID)
+            if(count(DB::table('group_category')->where('group_category_id',$gcID)->get())==0)
+                return redirect()->to('/kategori/danakeluar');
+        if($cID)
+            if(count(DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran',$cID)->get())==0)
+                return redirect()->to('/kategori/danakeluar');
+                // return response()->json(['errors' => ["Nama Kategori ini sudah ada"]], 422);
+        $dateRange = $this->timeByMonth($time);
+    
+        // dd($cID,$gcID,$time);
+        // dd($day);
+        
+        $periode = $transaksi->sPeriode()[0];
+        if ($periode->awal == $periode->akhir) {
+            $deskripsi='Periode :'.$periode->periode." Bulan ($periode->awal)";
+        }else{
+            $deskripsi='Periode :'.$periode->periode." Bulan ($periode->awal s/d $periode->akhir)";
+        }
+        $data=array(
+            'monthYear' => $time,
+            'deskripsi' => $deskripsi
+        );
+        // dd($data);
+        return view('BudgetinQ.jenisPengeluaranCRUD.view')->with($data);
+    }
+
+    public function categoryDKResponse($gcID=null,$cID=null,$time=null){
+        $transaksi = new Transaksi;
+        $jenis_pengeluaran = new JenisPengeluaran;
+        $time = $time ?: date("F, Y");
+        if($gcID)
+            if(count(DB::table('group_category')->where('group_category_id',$gcID)->get())==0)
+                return response()->json(['errors' => ["Group Kategori tidak ada"]], 422);
+        if($cID)
+            if(count(DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran',$cID)->get())==0)
+                return response()->json(['errors' => ["Jenis Pengeluaran tidak ada"]], 422);
+        $data=array(
+            'monthYear' => $time,
+            'list_jenis_pengeluaran' => $jenis_pengeluaran->selectAll()
+        );
+        return response()->json($data);
     }
 
 }

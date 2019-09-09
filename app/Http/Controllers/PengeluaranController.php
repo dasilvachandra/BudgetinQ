@@ -64,11 +64,13 @@ class PengeluaranController extends Controller
         $jenis_transaksi = $id_pengeluaran;
         $waktu = date("Y-m-d", strtotime($this->dateFilter($validator['time'])));
         $checkDuplicate=$pengeluaran->checkDuplicate([$id,$waktu,$nama_pengeluaran,$jumlah,$id_jenis_pengeluaran]);
+        $link = '/danakeluar/'.date("F, Y", strtotime($waktu)).'/'.date("d", strtotime($waktu));
         if (count($checkDuplicate)==0) {
             $pengeluaran->insert([$id_pengeluaran, $nama_pengeluaran, $jumlah,$picture,$id_jenis_pengeluaran]);
             $transaksi->insert([$id_transaksi, $jenis_transaksi, $waktu,date("Y-m-d H:i:s"),date("Y-m-d H:i:s"),$id]);
             $data = array(
                 'pesan' => '1',
+                'link' => $link,
                 'list_pengeluaran' => $pengeluaran->selectAll($this->timeByMonth($waktu))
             );
             return response()->json($data);
@@ -79,12 +81,20 @@ class PengeluaranController extends Controller
         // return redirect()->to('/danakeluar');
     }
 
-    public function edit($id)
+    public function edit(Request $request)
     {
+        $rules = array(
+            'id_pengeluaran' => 'required|exists:pengeluaran|max:255',
+            
+        );
+        $customMessages = [
+            'id_pengeluaran.exists' => 'ID Pengeluaran not match',
+        ];
+        $validator = $this->validate($request, $rules, $customMessages);
         $pengeluaran = new Pengeluaran;
         $id_user=Auth::user()->id;
         // $data = DB::select('select * from pengeluaran inner join transaksi on jenis_transaksi=id_pengeluaran where id_pengeluaran = ?', [$id]);        $d=$this->timeByMonth($data[0]->waktu);
-        $editData = $pengeluaran->selectByID($id);
+        $editData = $pengeluaran->selectByID($validator['id_pengeluaran']);
         // dd($editData);
         $data = array(
             'editData' => $editData
@@ -105,9 +115,10 @@ class PengeluaranController extends Controller
             'id.required' => 'id failed'
         ];
         $validator = $this->validate($request, $rules, $customMessages);
+        
         $pengeluaran->remove([$validator['id'],$id_user,$email]);
         $data = array(
-            'pesan' => '0'
+            'pesan' => '0',
         );
         return response()->json($data);
     }
@@ -162,9 +173,10 @@ class PengeluaranController extends Controller
         $waktu = date("Y-m-d", strtotime($this->dateFilter($validator['time'])));
         $pengeluaran->patch([$nama_pengeluaran, $jumlah,$picture,$id_jenis_pengeluaran,$id_pengeluaran]);
         $transaksi->patch([$waktu, $jenis_transaksi, $id]);
-        
+        $link = '/danakeluar/'.date("F, Y", strtotime($waktu)).'/'.date("d", strtotime($waktu));
         $data = array(
             'pesan' => '1',
+            'link' => $link,
             'list_pengeluaran' => $pengeluaran->selectAll($this->timeByMonth($waktu))
         );
         return response()->json($data);
