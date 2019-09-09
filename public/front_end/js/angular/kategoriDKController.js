@@ -37,7 +37,7 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
                             var mydate = new Date(data);
                             var dd = mydate.getDate();
                             mY = monthYear(mydate);
-                            url = "<a href='/kategori/danakeluar/" + row['group_category_id'] + "/" + row['id_jenis_pengeluaran'] + "'>" + data + "</a>";
+                            return "<a href='/danakeluar/kategori/" + row['id_jenis_pengeluaran'] + "/'>" + data + "</a>";
                             return url;
                         }
                     },
@@ -46,7 +46,7 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
                         targets: 3, data: "waktu", render: function (data, type, row, meta) {
                             var mydate = new Date(row['waktu']);
                             mY = monthYear(mydate);
-                            return "<a href='/kategori/danakeluar/" + row['group_category_id'] + "/" + row['id_jenis_pengeluaran'] + "/ " + mY + "/'>" + data + "</a>";
+                            return "<a href='/danakeluar/kategori/" + row['id_jenis_pengeluaran'] + "/'>" + data + "</a>";
                         }
                     },
                     { width: 200, targets: 0 },
