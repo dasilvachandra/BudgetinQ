@@ -33,7 +33,7 @@ class Transaksi extends Model
 	
 	public function sPeriode(){
 		$id=Auth::user()->id;
-		$q='select max(waktu) awal, min(waktu) akhir,  period_diff(date_format(max(waktu),"%Y%m"),date_format(min(waktu),"%Y%m")) as periode from transaksi where id=?';
+		$q='select max(waktu) akhir, min(waktu) awal,  period_diff(date_format(max(waktu),"%Y%m"),date_format(min(waktu),"%Y%m")) as periode from transaksi where id=?';
 		return DB::select($q,[$id]);
 	}
 }

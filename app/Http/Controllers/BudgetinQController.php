@@ -152,6 +152,29 @@ class BudgetinQController  extends Controller
         );
         return response()->json($data);
     }  
+    public function danakeluarResponseByKategori($id_jenis_pengeluaran=null,$time=null){
+        // dd($id_jenis_pengeluaran);
+        $transaksi = new Transaksi;
+        // $time = $time ?: date("F, Y");
+        // dd($time);
+        $pengeluaran = new Pengeluaran;
+        if ($time == null) {
+            $periode = $transaksi->sPeriode()[0];
+            // dd($periode->awal);
+            $list_pengeluaran = $pengeluaran->selectRangeByKategori($periode->awal,$periode->akhir,$id_jenis_pengeluaran);
+        }else{
+            $waktu = $this->timeByMonth($time);
+        $list_pengeluaran = $pengeluaran->selectRangeByKategori($waktu['start_default'],$waktu['end_default'],$id_jenis_pengeluaran);
+        }
+        $data=array(
+            'cPengeluaran' => DB::table('jenis_pengeluaran')->where('id', Auth::user()->id)->get(),
+            'gcPengeluaran' => DB::table('group_category')->where('pengeluaran', '1')->get(),
+            'list_pengeluaran' => $list_pengeluaran
+        );
+        return response()->json($data);
+    }  
+
+    
 
     public function dataGC(Request $request){
         $pengeluaran = new Pengeluaran;
@@ -205,9 +228,11 @@ class BudgetinQController  extends Controller
         
         $periode = $transaksi->sPeriode()[0];
         if ($periode->awal == $periode->akhir) {
-            $deskripsi='Periode :'.$periode->periode." Bulan ($periode->awal)";
+            $periode->periode = $periode->periode ?: 1;
+            $periode->awal = $periode->awal ?: date("Y-m-d");
+            $deskripsi='Periode : '.$periode->periode." Bulan ($periode->awal)";
         }else{
-            $deskripsi='Periode :'.$periode->periode." Bulan ($periode->awal s/d $periode->akhir)";
+            $deskripsi='Periode : '.$periode->periode." Bulan ($periode->awal s/d $periode->akhir)";
         }
         $data=array(
             'monthYear' => $time,
@@ -227,6 +252,7 @@ class BudgetinQController  extends Controller
         if($cID)
             if(count(DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran',$cID)->get())==0)
                 return response()->json(['errors' => ["Jenis Pengeluaran tidak ada"]], 422);
+
         $data=array(
             'monthYear' => $time,
             'list_jenis_pengeluaran' => $jenis_pengeluaran->selectAll()

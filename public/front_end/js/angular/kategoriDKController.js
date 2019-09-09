@@ -37,7 +37,7 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
                             var mydate = new Date(data);
                             var dd = mydate.getDate();
                             mY = monthYear(mydate);
-                            url = "<a href='/danakeluar/" + mY + "/" + dd + "'>" + data + "</a>";
+                            url = "<a href='/kategori/danakeluar/" + row['group_category_id'] + "/" + row['id_jenis_pengeluaran'] + "'>" + data + "</a>";
                             return url;
                         }
                     },

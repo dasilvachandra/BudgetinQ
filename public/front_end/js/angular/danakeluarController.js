@@ -9,9 +9,10 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         $scope.cPengeluaran = data['cPengeluaran'];
         $scope.gcPengeluaran = data['gcPengeluaran'];
         tablePengeluaran(data['list_pengeluaran']);
+        // console.log(data['list_pengeluaran'])
         $scope.$apply();
     }
-
+    console.log($rootScope.pathname);
     if ($rootScope.pathname.length == 3 || $rootScope.pathname.length == 2) {
         value = $("#time").val();
         url = '/dkr/' + value
@@ -21,6 +22,13 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         url = '/dkr/' + $("#time").val() + "/" + $rootScope.pathname[3];
         ajaxGet(url, returnData);
     }
+    // get data danakeluar by kategori
+    if ($rootScope.pathname[2] == 'kategori') {
+        url = '/dana/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
+        console.log(url);
+        ajaxGet(url, returnData);
+    }
+
 
     function danakeluarRefresh(data) {
         console.log(data);
@@ -69,7 +77,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
                         targets: 3, data: "waktu", render: function (data, type, row, meta) {
                             var mydate = new Date(row['waktu']);
                             mY = monthYear(mydate);
-                            return "<a href='/kategori/danakeluar/" + row['group_category_id'] + "/" + row['id_jenis_pengeluaran'] + "/ " + mY + "/'>" + data + "</a>";
+                            return "<a href='/danakeluar/kategori/" + row['id_jenis_pengeluaran'] + "/ " + mY + "/'>" + data + "</a>";
                         }
                     },
                     { width: 200, targets: 0 },

@@ -151,4 +151,21 @@ class Pengeluaran extends Model
         ";
         return DB::select($q,[$id,$start_default,$end_default]);
     }
+    public function selectRangeByKategori($start_default,$end_default,$id_jenis_pengeluaran){
+        $id=Auth::user()->id;
+        $q=" SELECT 
+        id_pengeluaran,
+        DATE_FORMAT(waktu, '%d %M, %Y') waktu,
+        nama_pengeluaran,
+        jumlah ,
+        jenis_pengeluaran,
+        group_category_id,
+        id_jenis_pengeluaran
+        from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
+        inner join jenis_pengeluaran using(id_jenis_pengeluaran)
+        where transaksi.id=? and waktu between ? and ? and id_jenis_pengeluaran = ? ;
+        ";
+        // dd($id,$start_default,$end_default,$id_jenis_pengeluaran);
+        return DB::select($q,[$id,$start_default,$end_default,$id_jenis_pengeluaran]);
+    }
 }
