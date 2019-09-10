@@ -127,11 +127,30 @@ class BudgetinQController  extends Controller
     }
 
     public function danakeluar($time=null,$day=null){
+        $title = "Daftar Pengeluaran $day $time";
         $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
         $day = $day ?: date("d");
-        // 'title' => DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran', $cID)->first()->jenis_pengeluaran
         $data=array(
-            'monthYear' => $time
+            'monthYear' => $time,
+            'title' => $title
+        );
+        return view('BudgetinQ.danakeluar')->with($data);
+    }
+
+    public function vDKByK($id_jenis_pengeluaran=null,$time=null){
+        $jenis_pengeluaran = DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran', $id_jenis_pengeluaran)->first();
+        if($jenis_pengeluaran==null)
+             return redirect()->to('/kategori/danakeluar');
+        $title = "Daftar Pengeluaran";
+        $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
+
+        // $day = $day ?: date("d");
+        $data=array(
+            'monthYear' => $time,
+            'title' => $title,
+            'jenis_pengeluaran' => DB::table('jenis_pengeluaran')->where('id', Auth::user()->id)->get(),
+            'page' => 'kategori',
+            'id_jenis_pengeluaran' => $id_jenis_pengeluaran
         );
         return view('BudgetinQ.danakeluar')->with($data);
     }
@@ -151,7 +170,8 @@ class BudgetinQController  extends Controller
             'list_pengeluaran' => $list_pengeluaran
         );
         return response()->json($data);
-    }  
+    } 
+
     public function danakeluarResponseByKategori($id_jenis_pengeluaran=null,$time=null){
         // dd($id_jenis_pengeluaran);
         $transaksi = new Transaksi;

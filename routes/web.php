@@ -37,10 +37,10 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/danamasuk/store', 'PendapatanController@store');  // on progress.... 
 
     // DANAKELUAR VIEW
-    Route::get('/danakeluar', 'BudgetinQController@danakeluar'); // view danakeluar
-    Route::get('/danakeluar/{time}', 'BudgetinQController@danakeluar'); // view danakeluar
-    Route::get('/danakeluar/{time}/{day}', 'BudgetinQController@danakeluar'); // view danakeluar
-    Route::get('/danakeluar/kategori/{time}/{day}', 'BudgetinQController@danakeluar'); // view danakeluar
+    Route::get('/danakeluar', 'BudgetinQController@danakeluar'); // view danakeluar by this month latest
+    Route::get('/danakeluar/{time}', 'BudgetinQController@danakeluar'); // view danakeluar by other month
+    Route::get('/danakeluar/{time}/{day}', 'BudgetinQController@danakeluar'); // view danakeluar by day
+    Route::get('/danakeluar/kategori/{id_jenis_pengeluaran}/{time}', 'BudgetinQController@vDKByK'); // view danakeluar by kategori
 
     // DANAKELUAR CRUD
     Route::post('/danakeluar/store', 'PengeluaranController@store'); // CREATE danakeluar
