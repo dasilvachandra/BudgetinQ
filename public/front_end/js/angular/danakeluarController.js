@@ -9,10 +9,8 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         $scope.cPengeluaran = data['cPengeluaran'];
         $scope.gcPengeluaran = data['gcPengeluaran'];
         tablePengeluaran(data['list_pengeluaran']);
-        // console.log(data['list_pengeluaran'])
         $scope.$apply();
     }
-    console.log($rootScope.pathname);
     if ($rootScope.pathname.length == 3 || $rootScope.pathname.length == 2) {
         value = $("#time").val();
         url = '/dkr/' + value
@@ -24,6 +22,14 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
     }
     // get data danakeluar by kategori
     if ($rootScope.pathname[2] == 'kategori') {
+        $scope.sjpg = $rootScope.pathname[3];
+
+        $scope.onChangeSJPG = function (value) {
+            $rootScope.pathname.splice(3, 1, value);
+            url = '/danakeluar/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
+            // console.log($rootScope.pathname);
+            window.location = url;
+        }
         url = '/dana/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
         console.log(url);
         ajaxGet(url, returnData);
@@ -31,7 +37,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
 
 
     function danakeluarRefresh(data) {
-        console.log(data);
+        // console.log(data);
         if (data['pesan'] == '1') {
             // url = '/danakeluar/' + $rootScope.pathname[2] + "/" + data['day'];
             // window.location = window.location.href;
@@ -122,7 +128,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
 
     $scope.danakeluarEdit = function () {
         function getDataEdit(data) {
-            console.log(data['editData']);
+            // console.log(data['editData']);
             var mydate = new Date(data['editData'][0]['waktu']);
             $scope.editTanggal = dateMonthYear(mydate);
             $scope.id_pengeluaran = data['editData'][0]['id_pengeluaran'];
@@ -177,6 +183,19 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
             window.location = "/kategori/danakeluar";
         }
     }
+
+    $('#time').change(function () {
+        time = $("#time").val();
+        // var url = window.location.href;
+        // var host = new URL(url).host;
+        // var pathname = new URL(url).pathname.split("/")[1];
+        $rootScope.pathname.splice(4, 1, time);
+        url = '/danakeluar/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
+        // console.log($rootScope.pathname);
+        window.location = url;
+        // returnDataHome($("#time").val(),"/data");
+    });
+
 
 
 

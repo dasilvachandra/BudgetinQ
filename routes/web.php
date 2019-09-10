@@ -39,7 +39,8 @@ Route::group(['middleware' => ['auth']], function() {
     // DANAKELUAR VIEW
     Route::get('/danakeluar', 'BudgetinQController@danakeluar'); // view danakeluar by this month latest
     Route::get('/danakeluar/{time}', 'BudgetinQController@danakeluar'); // view danakeluar by other month
-    Route::get('/danakeluar/{time}/{day}', 'BudgetinQController@danakeluar'); // view danakeluar by day
+    // Route::get('/danakeluar/{time}/{day}', 'BudgetinQController@danakeluar'); // view danakeluar by day
+    Route::get('/danakeluar/kategori/{id_jenis_pengeluaran}', 'BudgetinQController@vDKByK'); // view danakeluar by kategori
     Route::get('/danakeluar/kategori/{id_jenis_pengeluaran}/{time}', 'BudgetinQController@vDKByK'); // view danakeluar by kategori
 
     // DANAKELUAR CRUD

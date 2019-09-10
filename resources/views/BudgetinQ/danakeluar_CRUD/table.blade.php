@@ -1,18 +1,18 @@
 
 <div class="card-header py-3 mb-4">
-    <h6 class="m-0 font-weight-bold text-primary"> {{$title}}
-    {!! Form::select('size', array('L' => 'Large', 'S' => 'Small'), 'S'); !!}
+    <h6 class="m-0 font-weight-bold text-primary">DAFTAR PENGELUARAN
         @if (isset($page)=='kategori')
-            <select>
+            <select ng-model="sjpg" ng-change="onChangeSJPG(sjpg)">
                 @foreach($jenis_pengeluaran as $show)
-                    @php $active="-"; @endphp
+                    @php $active=""; @endphp
                     @if ($show->id_jenis_pengeluaran==$id_jenis_pengeluaran)
-                        @php $active="active"; @endphp
+                        @php $active="selected"; @endphp
                     @endif
                 <option value="{{$show->id_jenis_pengeluaran}}" {{$active}} >{{$show->jenis_pengeluaran}}</option>
                 @endforeach
             </select>
         @endif
+        {!!$title!!} 
     </h6>
 </div>
 <div class="table-responsive">

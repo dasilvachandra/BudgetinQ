@@ -36,14 +36,14 @@
         }
     })
 
-    $('#time').change(function () {
-        time = $("#time").val();
-        var url = window.location.href;
-        var host = new URL(url).host;
-        var pathname = new URL(url).pathname.split("/")[1];
-        window.location = "/" + pathname + "/" + time;
-        // returnDataHome($("#time").val(),"/data");
-    });
+    // $('#time').change(function () {
+    //     time = $("#time").val();
+    //     var url = window.location.href;
+    //     var host = new URL(url).host;
+    //     var pathname = new URL(url).pathname.split("/")[1];
+    //     window.location = "/" + pathname + "/" + time;
+    //     // returnDataHome($("#time").val(),"/data");
+    // });
     $(document).ready(function () {
         $('#dataTable').DataTable();
     });

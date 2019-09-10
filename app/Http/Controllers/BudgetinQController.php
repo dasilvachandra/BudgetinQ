@@ -127,7 +127,7 @@ class BudgetinQController  extends Controller
     }
 
     public function danakeluar($time=null,$day=null){
-        $title = "Daftar Pengeluaran $day $time";
+        $title = " $day $time";
         $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
         $day = $day ?: date("d");
         $data=array(
@@ -138,10 +138,20 @@ class BudgetinQController  extends Controller
     }
 
     public function vDKByK($id_jenis_pengeluaran=null,$time=null){
+        
         $jenis_pengeluaran = DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran', $id_jenis_pengeluaran)->first();
         if($jenis_pengeluaran==null)
              return redirect()->to('/kategori/danakeluar');
-        $title = "Daftar Pengeluaran";
+        
+        if($time==null){
+            $transaksi = new Transaksi;
+            $periode = $transaksi->sPeriode()[0];
+            $title = "Periode : ".$this->dateFilter($periode->awal)." s/d ".$this->dateFilter($periode->akhir);
+        }else{
+            $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
+            $title = "$time => <a href='/danakeluar/kategori/$id_jenis_pengeluaran'>Lihat semua Periode</a>";
+        }
+        // dd('');
         $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
 
         // $day = $day ?: date("d");
