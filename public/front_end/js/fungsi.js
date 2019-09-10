@@ -136,3 +136,9 @@ function monthYear(d) {
     var dayName = days[mydate.getDay()];
     return monthNames[mm] + ", " + yy;
 }
+
+function redirectTimeForm(url) {
+    $('#time').change(function () {
+        window.location = url;
+    });
+}

@@ -5,6 +5,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         });
         return a;
     };
+    time = $("#time").val();
     function returnData(data) {
         $scope.cPengeluaran = data['cPengeluaran'];
         $scope.gcPengeluaran = data['gcPengeluaran'];
@@ -12,24 +13,31 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         $scope.$apply();
     }
     if ($rootScope.pathname.length == 3 || $rootScope.pathname.length == 2) {
-        value = $("#time").val();
-        url = '/dkr/' + value
+        url = '/dkr/' + time
+        redirectTimeForm('/danakeluar/' + time);
         ajaxGet(url, returnData);
     }
     if ($rootScope.pathname.length == 4) {
-        url = '/dkr/' + $("#time").val() + "/" + $rootScope.pathname[3];
+        redirectTimeForm('/danakeluar/' + time);
+        url = '/dkr/' + time + "/" + $rootScope.pathname[3];
         ajaxGet(url, returnData);
     }
+
     // get data danakeluar by kategori
     if ($rootScope.pathname[2] == 'kategori') {
         $scope.sjpg = $rootScope.pathname[3];
-
         $scope.onChangeSJPG = function (value) {
             $rootScope.pathname.splice(3, 1, value);
             url = '/danakeluar/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
             // console.log($rootScope.pathname);
             window.location = url;
         }
+        $('#time').change(function () {
+            time = $("#time").val();
+            $rootScope.pathname.splice(4, 1, time);
+            url = '/danakeluar/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
+            window.location = url;
+        });
         url = '/dana/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
         console.log(url);
         ajaxGet(url, returnData);
@@ -184,17 +192,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         }
     }
 
-    $('#time').change(function () {
-        time = $("#time").val();
-        // var url = window.location.href;
-        // var host = new URL(url).host;
-        // var pathname = new URL(url).pathname.split("/")[1];
-        $rootScope.pathname.splice(4, 1, time);
-        url = '/danakeluar/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
-        // console.log($rootScope.pathname);
-        window.location = url;
-        // returnDataHome($("#time").val(),"/data");
-    });
+
 
 
 
