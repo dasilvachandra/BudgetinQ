@@ -127,9 +127,14 @@ class BudgetinQController  extends Controller
     }
 
     public function danakeluar($time=null,$day=null){
-        $title = " $day $time";
+        
         $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
-        $day = $day ?: date("d");
+    
+        if($day==null)
+            $title = "$time";
+        else
+            $day = $day ?: date("d");
+            $title = "$day $time";
         $data=array(
             'monthYear' => $time,
             'title' => $title

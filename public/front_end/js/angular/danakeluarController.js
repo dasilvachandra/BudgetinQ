@@ -14,11 +14,11 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
     }
     if ($rootScope.pathname.length == 3 || $rootScope.pathname.length == 2) {
         url = '/dkr/' + time
-        redirectTimeForm('/danakeluar/' + time);
+        redirectTimeForm('/danakeluar/');
         ajaxGet(url, returnData);
     }
     if ($rootScope.pathname.length == 4) {
-        redirectTimeForm('/danakeluar/' + time);
+        redirectTimeForm('/danakeluar/');
         url = '/dkr/' + time + "/" + $rootScope.pathname[3];
         ajaxGet(url, returnData);
     }
@@ -193,7 +193,12 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
     }
 
 
-
+    function redirectTimeForm(url) {
+        $('#time').change(function () {
+            time = $('#time').val();
+            window.location = url + time;
+        });
+    }
 
 
 

@@ -139,6 +139,7 @@ function monthYear(d) {
 
 function redirectTimeForm(url) {
     $('#time').change(function () {
-        window.location = url;
+        time = $('#time').val();
+        window.location = url + time;
     });
 }
