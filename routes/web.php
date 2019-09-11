@@ -59,14 +59,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/dana/kategori/{id_jenis_pengeluaran}/{time}', 'BudgetinQController@danakeluarResponseByKategori'); // return cPengeluaran, gcPengeluaran, list_pengeluaran
 
     //CATEGORY DANAKELUAR VIEW
-    Route::get('/kategori/danakeluar', 'BudgetinQController@categoryDK'); // view category danakeluar
-    Route::get('/kategori/danakeluar/{id_group_kategori}', 'BudgetinQController@categoryDK'); // view category danakeluar
-    Route::get('/kategori/danakeluar/{id_group_kategori}/{id_kategori}', 'BudgetinQController@danakeluar'); // view category danakeluar
-    Route::get('/kategori/danakeluar/{id_group_kategori}/{id_kategori}/{time}', 'BudgetinQController@categoryDK'); // view category danakeluar
+    Route::get('/kategori/danakeluar', 'BudgetinQController@categoryDK'); // view category danakeluar all periode
+    Route::get('/kategori/danakeluar/{time}', 'BudgetinQController@categoryDK'); // view category danakeluar per bulan
+    // Route::get('/kategori/danakeluar/{id_group_kategori}/{id_kategori}', 'BudgetinQController@danakeluar'); // view category danakeluar
+    // Route::get('/kategori/danakeluar/{id_group_kategori}/{id_kategori}/{time}', 'BudgetinQController@categoryDK'); // view category danakeluar
     
     //CATEGORY DANAKELUAR RESPONSE
     Route::get('/kategoriDKR', 'BudgetinQController@categoryDKResponse');
-    // Route::get('/kategoriDKR/{time}/{day}', 'BudgetinQController@danakeluarResponse');
+    Route::get('/kategoriDKR/{time}', 'BudgetinQController@categoryDKResponse');
     // KategoriDKController
 
 });

@@ -245,52 +245,47 @@ class BudgetinQController  extends Controller
         return $data;
     }
 
-    public function categoryDK($gcID=null,$cID=null,$time=null){
+    public function categoryDK($a=null){
         $transaksi = new Transaksi;
         $jenis_pengeluaran = new JenisPengeluaran;
-        $time = $time ?: date("F, Y");
-        if($gcID)
-            if(count(DB::table('group_category')->where('group_category_id',$gcID)->get())==0)
-                return redirect()->to('/kategori/danakeluar');
-        if($cID)
-            if(count(DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran',$cID)->get())==0)
-                return redirect()->to('/kategori/danakeluar');
-                // return response()->json(['errors' => ["Nama Kategori ini sudah ada"]], 422);
-        $dateRange = $this->timeByMonth($time);
-    
-        // dd($cID,$gcID,$time);
-        // dd($day);
-        
+        $time = $a ?: date("F, Y");
+        $time = date("F, Y", strtotime($this->timeByMonth($time)['end_default']));
         $periode = $transaksi->sPeriode()[0];
+        $title='Periode : '.$periode->periode." Bulan ($periode->awal s/d $periode->akhir)";
         if ($periode->awal == $periode->akhir) {
+            // untuk pengguna baru
             $periode->periode = $periode->periode ?: 1;
             $periode->awal = $periode->awal ?: date("Y-m-d");
-            $deskripsi='Periode : '.$periode->periode." Bulan ($periode->awal)";
-        }else{
-            $deskripsi='Periode : '.$periode->periode." Bulan ($periode->awal s/d $periode->akhir)";
+            $title='Periode : '.$periode->periode." Bulan ($periode->awal)";
+        }
+        if ($a!=null) {
+            $title="Periode :  Bulan $time";
         }
         $data=array(
             'monthYear' => $time,
-            'deskripsi' => $deskripsi
+            'title' => $title
         );
         // dd($data);
         return view('BudgetinQ.jenisPengeluaranCRUD.view')->with($data);
     }
 
-    public function categoryDKResponse($gcID=null,$cID=null,$time=null){
+    public function categoryDKResponse($time=null){
         $transaksi = new Transaksi;
         $jenis_pengeluaran = new JenisPengeluaran;
-        $time = $time ?: date("F, Y");
-        if($gcID)
-            if(count(DB::table('group_category')->where('group_category_id',$gcID)->get())==0)
-                return response()->json(['errors' => ["Group Kategori tidak ada"]], 422);
-        if($cID)
-            if(count(DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran',$cID)->get())==0)
-                return response()->json(['errors' => ["Jenis Pengeluaran tidak ada"]], 422);
+        if ($time!=null) {
+            $dateRange = $this->timeByMonth($time);
+            $list_pengeluaran= $jenis_pengeluaran->selectRange($dateRange['start_default'],$dateRange['end_default']);
+        }else{
+            // $time = $time ?: date("F, Y");
+            $periode = $transaksi->sPeriode()[0];
+            // $title = "Periode : ".$periode->awal." s/d ".$periode->akhir;
+            // $dateRange = $this->timeByMonth($time);
+            $list_pengeluaran=$jenis_pengeluaran->selectRange($periode->awal,$periode->akhir);
+        }
 
         $data=array(
             'monthYear' => $time,
-            'list_jenis_pengeluaran' => $jenis_pengeluaran->selectAll()
+            'list_jenis_pengeluaran' => $list_pengeluaran
         );
         return response()->json($data);
     }

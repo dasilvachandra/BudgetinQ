@@ -1,17 +1,10 @@
 app.controller('kategoriDKController', function ($scope, $rootScope, $routeParams) {
-    console.log("KategoriDKController");
+    console.log($rootScope.pathname);
     function returnData(data) {
         console.log(data);
         tableJenisPengeluaran(data['list_jenis_pengeluaran']);
     }
 
-    // data = {
-    //     "_token": $('meta[name="csrf-token"]').attr('content'),
-    //     "time": $("#time").val()
-    // };
-    ajaxGet('/kategoriDKR', returnData);
-
-    // TABLE
     function tableJenisPengeluaran(data) {
         // console.log(data);
         id = '#tableJenisPengeluaran';
@@ -37,8 +30,12 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
                             var mydate = new Date(data);
                             var dd = mydate.getDate();
                             mY = monthYear(mydate);
-                            return "<a href='/danakeluar/kategori/" + row['id_jenis_pengeluaran'] + "/'>" + data + "</a>";
-                            return url;
+                            pathTime = '';
+                            if ($rootScope.pathname[3] != undefined) {
+                                pathTime = $rootScope.pathname[3];
+                            }
+                            url = '/danakeluar/kategori/' + row['id_jenis_pengeluaran'] + "/" + pathTime;
+                            return "<a href=" + url + ">" + data + "</a>";
                         }
                     },
                     { targets: 2, data: "jumlah", render: function (data, type, row, meta) { return formatRupiah(data) } },
@@ -62,4 +59,19 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
         }
         selectCell(id);
     }
+
+    if ($rootScope.pathname.length == 3) {
+        ajaxGet('/kategoriDKR', returnData);
+    }
+    if ($rootScope.pathname.length == 4) {
+        ajaxGet('/kategoriDKR/' + $("#time").val(), returnData);
+    }
+
+    $('#time').change(function () {
+        time = $("#time").val();
+        url = '/kategori/danakeluar/' + time;
+        console.log(url);
+        window.location = url;
+    });
+
 });

@@ -39,6 +39,21 @@ class JenisPengeluaran extends Model
         $id=Auth::user()->id;
         return DB::select($q,[$id]);
     }
+    
+    public function selectRange($start_default,$end_default){
+        $q="SELECT a.id_jenis_pengeluaran, a.jenis_pengeluaran, ifnull(jt,0) as jt, ifnull(total,0) as total, ifnull(group_category,0) as group_category, a.group_category_id 
+        from (select * from jenis_pengeluaran where id=?) as a left join (
+            SELECT id_jenis_pengeluaran, jenis_pengeluaran, count(jumlah) as jt, sum(jumlah) as total, group_category, group_category_id 
+            from jenis_pengeluaran 
+            inner join group_category using(group_category_id) 
+            inner join pengeluaran using (id_jenis_pengeluaran) 
+            inner join transaksi on id_pengeluaran = jenis_transaksi 
+            where transaksi.id=? and waktu between ? and ? group by jenis_pengeluaran,id_jenis_pengeluaran, group_category,group_category_id) as b 
+            on b.id_jenis_pengeluaran = a.id_jenis_pengeluaran where a.id=?;";
+        $id=Auth::user()->id;
+        // dd(DB::select($q,[$id,$id,$start_default,$end_default]));
+        return DB::select($q,[$id,$id,$start_default,$end_default,$id]);
+    }
 
     public function selectByID($id)
     {
