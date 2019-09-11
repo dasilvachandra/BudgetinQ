@@ -2,6 +2,8 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
     console.log($rootScope.pathname);
     function returnData(data) {
         console.log(data);
+        $scope.gcPengeluaran = data['gcPengeluaran'];
+        $scope.$apply();
         tableJenisPengeluaran(data['list_jenis_pengeluaran']);
     }
 
@@ -59,6 +61,13 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
         }
         selectCell(id);
     }
+
+    function kategoriDKRefresh(data) {
+        console.log(data);
+    }
+    $scope.kategoriDKStore = function (url, formID) {
+        ajaxPost(url, $(formID).serialize(), kategoriDKRefresh);
+    };
 
     if ($rootScope.pathname.length == 3) {
         ajaxGet('/kategoriDKR', returnData);

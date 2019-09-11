@@ -12,22 +12,22 @@
                 <div class="p-4">
 
                     <a href="#" class="btn btn-primary btn-icon-split mb-2" data-toggle="modal"
-                        data-target="#danakeluarCreateModal">
+                        data-target="#kategoriDKCreateModal">
                         <span class="icon text-white-50">
                             <i class="fas fa-plus"></i>
                         </span>
                         <span class="text">Tambah</span>
                     </a>
-                    <a href="#" class="btn btn-info btn-icon-split mb-2" ng-click="danakeluarEdit()">
+                    <a href="#" class="btn btn-info btn-icon-split mb-2" ng-click="kategoriDKEdit()">
                         <span class="icon text-white-50">
                             <i class="fa fa-pencil-square-o"></i>
                         </span>
                         <span class="text">Edit</span>
                     </a>
-                    <button class="danakeluarEditModal" data-toggle="modal" data-target="#danakeluarEditModal"
+                    <button class="kategoriDKEditModal" data-toggle="modal" data-target="#kategoriDKEditModal"
                         style="display: none;"></button>
 
-                    <a href="#" class="btn btn-danger btn-icon-split mb-2" ng-click="danakeluarDelete()">
+                    <a href="#" class="btn btn-danger btn-icon-split mb-2" ng-click="kategoriDKDelete()">
                         <span class="icon text-white-50">
                             <i class="fas fa-trash"></i>
                         </span>
@@ -35,6 +35,8 @@
                     </a>
 
                     @include('BudgetinQ.jenisPengeluaranCRUD.table')
+                    @include('BudgetinQ.jenisPengeluaranCRUD.create')
+                    <!-- include('BudgetinQ.jenisPengeluaranCRUD.edit') -->
                 </div>
             </div>
         </div>

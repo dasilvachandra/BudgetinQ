@@ -296,7 +296,8 @@ class BudgetinQController  extends Controller
 
         $data=array(
             'monthYear' => $time,
-            'list_jenis_pengeluaran' => $list_pengeluaran
+            'list_jenis_pengeluaran' => $list_pengeluaran,
+            'gcPengeluaran' => DB::table('group_category')->where('pengeluaran', '1')->get()
         );
         return response()->json($data);
     }

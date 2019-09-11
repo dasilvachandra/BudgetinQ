@@ -67,6 +67,14 @@ Route::group(['middleware' => ['auth']], function() {
     //CATEGORY DANAKELUAR RESPONSE
     Route::get('/kategoriDKR', 'BudgetinQController@categoryDKResponse');
     Route::get('/kategoriDKR/{time}', 'BudgetinQController@categoryDKResponse');
-    // KategoriDKController
+    
+    // KATEGORI DANAKELUAR CRUD
+    Route::post('/kategori/danakeluar/store', 'JenisPengeluaranController@store'); // CREATE danakeluar
+    Route::post('/kategori/danakeluar/edit', 'JenisPengeluaranController@edit'); // EDIT danakeluar
+    Route::post('/kategori/danakeluar/update', 'JenisPengeluaranController@update'); //UPDATE danakeluar
+    Route::post('/kategori/danakeluar/delete', 'JenisPengeluaranController@delete'); // DELETE danakeluar
+    
+
+
 
 });
