@@ -2,6 +2,7 @@
 <div class="card-header py-3 mb-4">
     <h6 class="m-0 font-weight-bold text-primary">DAFTAR PENGELUARAN
         @if (isset($page)=='kategori')
+            KATEGORI 
             <select ng-model="sjpg" ng-change="onChangeSJPG(sjpg)">
                 @foreach($jenis_pengeluaran as $show)
                     @php $active=""; @endphp

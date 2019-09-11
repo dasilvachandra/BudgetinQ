@@ -151,10 +151,10 @@ class BudgetinQController  extends Controller
         if($time==null){
             $transaksi = new Transaksi;
             $periode = $transaksi->sPeriode()[0];
-            $title = "Periode : ".$this->dateFilter($periode->awal)." s/d ".$this->dateFilter($periode->akhir);
+            $title = "Periode : ".$periode->awal." s/d ".$periode->akhir;
         }else{
             $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
-            $title = "$time => <a href='/danakeluar/kategori/$id_jenis_pengeluaran/' >Lihat semua Periode</a>";
+            $title = "BULAN $time <a class='btn btn-info' href='/danakeluar/kategori/$id_jenis_pengeluaran/' >Lihat semua Periode</a>";
         }
         // dd('');
         $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
