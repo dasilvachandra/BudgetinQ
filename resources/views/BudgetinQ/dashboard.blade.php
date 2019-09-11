@@ -1,7 +1,10 @@
 @extends('BudgetinQ.master')
 @section('title','Dashboard')
+@section('topbar1')
+@include('BudgetinQ.templates.selectMonth')
+@stop
 @section('content')
-<div class="row">
+<div class="row" ng-controller="dashboardController as Ctrl">
     <!-- Earnings (Monthly) Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
@@ -269,5 +272,5 @@
 @section('javascript')
 <script src="{{asset('front_end/js/chartArea.js')}}"></script>
 <script src="{{asset('front_end/js/chartPie.js')}}"></script>
-
+<script src="{{asset('front_end/js/angular/dashboardController.js')}}"></script>
 @stop

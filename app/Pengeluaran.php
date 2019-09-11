@@ -70,10 +70,10 @@ class Pengeluaran extends Model
         return $data;
     }
 
-    public function danakeluar($range_date)
+    public function totalDanaKeluar($start_default,$end_default)
     {
-        $start_default = $range_date['start_default'];
-        $end_default = $range_date['end_default'];
+        // $start_default = $range_date['start_default'];
+        // $end_default = $range_date['end_default'];
         $id_user=Auth::user()->id;
         $email=Auth::user()->email;
         $q='
@@ -86,10 +86,10 @@ class Pengeluaran extends Model
         return DB::select($q,[$id_user,$email,$start_default,$end_default])[0]->total;
     }
 
-
-    public function totalDanaKeluar($time)
+    public function totalDanaKeluarByKategori($start_default,$end_default,$id_jenis_pengeluaran)
     {
-        // dd($time);
+        // $start_default = $range_date['start_default'];
+        // $end_default = $range_date['end_default'];
         $id_user=Auth::user()->id;
         $email=Auth::user()->email;
         $q='
@@ -97,11 +97,27 @@ class Pengeluaran extends Model
             FROM transaksi 
                 inner join users using(id) 
                 inner join pengeluaran on id_pengeluaran=jenis_transaksi 
-            where id=? and email=? and 
-                waktu between ( select min(waktu) as waktu from transaksi where id=?) and ?;
+            where id=? and email=? and waktu between ? and ? and id_jenis_pengeluaran = ? ;
         ';
-        return DB::select($q,[$id_user,$email,$id_user,$time])[0]->total;
+        // dd($id_jenis_pengeluaran);
+        return DB::select($q,[$id_user,$email,$start_default,$end_default,$id_jenis_pengeluaran])[0]->total;
     }
+    
+    // public function totalDanaKeluar($time)
+    // {
+    //     // dd($time);
+    //     $id_user=Auth::user()->id;
+    //     $email=Auth::user()->email;
+    //     $q='
+    //     SELECT ifnull(sum(jumlah),0) as total
+    //         FROM transaksi 
+    //             inner join users using(id) 
+    //             inner join pengeluaran on id_pengeluaran=jenis_transaksi 
+    //         where id=? and email=? and 
+    //             waktu between ( select min(waktu) as waktu from transaksi where id=?) and ?;
+    //     ';
+    //     return DB::select($q,[$id_user,$email,$id_user,$time])[0]->total;
+    // }
 
     public function totalPerHari($time)
     {

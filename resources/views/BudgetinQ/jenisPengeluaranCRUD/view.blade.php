@@ -1,5 +1,8 @@
 @extends('BudgetinQ.master')
 @section('title','Dana Masuk')
+@section('topbar1')
+@include('BudgetinQ.templates.selectMonth')
+@stop
 @section('content')
 <div class="card o-hidden border-0 shadow-lg my-5" ng-controller="kategoriDKController as Ctrl">
 <div class="card-body p-0">

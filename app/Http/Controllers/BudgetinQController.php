@@ -22,9 +22,16 @@ class BudgetinQController  extends Controller
     {
         $time = $time ?: date("F, Y");
         $pengeluaran = new Pengeluaran;
+        $transaksi = new Transaksi;
         $pendapatan = new Pendapatan;
-        $saldoBulanlalu=$pendapatan->totalDanaMasuk($this->monthBefore($time))-$pengeluaran->totalDanaKeluar($this->monthBefore($time));
-        $danakeluar = $pengeluaran->danakeluar($this->timeByMonth($time));
+        // $monthBefore = $this->timeByMonth();
+        // dd($this->monthBefore($time));
+        // dd($pendapatan->totalDanaMasuk($this->monthBefore($time)));
+        $periode = $transaksi->sPeriode()[0];
+        $saldoBulanlalu=$pendapatan->totalDanaMasuk($this->monthBefore($time))-$pengeluaran->totalDanaKeluar($periode->awal,$this->monthBefore($time));
+        $dateRange = $this->timeByMonth($time);
+        $danakeluar = $pengeluaran->totalDanakeluar($dateRange['start_default'],$dateRange['end_default']);
+        
         $danamasuk = $saldoBulanlalu+$pendapatan->danamasuk($this->timeByMonth($time));
         $saldo=$danamasuk-$danakeluar;
         $gcPengeluaran = DB::table('group_category')->where('pengeluaran', '1')->get();
@@ -127,45 +134,49 @@ class BudgetinQController  extends Controller
     }
 
     public function danakeluar($time=null,$day=null){
-        
+        $pengeluaran = new Pengeluaran;
         $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
-    
         if($day==null)
             $title = "$time";
         else
             $day = $day ?: date("d");
             $title = "$day $time";
+        $dateRange = $this->timeByMonth($time);
+        $totalDanaKeluar = $this->rupiah($pengeluaran->totalDanaKeluar($dateRange['start_default'],$dateRange['end_default']));
         $data=array(
             'monthYear' => $time,
-            'title' => $title
+            'title' => $title,
+            'totalDanaKeluar' => $totalDanaKeluar
         );
         return view('BudgetinQ.danakeluar')->with($data);
     }
 
     public function vDKByK($id_jenis_pengeluaran=null,$time=null){
-        // dd("");
+        $pengeluaran = new Pengeluaran;
         $jenis_pengeluaran = DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran', $id_jenis_pengeluaran)->first();
-        if($jenis_pengeluaran==null)
+        if($jenis_pengeluaran==null){
              return redirect()->to('/kategori/danakeluar');
-        
+        }
         if($time==null){
             $transaksi = new Transaksi;
             $periode = $transaksi->sPeriode()[0];
             $title = "Periode : ".$periode->awal." s/d ".$periode->akhir;
+            $totalDanaKeluar = $pengeluaran->totalDanaKeluarByKategori($periode->awal,$periode->akhir,$id_jenis_pengeluaran);
         }else{
             $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
             $title = "BULAN $time <a class='btn btn-info' href='/danakeluar/kategori/$id_jenis_pengeluaran/' >Lihat semua Periode</a>";
+            $dateRange = $this->timeByMonth($time);
+            $totalDanaKeluar = $pengeluaran->totalDanaKeluarByKategori($dateRange['start_default'],$dateRange['end_default'],$id_jenis_pengeluaran);
         }
-        // dd('');
         $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
-
-        // $day = $day ?: date("d");
+        
         $data=array(
             'monthYear' => $time,
             'title' => $title,
             'jenis_pengeluaran' => DB::table('jenis_pengeluaran')->where('id', Auth::user()->id)->get(),
             'page' => 'kategori',
-            'id_jenis_pengeluaran' => $id_jenis_pengeluaran
+            'id_jenis_pengeluaran' => $id_jenis_pengeluaran,
+            'totalDanaKeluar' => $this->rupiah($totalDanaKeluar)
         );
         return view('BudgetinQ.danakeluar')->with($data);
     }
