@@ -63,9 +63,9 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
     }
 
     function kategoriDKRefresh(data) {
-        window.location = data['url'];
-    }
-    function kategoriAfterDelete(data) {
+        if (data['url'] !== undefined) {
+            window.location = data['url'];
+        }
 
     }
 
@@ -93,11 +93,39 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
                     "_token": $('meta[name="csrf-token"]').attr('content'),
                     'id_jenis_pengeluaran': id
                 };
-                ajaxPost(url, data, kategoriAfterDelete);
+                ajaxPost(url, data, kategoriDKRefresh);
             }
         }
 
 
+    }
+
+    $scope.kategoriDKEdit = function () {
+        function getDataEdit(data) {
+            console.log(data);
+            $scope.id_jenis_pengeluaran = data['editData'][0]['id_jenis_pengeluaran'];
+            $scope.jenis_pengeluaran = data['editData'][0]['jenis_pengeluaran'];
+            $scope.mGC = data['editData'][0]['group_category_id'];
+            $scope.$apply();
+            document.getElementsByClassName("kategoriDKEditModal")[0].click();
+        }
+
+        var table = $('#tableJenisPengeluaran').DataTable();
+        var data = table.row('.selected').data();
+        if (data == null) {
+            alert("Please select row!!");
+        } else {
+            var id = data['id_jenis_pengeluaran'];
+            if (confirm("Are you sure you want to Edit " + data['jenis_pengeluaran'] + "?")) {
+                url = "/kategori/danakeluar/edit/";
+
+                data = {
+                    "_token": $('meta[name="csrf-token"]').attr('content'),
+                    'id_jenis_pengeluaran': id
+                };
+                ajaxPost(url, data, getDataEdit);
+            }
+        }
     }
 
     if ($rootScope.pathname.length == 3) {

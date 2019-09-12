@@ -36,7 +36,7 @@
 
                     @include('BudgetinQ.jenisPengeluaranCRUD.table')
                     @include('BudgetinQ.jenisPengeluaranCRUD.create')
-                    <!-- include('BudgetinQ.jenisPengeluaranCRUD.edit') -->
+                    @include('BudgetinQ.jenisPengeluaranCRUD.edit')
                 </div>
             </div>
         </div>

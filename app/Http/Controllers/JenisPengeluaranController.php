@@ -74,11 +74,13 @@ class JenisPengeluaranController extends Controller
             'id_jenis_pengeluaran.required' => 'ID Jenis Pengeluaran invalid'
         ];
         $validator = $this->validate($request, $rules, $customMessages);
-        $dataKatByID = DB::select('SELECT * from jenis_pengeluaran where id_jenis_pengeluaran = ? limit 1',[$validator['id_jenis_pengeluaran']]); 
-
+        $dataJenisPengeluaran = DB::table('jenis_pengeluaran')->where([
+            ['id_jenis_pengeluaran','=',$validator['id_jenis_pengeluaran']],
+            ['id','=',Auth::user()->id],
+        ])->get();
+        // dd($dataJenisPengeluaran);
         $data = array(
-            'dataKatByID' => $dataKatByID,
-            'all_jenis_pengeluaran' => $this->selectAll(),
+            'editData' => $dataJenisPengeluaran
         );
 
         return $data;
@@ -99,38 +101,25 @@ class JenisPengeluaranController extends Controller
             'id_jenis_pengeluaran.required' => 'ID Jenis Pengeluaran invalid',
             'group_category_id.required' => 'Group Category invalid'
         ];
-        $validator = $this->validate($request, $rules, $customMessages);
-        $jenisPengeluaranBefore = $katPengeluaran->selectByID($validator['id_jenis_pengeluaran']);
-
-        #filter 1
-        $filter1 = DB::select("select jenis_pengeluaran from jenis_pengeluaran where id=1 and id_jenis_pengeluaran != ? and jenis_pengeluaran = ? ",[$validator['id_jenis_pengeluaran'],$validator['jenis_pengeluaran']]);
-        if (count($filter1)>=1) {
-            return response()->json(['errors' => ["Kategori ini sudah ada"]], 422);
-        }
-        // filter 2 : check id group_category yang ada di database.
-        $filter2 = DB::select("select * from group_category where group_category_id = ?",[$validator['group_category_id']]);
-        if (count($filter2)==0) {
-            return response()->json(['errors' => ['Value group category tidak boleh diubah']], 422);
-        }
-
-
-
-       
-        // check group category gabung antara jenis pengeluaran dan pendapatan
-        $filter3 = DB::select("select gabung from group_category where group_category_id = ?",[$validator['group_category_id']])[0]->gabung;
-        $filter4 = DB::select("select gabung from group_category where group_category_id = ?",[$jenisPengeluaranBefore[0]->group_category_id])[0]->gabung;
         
-        if ($filter3!=$filter4 ) {
-            return response()->json(['errors' => ["UPDATE Gagal karena Group Category Tidak Cocok"]], 422);
+        $validator = $this->validate($request, $rules, $customMessages);
+        $checkGroupCategory = DB::table("jenis_pengeluaran")
+                                ->join('group_category','jenis_pengeluaran.group_category_id','=','group_category.group_category_id')
+                                ->where([
+                                    ['jenis_pengeluaran.id_jenis_pengeluaran',$validator['id_jenis_pengeluaran']],
+                                    ['id',$id_user],
+                                ])
+                                ->get();
+        $dataKategori = array($validator['jenis_pengeluaran'],$validator['id_jenis_pengeluaran'],$id_user);
+        if ($checkGroupCategory[0]->pengeluaran==1) {
+            $katPengeluaran->updateByName2($dataKategori);
         }
-
-        if ($filter3==$filter4) {
-            $data=[$validator['jenis_pengeluaran'],$validator['group_category_id'],$jenisPengeluaranBefore[0]->jenis_pengeluaran,$id_user,$jenisPengeluaranBefore[0]->group_category_id];
-            $katPendapatan->updateByName($data);
+        if ($checkGroupCategory[0]->gabung==1) {
+            $katPendapatan->updateByName2($dataKategori);
         }
-        $data=[$validator['jenis_pengeluaran'],$validator['group_category_id'],$validator['id_jenis_pengeluaran'],$id_user];
-        $katPengeluaran->updateByID($data);
-        return $this->selectAll(); 
+        return [
+            'url'=>'/kategori/danakeluar',
+        ];
     }
 
     public function delete(Request $request)

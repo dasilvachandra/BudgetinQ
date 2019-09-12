@@ -127,7 +127,7 @@ class JenisPengeluaran extends Model
 
     public function updateByName2($data)
     {
-        DB::select('UPDATE jenis_pengeluaran set jenis_pengeluaran = ? where jenis_pengeluaran = ? and id = ?', $data);
+        DB::select('UPDATE jenis_pengeluaran set jenis_pengeluaran = ? where id_jenis_pengeluaran = ? and id = ?', $data);
     }
 
     public function deleteByID($data){

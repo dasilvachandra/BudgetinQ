@@ -95,7 +95,7 @@ class JenisPendapatan extends Model
     }
     public function updateByName2($data)
     {
-        DB::select('UPDATE jenis_pendapatan set jenis_pendapatan = ? where jenis_pendapatan = ? and id = ?', $data);
+        DB::select('UPDATE jenis_pendapatan set jenis_pendapatan = ? where id_jenis_pendapatan = ? and id = ?', $data);
     }
     public function deleteByName($data)
     {
