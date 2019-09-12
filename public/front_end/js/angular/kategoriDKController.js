@@ -85,8 +85,8 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
 
             var check = confirm("Are you sure you want to delete " + data['jenis_pengeluaran'] + "?");
             if (check) {
-                table.$('tr.selected').css("background-color", "yellow");
-                table.$('tr.selected').fadeOut(100);
+                // table.$('tr.selected').css("background-color", "yellow");
+                // table.$('tr.selected').fadeOut(100);
                 // table.row('.selected').remove().draw(false);
                 url = "/kategori/danakeluar/delete";
                 data = {

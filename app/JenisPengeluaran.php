@@ -41,8 +41,8 @@ class JenisPengeluaran extends Model
     }
     
     public function selectRange($start_default,$end_default){
-        $q="SELECT a.id_jenis_pengeluaran, a.jenis_pengeluaran, ifnull(jt,0) as jt, ifnull(total,0) as total, ifnull(group_category,0) as group_category, a.group_category_id 
-        from (select * from jenis_pengeluaran where id=?) as a left join (
+        $q="SELECT a.id_jenis_pengeluaran, a.jenis_pengeluaran, ifnull(jt,0) as jt, ifnull(total,0) as total, a.group_category, a.group_category_id 
+        from (select id_jenis_pengeluaran,jenis_pengeluaran, group_category, group_category_id, id from jenis_pengeluaran inner join group_category using(group_category_id) where id=?) as a left join (
             SELECT id_jenis_pengeluaran, jenis_pengeluaran, count(jumlah) as jt, sum(jumlah) as total, group_category, group_category_id 
             from jenis_pengeluaran 
             inner join group_category using(group_category_id) 
@@ -58,7 +58,7 @@ class JenisPengeluaran extends Model
     public function selectByID($id)
     {
         $qSelectByID="
-            SELECT id_jenis_pengeluaran as id_kategori ,jenis_pengeluaran as kategori,group_category_id, jenis_pengeluaran.updated_at, jenis_pengeluaran.created_at ,color,id
+            SELECT id_jenis_pengeluaran ,jenis_pengeluaran,group_category_id, jenis_pengeluaran.updated_at, jenis_pengeluaran.created_at ,color,id
             FROM 
                 jenis_pengeluaran 
                     left join pengeluaran using(id_jenis_pengeluaran) 
@@ -120,16 +120,6 @@ class JenisPengeluaran extends Model
         DB::select('UPDATE jenis_pengeluaran set jenis_pengeluaran = ?, group_category_id = ? where id_jenis_pengeluaran = ? and id = ? ', $data);
     }
     
-    public function updateByName($data)
-    {
-        DB::select('UPDATE jenis_pengeluaran set jenis_pengeluaran = ?, group_category_id = ? where jenis_pengeluaran = ? and id = ? and group_category_id = ? ', $data);
-    }
-
-    public function updateByName2($data)
-    {
-        DB::select('UPDATE jenis_pengeluaran set jenis_pengeluaran = ? where id_jenis_pengeluaran = ? and id = ?', $data);
-    }
-
     public function deleteByID($data){
         DB::select('DELETE from jenis_pengeluaran where id_jenis_pengeluaran = ? and id = ? ', $data);
     }

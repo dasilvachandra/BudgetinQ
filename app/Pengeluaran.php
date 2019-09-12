@@ -69,6 +69,37 @@ class Pengeluaran extends Model
         // dd($data);
         return $data;
     }
+    public function selectByIDJPG($id){
+                
+        $qSelectByID = "
+        SELECT 
+            users.id,
+            transaksi.id_transaksi,
+            -- concat(dayname(transaksi.waktu), ', ', DATE_FORMAT(transaksi.waktu, '%d/%m/%Y')) waktu,
+            transaksi.waktu,
+            pengeluaran.picture,
+            pengeluaran.id_pengeluaran,
+            pengeluaran.nama_pengeluaran,
+            pengeluaran.jumlah,
+            jenis_pengeluaran,
+            id_jenis_pengeluaran,
+            group_category_id,
+            group_category
+        FROM 
+            transaksi inner join pengeluaran on transaksi.jenis_transaksi=pengeluaran.id_pengeluaran 
+            inner join jenis_pengeluaran using(id_jenis_pengeluaran) inner join group_category using(group_category_id) inner join
+            users on users.id=transaksi.id 
+        WHERE 
+            transaksi.jenis_transaksi = pengeluaran.id_pengeluaran and 
+            users.id = transaksi.id and 
+            users.email = ? and pengeluaran.id_jenis_pengeluaran = ?
+            order by transaksi.waktu,transaksi.created_at asc ;";
+    // echo $qSelectByID;
+    $email=Auth::user()->email;
+    $data = DB::select($qSelectByID,[$email,$id]);
+    // dd($data);
+    return $data;
+}
 
     public function totalDanaKeluar($start_default,$end_default)
     {
