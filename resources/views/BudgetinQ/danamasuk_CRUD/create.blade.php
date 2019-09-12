@@ -3,7 +3,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Tambah Pemasukkan</h5>
+				<h5 class="modal-title" id="exampleModalLabel">Tambah Pendapatan</h5>
 				<button class="close" type="button" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">×</span>
 				</button>
@@ -24,12 +24,12 @@
 								</div>
 							</div>
 							<div class="col-sm-6">
-								<b>Deskripsi Pemasukkan</b>
+								<b>Deskripsi Pendapatan</b>
 								<div class="input-group-append ">
 									<span class="input-group-addon"><i
 											class="material-icons mr-0">label_outline</i></span>
 									<input type="text" class="form-control form-control-user" ng-model="selectedTime"
-										name="nama_pendapatan" required placeholder="Deskripsi Pemasukkan">
+										name="nama_pendapatan" required placeholder="Deskripsi Pendapatan">
 								</div>
 							</div>
 						</div>
@@ -40,7 +40,7 @@
 								<select class="form-control " name="group_category" ng-model="mGC"
 									ng-change="onChange(mGC)" required>
 									<option>-- Pilih Kategori --</option>
-									<option ng-repeat="s in gcPemasukkan" value="<%s.group_category_id%>">
+									<option ng-repeat="s in gcPendapatan" value="<%s.group_category_id%>">
 										<%s.group_category%>
 									</option>
 								</select>
@@ -51,10 +51,10 @@
 								<b>Kategori</b>
 								<div class="input-group form-float">
 									<span class="input-group-addon"><i class="material-icons">dehaze</i></span>
-									<select ng-repeat='row in gcPemasukkan' ng-if="mGC==row.group_category_id"
-										class="form-control " id="" name="id_jenis_pengeluaran" required>
+									<select ng-repeat='row in gcPendapatan' ng-if="mGC==row.group_category_id"
+										class="form-control " id="" name="id_jenis_pendapatan" required>
 										<option value="">-- Pilih Kategori --</option>
-										<option ng-repeat="s in category(cPemasukkan,row.group_category_id)"
+										<option ng-repeat="s in category(cPendapatan,row.group_category_id)"
 											value="<%s.id_jenis_pendapatan%>">
 											<%s.jenis_pendapatan%></option>
 										<option value="1" style="font-weight:bold;">ADD/EDIT Category</option>

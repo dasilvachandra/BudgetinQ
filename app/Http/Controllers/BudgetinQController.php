@@ -24,21 +24,17 @@ class BudgetinQController  extends Controller
         $pengeluaran = new Pengeluaran;
         $transaksi = new Transaksi;
         $pendapatan = new Pendapatan;
-        // $monthBefore = $this->timeByMonth();
-        // dd($this->monthBefore($time));
-        // dd($pendapatan->totalDanaMasuk($this->monthBefore($time)));
         $periode = $transaksi->sPeriode()[0];
-        $saldoBulanlalu=$pendapatan->totalDanaMasuk($this->monthBefore($time))-$pengeluaran->totalDanaKeluar($periode->awal,$this->monthBefore($time));
+        $totalDanamasuk = $pendapatan->totalDanaMasuk($periode->awal,$this->monthBefore($time));
+        $totalDanaKeluar = $pengeluaran->totalDanaKeluar($periode->awal,$this->monthBefore($time));
+        $saldoBulanlalu=$totalDanamasuk-$totalDanaKeluar;
         $dateRange = $this->timeByMonth($time);
         $danakeluar = $pengeluaran->totalDanakeluar($dateRange['start_default'],$dateRange['end_default']);
-        
-        $danamasuk = $saldoBulanlalu+$pendapatan->danamasuk($this->timeByMonth($time));
+        $danamasuk = $saldoBulanlalu+$pendapatan->totalDanaMasuk($dateRange['start_default'],$dateRange['end_default']);
         $saldo=$danamasuk-$danakeluar;
         $gcPengeluaran = DB::table('group_category')->where('pengeluaran', '1')->get();
         $gcPendapatan = DB::table('group_category')->where('pendapatan', '1')->get();
         $textColor=['#4e73df','#f6c23e','#1cc88a','#e74a3b','#fd7e14','#36b9cc','#6f42c1','#858796'];
-
-        // dd($groupCategory);
         $data=array(
             'danakeluar' => $this->rupiah($danakeluar),
             'danamasuk' => $this->rupiah($danamasuk),
@@ -48,6 +44,7 @@ class BudgetinQController  extends Controller
             'gcPendapatan' => $gcPendapatan,
             'textColor' => $textColor
         );
+        
         return view('BudgetinQ.dashboard')->with($data);
     }
     // PER GROUP BY WAKTU
@@ -125,13 +122,38 @@ class BudgetinQController  extends Controller
     }
     
     public function danamasuk($time=null,$day=null){
-        $time = $time ?: date("F, Y");
-        $day = $day ?: date("d");
+        $pendapatan = new Pendapatan;
+        $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
+        if($day==null)
+            $title = "$time";
+        else
+            $day = $day ?: date("d");
+            $title = "$day $time";
+        $dateRange = $this->timeByMonth($time);
+        $totalDanamasuk = $this->rupiah($pendapatan->totalDanamasuk($dateRange['start_default'],$dateRange['end_default']));
         $data=array(
-            'monthYear' => $time
+            'monthYear' => $time,
+            'title' => $title,
+            'totalDanamasuk' => $totalDanamasuk
         );
         return view('BudgetinQ.danamasuk')->with($data);
     }
+    public function danamasukResponse($time=null,$day=null){
+        $time = $time ?: date("F, Y");
+        $pendapatan = new Pendapatan;
+        $waktu = $this->timeByMonth($time);
+        $list_pendapatan = $pendapatan->selectAll($waktu);
+        if ($day) {
+            $waktu = $this->timeByMonth($day.' '.$time); 
+            $list_pendapatan = $pendapatan->selectRange($waktu['end_default'],$waktu['end_default']);
+        }
+        $data=array(
+            'cPendapatan' => DB::table('jenis_pendapatan')->where('id', Auth::user()->id)->get(),
+            'gcPendapatan' => DB::table('group_category')->where('pendapatan', '1')->get(),
+            'list_pendapatan' => $list_pendapatan
+        );
+        return response()->json($data);
+    } 
 
     public function danakeluar($time=null,$day=null){
         $pengeluaran = new Pengeluaran;

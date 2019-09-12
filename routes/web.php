@@ -31,10 +31,28 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/chartPie', 'BudgetinQController@chartPie'); // return ? on progress.... 
     // Route::post('/dataGC', 'BudgetinQController@dataGC'); 
 
-    // INPUT DANAMASUK
-    Route::get('/danamasuk', 'BudgetinQController@danamasuk'); // on progress.... 
+    // DANAMASUK VIEW
+    Route::get('/danamasuk', 'BudgetinQController@danamasuk'); // view danamasuk by this month latest
     Route::get('/danamasuk/{time}', 'BudgetinQController@danamasuk'); // on progress.... 
-    Route::post('/danamasuk/store', 'PendapatanController@store');  // on progress.... 
+
+    Route::get('/danamasuk/kategori/{id_jenis_pengeluaran}', 'BudgetinQController@vDMByK'); // view danamasuk by kategori
+    Route::get('/danamasuk/kategori/{id_jenis_pengeluaran}/{time}', 'BudgetinQController@vDMByK'); // view danamasuk by kategori
+    Route::get('/danamasuk/{time}/{day}', 'BudgetinQController@danamasuk'); // view danamasuk by day
+
+    // DANAKELUAR CRUD
+    Route::post('/danamasuk/store', 'PendapatanController@store'); // CREATE danamasuk
+    Route::post('/danamasuk/edit', 'PendapatanController@edit'); // EDIT danamasuk
+    Route::post('/danamasuk/update', 'PendapatanController@update'); //UPDATE danamasuk
+    Route::post('/danamasuk/delete', 'PendapatanController@delete'); // DELETE danamasuk
+    
+
+    // DANAMASUK RESPONSE
+    Route::get('/dmr', 'BudgetinQController@danamasukResponse'); // return cPendapatanta, gcPendapatanta, list_pengeluaran 
+    Route::get('/dmr/{time}', 'BudgetinQController@danamasukResponse'); // return cPendapatanta, gcPendapatanta, list_pengeluaran
+    Route::get('/dmr/{time}/{day}', 'BudgetinQController@danamasukResponse'); // return cPendapatanta, gcPendapatanta, list_pengeluaran
+    Route::get('/dana/kategori/{id_jenis_pengeluaran}', 'BudgetinQController@danamasukResponseByKategori'); // return cPendapatanta, gcPendapatanta, list_pengeluaran
+    Route::get('/dana/kategori/{id_jenis_pengeluaran}/{time}', 'BudgetinQController@danamasukResponseByKategori'); // return cPendapatanta, gcPendapatanta, list_pengeluaran
+
 
     // DANAKELUAR VIEW
     Route::get('/danakeluar', 'BudgetinQController@danakeluar'); // view danakeluar by this month latest

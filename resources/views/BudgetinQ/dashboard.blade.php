@@ -16,7 +16,7 @@
                         <div class="h5 mb-0 font-weight-bold text-gray-800">{{$danamasuk}}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        <i class=" fa-2x text-gray-300"><b>Rp</b></i>
                     </div>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                         <div class="h5 mb-0 font-weight-bold text-gray-800">{{$danakeluar}}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        <i class=" fa-2x text-gray-300"><b>Rp</b></i>
                     </div>
                 </div>
             </div>
@@ -52,7 +52,7 @@
                         <div class="h5 mb-0 font-weight-bold text-gray-800">{{$saldo}}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    <i class=" fa-2x text-gray-300"><b>Rp</b></i>
                     </div>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                         <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        <i class=" fa-2x text-gray-300"><b>Rp</b></i>
                     </div>
                 </div>
             </div>
