@@ -41,30 +41,28 @@ class JenisPengeluaranController extends Controller
             'group_category_id.required' => 'Group Category invalid'
         ];
         $validator = $this->validate($request, $rules, $customMessages);
-        
-        $check_group_cat_id = DB::table("group_category")->where('group_category_id',$validator['group_category_id'])->get();
-        
-        if (count($check_group_cat_id)==0) {
+        $dataGC = DB::table("group_category")->where('group_category_id',$validator['group_category_id'])->get();
+        if (count($dataGC)==0) {
             return response()->json(['errors' => ['group kategori gak ada!!']], 422);
         }
-        // dd(count($check_group_cat_id));
-        $id_jenis_pengeluaran = 'JPG_'.uniqid();
-        $created_at = date("Y-m-d H:i:s");
-        $updated_at = date("Y-m-d H:i:s");
-        $id = Auth::user()->id;
-        $data = array($id_jenis_pengeluaran,$validator['jenis_pengeluaran'],$validator['group_category_id'],$updated_at,$created_at,$id);
-       
+
+        $data = array(
+            'KTG_'.uniqid(),
+            $validator['jenis_pengeluaran'],
+            $validator['group_category_id'],
+            date("Y-m-d H:i:s"),
+            date("Y-m-d H:i:s"),
+            Auth::user()->id,
+            $this->randomRGB()
+        );
 
         $katPengeluaran->insertData($data);
-
-        // check group category gabung antara jenis pengeluaran dan pendapatan
-        $filter2 = DB::select("select gabung from group_category where group_category_id = ?",[$validator['group_category_id']]);
-        // dd($group_cat_gab[0]->gabung);
-        if ($filter2[0]->gabung==1) {
-            
+        if ($dataGC[0]->gabung==1) {
             $katPendapatan->insertData($data);
         }
-        return $this->selectAll(); 
+        return [
+            'url'=>'/kategori/danakeluar',
+        ];
     }
 
     public function edit(Request $request){
@@ -135,12 +133,13 @@ class JenisPengeluaranController extends Controller
         return $this->selectAll(); 
     }
 
-    public function destroy(Request $request)
+    public function delete(Request $request)
     {
         $katPengeluaran = new JenisPengeluaran;
         $katPendapatan = new JenisPendapatan;
         $pendapatan = new Pendapatan;
         $id_user=Auth::user()->id; 
+        
         $rules = array(
             'id_jenis_pengeluaran' => [ 'required', 
                 Rule::exists('jenis_pengeluaran')->where(function ($query) {
@@ -154,31 +153,45 @@ class JenisPengeluaranController extends Controller
             'id_jenis_pengeluaran.required' => 'ID Jenis Pengeluaran invalid'
         ];
         $validator = $this->validate($request, $rules, $customMessages);
-        $jenisPengeluaranBefore = $katPengeluaran->selectByID($validator['id_jenis_pengeluaran']);
-
-        // check jumlah data yang digunakan terkait jenis pengeluaran ini
-        $filter1 = DB::select('SELECT * from pengeluaran where id_jenis_pengeluaran = ? ',[$validator['id_jenis_pengeluaran']]); 
         
-        $jumlah = count($filter1);
-        if ($jumlah>0) {
-            $url = "#/jenis_pengeluaran/{$validator['id_jenis_pengeluaran']}";
+        $checkTransaksi = DB::table("jenis_pengeluaran")
+                                    ->join('pengeluaran','jenis_pengeluaran.id_jenis_pengeluaran','=','pengeluaran.id_jenis_pengeluaran')
+                                    ->where([
+                                        ['jenis_pengeluaran.id_jenis_pengeluaran',$validator['id_jenis_pengeluaran']],
+                                        ['id',$id_user],
+                                    ])
+                                    ->get();
+        if (count($checkTransaksi)>=1) {
+            $jumlah = count($checkTransaksi);
+            $url = "/danakeluar/kategori/{$validator['id_jenis_pengeluaran']}/";
             $pesan = "terdapat {$jumlah} data menggunakan kategori ini <a href={$url} class='alert-link'>Lihat data</a>";
             $error = [ 'id_jenis_pengeluaran' => $pesan];
-            return response()->json(['message' => 'data yang dikirimkan salah', 'errors' => $error], 422);
-        }else{
-            $filter2 = DB::select("select gabung from group_category where group_category_id = ?",[$jenisPengeluaranBefore[0]->group_category_id])[0]->gabung;
-            if ($filter2==1) {
-                $filter3 = $pendapatan->selectByKat($validator['id_jenis_pengeluaran']);
-                if (count($filter3)>0) {
-                    return response()->json(['errors' => ["Kategori Masih digunakan di Dana Masuk"]], 422);
-                }
-                $dataPendapatan=[$jenisPengeluaranBefore[0]->jenis_pengeluaran,$jenisPengeluaranBefore[0]->group_category_id,$id_user];
-                $katPendapatan->deleteByName($dataPendapatan);
-            }
+            return response()->json(['message' => 'data yang dikirimkan terfilter', 'errors' => $error], 422);
+        }if(count($checkTransaksi)==0){
+            $checkGroupCategory = DB::table("jenis_pengeluaran")
+                                    ->join('group_category','jenis_pengeluaran.group_category_id','=','group_category.group_category_id')
+                                    ->where([
+                                        ['jenis_pengeluaran.id_jenis_pengeluaran',$validator['id_jenis_pengeluaran']],
+                                        ['id',$id_user],
+                                    ])
+                                    ->get();
             $dataPengeluaran = [$validator['id_jenis_pengeluaran'],$id_user];
-            $katPengeluaran->deleteByID($dataPengeluaran);
-            return $this->selectAll();
+            if ($checkGroupCategory[0]->pengeluaran==1) {
+                $katPengeluaran->deleteByID($dataPengeluaran);
+            }
+            if ($checkGroupCategory[0]->gabung==1) {
+                $katPendapatan->deleteByID($dataPengeluaran);
+            }
+            return [
+                'url'=>'/kategori/danakeluar',
+            ];
+        
+            
+            
         }
+
+        
+
     }
     // public function viewPengeluaranByJPG(){
     //     return view('app_keuangan.jenis_pengeluaran.danaKeluarByKategori');

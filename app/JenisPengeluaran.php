@@ -112,9 +112,9 @@ class JenisPengeluaran extends Model
 
     public function insertData($data)
     {
-        // array_push($data,$color_randong);
         DB::select('INSERT INTO jenis_pengeluaran (id_jenis_pengeluaran, jenis_pengeluaran, group_category_id, updated_at, created_at, id, color) VALUES (?, ?, ?, ?,?, ? ,?)', $data);
     }
+
     public function updateByID($data)
     {
         DB::select('UPDATE jenis_pengeluaran set jenis_pengeluaran = ?, group_category_id = ? where id_jenis_pengeluaran = ? and id = ? ', $data);

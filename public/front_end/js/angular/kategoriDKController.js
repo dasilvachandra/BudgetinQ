@@ -63,11 +63,42 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
     }
 
     function kategoriDKRefresh(data) {
-        console.log(data);
+        window.location = data['url'];
     }
+    function kategoriAfterDelete(data) {
+
+    }
+
     $scope.kategoriDKStore = function (url, formID) {
         ajaxPost(url, $(formID).serialize(), kategoriDKRefresh);
     };
+
+    $scope.kategoriDKDelete = function () {
+        var table = $('#tableJenisPengeluaran').DataTable();
+        var data = table.row('.selected').data();
+        if (data == null) {
+            alert("Please select row!!");
+        } else {
+            // table.row(this).delete();
+
+            var id = data['id_jenis_pengeluaran'];
+
+            var check = confirm("Are you sure you want to delete " + data['jenis_pengeluaran'] + "?");
+            if (check) {
+                table.$('tr.selected').css("background-color", "yellow");
+                table.$('tr.selected').fadeOut(100);
+                // table.row('.selected').remove().draw(false);
+                url = "/kategori/danakeluar/delete";
+                data = {
+                    "_token": $('meta[name="csrf-token"]').attr('content'),
+                    'id_jenis_pengeluaran': id
+                };
+                ajaxPost(url, data, kategoriAfterDelete);
+            }
+        }
+
+
+    }
 
     if ($rootScope.pathname.length == 3) {
         ajaxGet('/kategoriDKR', returnData);
@@ -82,5 +113,6 @@ app.controller('kategoriDKController', function ($scope, $rootScope, $routeParam
         console.log(url);
         window.location = url;
     });
+
 
 });
