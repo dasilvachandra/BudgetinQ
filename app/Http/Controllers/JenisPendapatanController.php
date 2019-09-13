@@ -118,47 +118,19 @@ class JenisPendapatanController extends Controller
         ];
         
         $validator = $this->validate($request, $rules, $customMessages);
-        $checkJenisPendapatanBefore = DB::table("jenis_pendapatan")
-                                    ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
-                                    ->where([
-                                        ['jenis_pendapatan.id_jenis_pendapatan',$validator['id_jenis_pendapatan']],
-                                        ['id',$id_user],
-                                    ])
-                                    ->get();
-        $checkGroupCategory = DB::table("group_category")
-                                ->where([
-                                    ['group_category.group_category_id',$validator['group_category_id']]
-                                ])->get();
- 
+        $checkJenisPendapatanBefore = $katPendapatan->selectByID($validator['id_jenis_pendapatan']);
+        
+        $checkGroupCategory = DB::table("group_category")->where([['group_category.group_category_id',$validator['group_category_id']]])->get();
+        
         $dataKategori = array($validator['jenis_pendapatan'],$validator['group_category_id'],$validator['id_jenis_pendapatan'],$id_user);
         
-        if ($checkGroupCategory[0]->gabung==0) {
+        if ($checkJenisPendapatanBefore[0]->gabung==0 && $checkGroupCategory[0]->gabung==0) {
             $katPendapatan->updateByID($dataKategori);
-            if($checkJenisPendapatanBefore[0]->gabung==1){
-                $checkTransaksiDM = $pengeluaran->selectByIDJPD($validator['id_jenis_pendapatan']);
-                if (count($checkTransaksiDM)==0) {
-                    $katPengeluaran->deleteByID([$validator['id_jenis_pendapatan'],$id_user]);
-                }else{
-                    return response()->json(['errors' => [$checkTransaksiDM[0]->jenis_pendapatan." Masih terikat dengan ".count($checkTransaksiDM)." data danamasuk"]], 422);                }
-                
-            }
-        }
-
-        if ($checkGroupCategory[0]->gabung==1) {
+        }elseif ($checkJenisPendapatanBefore[0]->gabung==1 && $checkGroupCategory[0]->gabung==1) {
             $katPendapatan->updateByID($dataKategori);
-            if($checkJenisPendapatanBefore[0]->gabung==0){
-                $dataInsert = array(
-                    $validator['id_jenis_pendapatan'],
-                    $validator['jenis_pendapatan'],
-                    $validator['group_category_id'],
-                    date("Y-m-d H:i:s"),
-                    date("Y-m-d H:i:s"),
-                    $id_user,
-                    $this->randomRGB()
-                );
-                $katPengeluaran->insertData($dataInsert);
-            }
             $katPengeluaran->updateByID($dataKategori);
+        }else{
+            return response()->json(['errors' => ["Kategori Sync. atau Not Sync. tidak bisa berpindah"]], 422);
         }
 
         return [

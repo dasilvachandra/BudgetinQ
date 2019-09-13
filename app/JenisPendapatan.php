@@ -57,17 +57,13 @@ class JenisPendapatan extends Model
 
     public function selectByID($id)
     {
-        $qSelectByID="
-            SELECT id_jenis_pendapatan ,jenis_pendapatan,group_category_id, jenis_pendapatan.updated_at, jenis_pendapatan.created_at ,color,id
-            FROM 
-                jenis_pendapatan 
-                    left join pendapatan using(id_jenis_pendapatan) 
-                    inner join users using(id) 
-            where users.id=? and email = ? and id_jenis_pendapatan = ?;
+        $q="
+            SELECT * FROM jenis_pendapatan 
+                    inner join group_category using(group_category_id)
+            where id=?  and id_jenis_pendapatan = ?;
          ";
-        $id_user=Auth::user()->id;
-        $email=Auth::user()->email;
-        $data = DB::select($qSelectByID,[$id_user,$email,$id]);
+         
+        $data = DB::select($q,[Auth::user()->id,$id]);
         return $data;
     }
 
