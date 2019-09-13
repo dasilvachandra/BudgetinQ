@@ -48,13 +48,13 @@
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
             aria-expanded="true" aria-controls="collapseUtilities">
             <i class="fa fa-list-alt" aria-hidden="true"></i>
-            <span>Manage Category</span>
+            <span>KATEGORI</span>
         </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+        <div id="collapseUtilities" class="collapse" ng-class="url == 'kategori' ? 'show' : ''" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Manage Category:</h6>
-                <a class="collapse-item " href="{{url('/kategori/danamasuk')}}">Category Dana Masuk</a>
-                <a class="collapse-item" href="{{url('/kategori/danakeluar')}}">Category Dana Keluar</a>
+                <a class="collapse-item " ng-class="path2 == 'danamasuk' ? 'active' : ''" href="{{url('/kategori/danamasuk')}}">Dana Masuk</a>
+                <a class="collapse-item" ng-class="path2 == 'danakeluar' ? 'active' : ''" href="{{url('/kategori/danakeluar')}}">Dana Keluar</a>
             </div>
         </div>
     </li>

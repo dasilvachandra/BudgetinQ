@@ -3,6 +3,7 @@ app.controller('kategoriDMController', function ($scope, $rootScope, $routeParam
     function returnData(data) {
         console.log(data);
         $scope.gcPendapatan = data['gcPendapatan'];
+        $scope.mGC = "6";
         $scope.$apply();
         tableJenisPendapatan(data['list_jenis_pendapatan']);
     }

@@ -25,7 +25,7 @@
                         </div>
                         <div class="form-group">
                             <b>Group Kategori</b>
-                            <div class="input-group form-float" ng-init="mGC='1'">
+                            <div class="input-group form-float" ng-init="mGC='6'">
                                 <span class="input-group-addon"><i class="material-icons">dehaze</i></span>
                                 <select class="form-control " name="group_category_id" ng-model="mGC"
                                     ng-change="onChange(mGC)" required>

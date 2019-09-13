@@ -12,14 +12,6 @@ class JenisPengeluaran extends Model
 	public $timestamps = false;
 	// protected $fillable = ['nama_pengeluaran','jumlah'];
 
-    private $qSelectByName="
-        SELECT id_jenis_pengeluaran,jenis_pengeluaran,group_category_id,color,id
-        FROM 
-            jenis_pengeluaran 
-                left join pengeluaran using(id_jenis_pengeluaran) 
-                inner join users using(id) 
-        where users.id=? and email = ? and jenis_pengeluaran = ?;
-     ";
     private $qPengByKat = "
         SELECT * 
         FROM pengeluaran 
@@ -70,14 +62,18 @@ class JenisPengeluaran extends Model
         $data = DB::select($qSelectByID,[$id_user,$email,$id]);
         return $data;
     }
-
-
     public function selectByName($name)
     {
-        $id_user=Auth::user()->id;
-        $email=Auth::user()->email;
-        $data = DB::select($this->qSelectByName,[$id_user,$email,$name]);
-        return $data;
+        return DB::table('pengeluaran')
+        ->join('jenis_pengeluaran','pengeluaran.id_jenis_pengeluaran','=','jenis_pengeluaran.id_jenis_pengeluaran')
+        ->join('group_category','jenis_pengeluaran.group_category_id','=','group_category.group_category_id')
+        ->where([
+            ['jenis_pengeluaran','=',$name],
+            ['id','=',Auth::user()->id]
+        ])->get();
+    }
+    public function GCPengeluaran(){
+        return DB::select("select group_category_id, pendapatan,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pengeluaran=1");
     }
 
     public function sumByDate($time)

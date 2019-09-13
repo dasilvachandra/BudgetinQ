@@ -124,6 +124,7 @@ app.run(function ($rootScope, $location) {
     $rootScope.host = host;
     $rootScope.pathname = pathname;
     $rootScope.url = pathname[1];
+    $rootScope.path2 = pathname[2];
     datePickerForm('.datepickerForm');
     // input_rupiah("input_rupiah");
     $rootScope.$on("$routeChangeSuccess", function (event, next, current) {

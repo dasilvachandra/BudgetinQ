@@ -151,7 +151,7 @@ class BudgetinQController  extends Controller
         }
         $data=array(
             'cPendapatan' => DB::table('jenis_pendapatan')->where('id', Auth::user()->id)->get(),
-            'gcPendapatan' => DB::table('group_category')->where('pendapatan', '1')->get(),
+            'gcPendapatan' => $pendapatan->GCPendapatan(),
             'list_pendapatan' => $list_pendapatan
         );
         return response()->json($data);
@@ -216,7 +216,7 @@ class BudgetinQController  extends Controller
         }
         $data=array(
             'cPengeluaran' => DB::table('jenis_pengeluaran')->where('id', Auth::user()->id)->get(),
-            'gcPengeluaran' => DB::table('group_category')->where('pengeluaran', '1')->get(),
+            'gcPengeluaran' => $pengeluaran->GCPengeluaran(),
             'list_pengeluaran' => $list_pengeluaran
         );
         return response()->json($data);
@@ -321,7 +321,7 @@ class BudgetinQController  extends Controller
         $data=array(
             'monthYear' => $time,
             'list_jenis_pengeluaran' => $list_pengeluaran,
-            'gcPengeluaran' => DB::table('group_category')->where('pengeluaran', '1')->get()
+            'gcPengeluaran' => $jenis_pengeluaran->GCPengeluaran()
         );
         return response()->json($data);
     }
@@ -367,7 +367,7 @@ class BudgetinQController  extends Controller
         $data=array(
             'monthYear' => $time,
             'list_jenis_pendapatan' => $list_pendapatan,
-            'gcPendapatan' => DB::table('group_category')->where('pendapatan', '1')->get()
+            'gcPendapatan' => $jenis_pendapatan->GCPendapatan(),
         );
         return response()->json($data);
     }

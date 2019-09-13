@@ -215,4 +215,7 @@ class Pengeluaran extends Model
         // dd($id,$start_default,$end_default,$id_jenis_pengeluaran);
         return DB::select($q,[$id,$start_default,$end_default,$id_jenis_pengeluaran]);
     }
+    public function GCPengeluaran(){
+        return DB::select("select group_category_id, pendapatan,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pengeluaran=1");
+    }
 }

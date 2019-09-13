@@ -69,37 +69,40 @@ class Pendapatan extends Model
         // dd($data);
         return $data;
     }
-    public function selectByIDJPG($id){
-                
-        $qSelectByID = "
-        SELECT 
-            users.id,
-            transaksi.id_transaksi,
-            -- concat(dayname(transaksi.waktu), ', ', DATE_FORMAT(transaksi.waktu, '%d/%m/%Y')) waktu,
-            transaksi.waktu,
-            pendapatan.picture,
-            pendapatan.id_pendapatan,
-            pendapatan.nama_pendapatan,
-            pendapatan.jumlah,
-            jenis_pendapatan,
-            id_jenis_pendapatan,
-            group_category_id,
-            group_category
-        FROM 
-            transaksi inner join pendapatan on transaksi.jenis_transaksi=pendapatan.id_pendapatan 
-            inner join jenis_pendapatan using(id_jenis_pendapatan) inner join group_category using(group_category_id) inner join
-            users on users.id=transaksi.id 
-        WHERE 
-            transaksi.jenis_transaksi = pendapatan.id_pendapatan and 
-            users.id = transaksi.id and 
-            users.email = ? and pendapatan.id_jenis_pendapatan = ?
-            order by transaksi.waktu,transaksi.created_at asc ;";
-    // echo $qSelectByID;
-    $email=Auth::user()->email;
-    $data = DB::select($qSelectByID,[$email,$id]);
-    // dd($data);
-    return $data;
-}
+    public function selectByIDJPD($id){
+             
+            $qSelectByID = "
+            SELECT 
+                users.id,
+                transaksi.id_transaksi,
+                -- concat(dayname(transaksi.waktu), ', ', DATE_FORMAT(transaksi.waktu, '%d/%m/%Y')) waktu,
+                transaksi.waktu,
+                pendapatan.picture,
+                pendapatan.id_pendapatan,
+                pendapatan.nama_pendapatan,
+                pendapatan.jumlah,
+                jenis_pendapatan,
+                id_jenis_pendapatan,
+                group_category_id,
+                group_category
+            FROM 
+                transaksi inner join pendapatan on transaksi.jenis_transaksi=pendapatan.id_pendapatan 
+                inner join jenis_pendapatan using(id_jenis_pendapatan) inner join group_category using(group_category_id) inner join
+                users on users.id=transaksi.id 
+            WHERE 
+                transaksi.jenis_transaksi = pendapatan.id_pendapatan and 
+                users.id = transaksi.id and 
+                users.email = ? and pendapatan.id_jenis_pendapatan = ?
+                order by transaksi.waktu,transaksi.created_at asc ;";
+        // echo $qSelectByID;
+        $email=Auth::user()->email;
+        $data = DB::select($qSelectByID,[$email,$id]);
+        // dd($data);
+        return $data;
+    }
+    public function GCPendapatan(){
+        return DB::select("select group_category_id, pendapatan,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pendapatan=1");
+    }
 
     public function totalDanaMasuk($start_default,$end_default)
     {

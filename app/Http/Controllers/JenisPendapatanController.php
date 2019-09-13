@@ -28,20 +28,28 @@ class JenisPendapatanController extends Controller
     public function store(Request $request){
         $katPengeluaran = new JenisPengeluaran;
         $katPendapatan = new JenisPendapatan;
+        $id_user = Auth::user()->id;
         $rules = array(
-            'jenis_pendapatan' => [ 'required', 
+            'jenis_pendapatan' => [ 'required', 'regex:/^[ a-zA-Z&-]+$/u',
                 Rule::unique('jenis_pendapatan')->where(function ($query) {
-                    $id=Auth::user()->id;
-                    $query->where('id', $id);
+                    $query->where('id', Auth::user()->id);
                 }),
             ],
-            'group_category_id' => 'required'
+            'group_category_id' => ['required','regex:/^[1-6]+$/u','integer','max:6']
         );
         $customMessages = [
-            'jenis_pendapatan.required' => 'Jenis Pendapatan invalid',
+            'jenis_pendapatan.required' => 'Nama Kategori - Belum di isi',
+            'jenis_pendapatan.regex' => 'Nama Kategori - karakter tidak diperbolehkan',
             'group_category_id.required' => 'Group Category invalid'
         ];
         $validator = $this->validate($request, $rules, $customMessages);
+
+        // 1. Jenis Pendapatan tidak sama dengan Jenis Pengeluaran
+        $checkTransaksiDK = $katPengeluaran->selectByName($validator['jenis_pendapatan']);
+        if(count($checkTransaksiDK)>=1){
+            return response()->json(['errors' => ['Kategori <b>'.$validator['jenis_pendapatan'].'</b> sudah ada. Group <b>'.$checkTransaksiDK[0]->group_category.'</b>']], 422);
+        }
+
         $dataGC = DB::table("group_category")->where('group_category_id',$validator['group_category_id'])->get();
         if (count($dataGC)==0) {
             return response()->json(['errors' => ['group kategori gak ada!!']], 422);
@@ -53,14 +61,19 @@ class JenisPendapatanController extends Controller
             $validator['group_category_id'],
             date("Y-m-d H:i:s"),
             date("Y-m-d H:i:s"),
-            Auth::user()->id,
+            $id_user,
             $this->randomRGB()
         );
 
-        $katPengeluaran->insertData($data);
-        if ($dataGC[0]->gabung==1) {
+        if ($dataGC[0]->gabung==0) {
             $katPendapatan->insertData($data);
         }
+        
+        if ($dataGC[0]->gabung==1) {
+            $katPengeluaran->insertData($data);
+            $katPendapatan->insertData($data);
+        }
+
         return [
             'url'=>'/kategori/danamasuk',
         ];
@@ -105,7 +118,7 @@ class JenisPendapatanController extends Controller
         ];
         
         $validator = $this->validate($request, $rules, $customMessages);
-        $checkJenisPengeluaranBefore = DB::table("jenis_pendapatan")
+        $checkJenisPendapatanBefore = DB::table("jenis_pendapatan")
                                     ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
                                     ->where([
                                         ['jenis_pendapatan.id_jenis_pendapatan',$validator['id_jenis_pendapatan']],
@@ -120,20 +133,20 @@ class JenisPendapatanController extends Controller
         $dataKategori = array($validator['jenis_pendapatan'],$validator['group_category_id'],$validator['id_jenis_pendapatan'],$id_user);
         
         if ($checkGroupCategory[0]->gabung==0) {
-            $katPengeluaran->updateByID($dataKategori);
-            if($checkJenisPengeluaranBefore[0]->gabung==1){
-                $checkTransaksi = $pengeluaran->selectByIDJPG($validator['id_jenis_pendapatan']);
-                if (count($checkTransaksi)==0) {
-                    $katPendapatan->deleteByID([$validator['id_jenis_pendapatan'],$id_user]);
+            $katPendapatan->updateByID($dataKategori);
+            if($checkJenisPendapatanBefore[0]->gabung==1){
+                $checkTransaksiDM = $pengeluaran->selectByIDJPD($validator['id_jenis_pendapatan']);
+                if (count($checkTransaksiDM)==0) {
+                    $katPengeluaran->deleteByID([$validator['id_jenis_pendapatan'],$id_user]);
                 }else{
-                    return response()->json(['errors' => [$checkTransaksi[0]->jenis_pendapatan." Masih terikat dengan ".count($checkTransaksi)." data danamasuk"]], 422);                }
+                    return response()->json(['errors' => [$checkTransaksiDM[0]->jenis_pendapatan." Masih terikat dengan ".count($checkTransaksiDM)." data danamasuk"]], 422);                }
                 
             }
         }
 
         if ($checkGroupCategory[0]->gabung==1) {
-            $katPengeluaran->updateByID($dataKategori);
-            if($checkJenisPengeluaranBefore[0]->gabung==0){
+            $katPendapatan->updateByID($dataKategori);
+            if($checkJenisPendapatanBefore[0]->gabung==0){
                 $dataInsert = array(
                     $validator['id_jenis_pendapatan'],
                     $validator['jenis_pendapatan'],
@@ -143,9 +156,9 @@ class JenisPendapatanController extends Controller
                     $id_user,
                     $this->randomRGB()
                 );
-                $katPendapatan->insertData($dataInsert);
+                $katPengeluaran->insertData($dataInsert);
             }
-            $katPendapatan->updateByID($dataKategori);
+            $katPengeluaran->updateByID($dataKategori);
         }
 
         return [
@@ -158,6 +171,7 @@ class JenisPendapatanController extends Controller
     {
         $katPengeluaran = new JenisPengeluaran;
         $katPendapatan = new JenisPendapatan;
+        $pendapatan = new Pendapatan;
         $pengeluaran = new Pengeluaran;
         $id_user=Auth::user()->id; 
         
@@ -174,37 +188,46 @@ class JenisPendapatanController extends Controller
             'id_jenis_pendapatan.required' => 'ID Jenis Pendapatan invalid'
         ];
         $validator = $this->validate($request, $rules, $customMessages);
-        $checkTransaksi = $pengeluaran->selectByIDJPG($validator['id_jenis_pendapatan']);
+        // 1. Check apakah jenis_pendapatan sync. masih di digunakan di transaksi pengeluaran
+        // $checkTransaksiDK = $katPengeluaran->selectByID($validator['jenis_pendapatan']);
+        // if(count($checkTransaksiDK)>=1){
+        //     return response()->json(['errors' => ['Kategori <b>'.$validator['jenis_pendapatan'].'</b> Masih digunakan. Group <b>'.$checkTransaksiDK[0]->group_category.'</b>']], 422);
+        // }
 
-        if (count($checkTransaksi)>=1) {
-            $url="<a href='/danamasuk/kategori/".$validator['id_jenis_pendapatan']."/'>Lihat Data</a>";
-            return response()->json(['errors' => [$checkTransaksi[0]->jenis_pendapatan." Masih terikat dengan ".count($checkTransaksi)." data danamasuk. $url"]], 422);
-        }if(count($checkTransaksi)==0){
-            $checkGroupCategory = DB::table("jenis_pendapatan")
-                                    ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
-                                    ->where([
-                                        ['jenis_pendapatan.id_jenis_pendapatan',$validator['id_jenis_pendapatan']],
-                                        ['id',$id_user],
-                                    ])
-                                    ->get();
-            $dataPengeluaran = [$validator['id_jenis_pendapatan'],$id_user];
-            if ($checkGroupCategory[0]->pengeluaran==1) {
-                $katPengeluaran->deleteByID($dataPengeluaran);
+        $dataPendapatan = [$validator['id_jenis_pendapatan'],$id_user];
+        $checkGroupCategory = DB::table("jenis_pendapatan")
+        ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
+        ->where([
+            ['jenis_pendapatan.id_jenis_pendapatan',$validator['id_jenis_pendapatan']],
+            ['id',$id_user],
+            ])->get();
+
+        if ($checkGroupCategory[0]->gabung==0) {
+            $checkTransaksiDM = $pendapatan->selectByIDJPD($validator['id_jenis_pendapatan']);
+            if (count($checkTransaksiDM)>=1) {
+                $urlDM="<a href='/danamasuk/kategori/".$validator['id_jenis_pendapatan']."/'>Lihat ".count($checkTransaksiDM)." Data Pendapatan </a>";
+                return response()->json(['errors' => ['Kategori <b>'.$checkTransaksiDM[0]->jenis_pendapatan."</b> Masih digunakan. $urlDM"]], 422);
             }
-            if ($checkGroupCategory[0]->gabung==1) {
-                $katPendapatan->deleteByID($dataPengeluaran);
-            }
-            
-            return [
-                'url'=>'/kategori/danamasuk',
-            ];
-        
-            
-            
+            $katPendapatan->deleteByID($dataPendapatan);
         }
 
-        
-
+        if ($checkGroupCategory[0]->gabung==1) {
+            $checkTransaksiDM = $pendapatan->selectByIDJPD($validator['id_jenis_pendapatan']);
+            $checkTransaksiDK = $pengeluaran->selectByIDJPG($validator['id_jenis_pendapatan']);
+            
+            if (count($checkTransaksiDM)>=1 || count($checkTransaksiDK)>=1) {
+                $urlDM="<a href='/danamasuk/kategori/".$validator['id_jenis_pendapatan']."/'>Check ".count($checkTransaksiDM)." Data Pendapatan</a>";
+                $urlDK="<a href='/danakeluar/kategori/".$validator['id_jenis_pendapatan']."/'>Check ".count($checkTransaksiDK)." Data Pengeluaran</a>";
+                return response()->json(['errors' => ['Kategori <b>'.$checkGroupCategory[0]->jenis_pendapatan."</b> Masih digunakan. $urlDM & $urlDK "]], 422);
+            }
+            dd($checkTransaksiDK);
+            
+            $katPendapatan->deleteByID($dataPendapatan);
+            $katPengeluaran->deleteByID($dataPendapatan);
+        }
+        return [
+            'url'=>'/kategori/danamasuk',
+        ];
     }
     // public function viewPengeluaranByJPG(){
     //     return view('app_keuangan.jenis_pendapatan.danaKeluarByKategori');
@@ -235,15 +258,15 @@ class JenisPendapatanController extends Controller
         $validator = $this->validate($request, $rules, $customMessages);
 
         // check jumlah data yang digunakan terkait jenis pengeluaran ini
-        $dataPengeluaranByKat = DB::select('SELECT * from pengeluaran inner join transaksi on id_pengeluaran = jenis_transaksi where id_jenis_pendapatan = ? ',[$validator['id_jenis_pendapatan']]); 
+        $dataPendapatanByKat = DB::select('SELECT * from pengeluaran inner join transaksi on id_pengeluaran = jenis_transaksi where id_jenis_pendapatan = ? ',[$validator['id_jenis_pendapatan']]); 
         
         $dataKatByID = DB::select('SELECT * from jenis_pendapatan where id_jenis_pendapatan = ? limit 1',[$validator['id_jenis_pendapatan']]); 
 
-        $jumlah = count($dataPengeluaranByKat);
+        $jumlah = count($dataPendapatanByKat);
         if ($jumlah>0) {
             $data = array(
                 'dataKatByID' => $dataKatByID,
-                'dataPengeluaranByKat' => $dataPengeluaranByKat,
+                'dataPendapatanByKat' => $dataPendapatanByKat,
             );
             return $data;
 

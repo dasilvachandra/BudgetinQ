@@ -79,35 +79,8 @@ class JenisPendapatan extends Model
         $data = DB::select($this->qSelectByName,[$id_user,$email,$name]);
         return $data;
     }
-
-    public function sumByDate($time)
-    {
-        // dd("");
-        $id_user=Auth::user()->id;
-        $data = DB::select($this->qByDate,[$id_user,$time]);
-        // dd($data);
-        return $data;
-    }
-
-    public function sumGroupByKategori($id_user,$start_default, $end_default)
-    {
-        $data=DB::table('jenis_pendapatan as jp')
-                            ->select('jp.jenis_pendapatan',DB::raw('ifnull(p.sum_kategori,0) as sum_kategori'))
-                            ->leftJoin(DB::raw('(SELECT id_jenis_pendapatan,sum(jumlah) as sum_kategori 
-                                        FROM pendapatan 
-                                        inner join transaksi t on jenis_transaksi=id_pendapatan
-                                        WHERE id=(?) and waktu between ? and ? 
-                                        GROUP BY id_jenis_pendapatan) as p
-                                    '),
-                                function($join)
-                                {
-                                    $join->on('jp.id_jenis_pendapatan', '=', 'p.id_jenis_pendapatan');
-                                })
-                            ->where('jp.id','=','?')
-                            ->orderBy('jp.jenis_pendapatan', 'asc')
-                            ->setBindings([ $id_user,$start_default, $end_default,$id_user])
-                            ->get();
-        return $data;
+    public function GCPendapatan(){
+        return DB::select("select group_category_id, pendapatan,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pendapatan=1");
     }
 
     public function insertData($data)
