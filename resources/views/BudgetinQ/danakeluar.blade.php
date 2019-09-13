@@ -14,8 +14,6 @@
         <div class="col-lg-12 shadow">
             <div class="p-4">
 
-
-
                 <a href="#" class="btn btn-primary btn-icon-split mb-2" data-toggle="modal"
                     data-target="#danakeluarCreateModal">
                     <span class="icon text-white-50">
