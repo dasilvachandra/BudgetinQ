@@ -76,13 +76,13 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/dana/kategori/{id_jenis_pengeluaran}', 'BudgetinQController@danakeluarResponseByKategori'); // return cPengeluaran, gcPengeluaran, list_pengeluaran
     Route::get('/dana/kategori/{id_jenis_pengeluaran}/{time}', 'BudgetinQController@danakeluarResponseByKategori'); // return cPengeluaran, gcPengeluaran, list_pengeluaran
 
-    //CATEGORY DANAKELUAR VIEW
+    //KATEGORI DANAKELUAR VIEW
     Route::get('/kategori/danakeluar', 'BudgetinQController@categoryDK'); // view category danakeluar all periode
     Route::get('/kategori/danakeluar/{time}', 'BudgetinQController@categoryDK'); // view category danakeluar per bulan
     // Route::get('/kategori/danakeluar/{id_group_kategori}/{id_kategori}', 'BudgetinQController@danakeluar'); // view category danakeluar
     // Route::get('/kategori/danakeluar/{id_group_kategori}/{id_kategori}/{time}', 'BudgetinQController@categoryDK'); // view category danakeluar
     
-    //CATEGORY DANAKELUAR RESPONSE
+    //KATEGORI DANAKELUAR RESPONSE
     Route::get('/kategoriDKR', 'BudgetinQController@categoryDKResponse');
     Route::get('/kategoriDKR/{time}', 'BudgetinQController@categoryDKResponse');
     
@@ -91,6 +91,22 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/kategori/danakeluar/edit', 'JenisPengeluaranController@edit'); // EDIT danakeluar
     Route::post('/kategori/danakeluar/update', 'JenisPengeluaranController@update'); //UPDATE danakeluar
     Route::post('/kategori/danakeluar/delete', 'JenisPengeluaranController@delete'); // DELETE danakeluar
+    
+    //KATEGORI DANAMASUK VIEW
+    Route::get('/kategori/danamasuk', 'BudgetinQController@categoryDM'); // view category danamasuk all periode
+    Route::get('/kategori/danamasuk/{time}', 'BudgetinQController@categoryDM'); // view category danamasuk per bulan
+    // Route::get('/kategori/danamasuk/{id_group_kategori}/{id_kategori}', 'BudgetinQController@danamasuk'); // view category danamasuk
+    // Route::get('/kategori/danamasuk/{id_group_kategori}/{id_kategori}/{time}', 'BudgetinQController@categoryDM'); // view category danamasuk
+    
+    //KATEGORI DANAMASUK RESPONSE
+    Route::get('/kategoriDMR', 'BudgetinQController@categoryDMResponse');
+    Route::get('/kategoriDMR/{time}', 'BudgetinQController@categoryDMResponse');
+    
+    // KATEGORI DANAMASUK CRUD
+    Route::post('/kategori/danamasuk/store', 'JenisPendapatanController@store'); // CREATE danamasuk
+    Route::post('/kategori/danamasuk/edit', 'JenisPendapatanController@edit'); // EDIT danamasuk
+    Route::post('/kategori/danamasuk/update', 'JenisPendapatanController@update'); //UPDATE danamasuk
+    Route::post('/kategori/danamasuk/delete', 'JenisPendapatanController@delete'); // DELETE danamasuk
     
 
 

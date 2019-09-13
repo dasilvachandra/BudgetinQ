@@ -9,6 +9,8 @@ use App\Pendapatan;
 use App\Pengeluaran;
 use App\Transaksi;
 use App\JenisPengeluaran;
+use App\JenisPendapatan;
+
 class BudgetinQController  extends Controller
 {
     public $date;
@@ -320,6 +322,52 @@ class BudgetinQController  extends Controller
             'monthYear' => $time,
             'list_jenis_pengeluaran' => $list_pengeluaran,
             'gcPengeluaran' => DB::table('group_category')->where('pengeluaran', '1')->get()
+        );
+        return response()->json($data);
+    }
+
+    public function categoryDM($a=null){
+        $transaksi = new Transaksi;
+        $jenis_pendapatan = new JenisPendapatan;
+        $time = $a ?: date("F, Y");
+        $time = date("F, Y", strtotime($this->timeByMonth($time)['end_default']));
+        $periode = $transaksi->sPeriode()[0];
+        $title='Periode : '.$periode->periode." Bulan ($periode->awal s/d $periode->akhir)";
+        if ($periode->awal == $periode->akhir) {
+            // untuk pengguna baru
+            $periode->periode = $periode->periode ?: 1;
+            $periode->awal = $periode->awal ?: date("Y-m-d");
+            $title='Periode : '.$periode->periode." Bulan ($periode->awal)";
+        }
+        if ($a!=null) {
+            $title="Periode :  Bulan $time";
+        }
+        $data=array(
+            'monthYear' => $time,
+            'title' => $title
+        );
+        // dd($data);
+        return view('BudgetinQ.jenisPendapatanCRUD.view')->with($data);
+    }
+
+    public function categoryDMResponse($time=null){
+        $transaksi = new Transaksi;
+        $jenis_pendapatan = new JenisPendapatan;
+        if ($time!=null) {
+            $dateRange = $this->timeByMonth($time);
+            $list_pendapatan= $jenis_pendapatan->selectRange($dateRange['start_default'],$dateRange['end_default']);
+        }else{
+            // $time = $time ?: date("F, Y");
+            $periode = $transaksi->sPeriode()[0];
+            // $title = "Periode : ".$periode->awal." s/d ".$periode->akhir;
+            // $dateRange = $this->timeByMonth($time);
+            $list_pendapatan=$jenis_pendapatan->selectRange($periode->awal,$periode->akhir);
+        }
+
+        $data=array(
+            'monthYear' => $time,
+            'list_jenis_pendapatan' => $list_pendapatan,
+            'gcPendapatan' => DB::table('group_category')->where('pendapatan', '1')->get()
         );
         return response()->json($data);
     }
