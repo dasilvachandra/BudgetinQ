@@ -49,17 +49,13 @@ class JenisPengeluaran extends Model
 
     public function selectByID($id)
     {
-        $qSelectByID="
-            SELECT id_jenis_pengeluaran ,jenis_pengeluaran,group_category_id, jenis_pengeluaran.updated_at, jenis_pengeluaran.created_at ,color,id
-            FROM 
-                jenis_pengeluaran 
-                    left join pengeluaran using(id_jenis_pengeluaran) 
-                    inner join users using(id) 
-            where users.id=? and email = ? and id_jenis_pengeluaran = ?;
+        $q="
+            SELECT * FROM jenis_pengeluaran 
+                    inner join group_category using(group_category_id)
+            where id=?  and id_jenis_pengeluaran = ?;
          ";
-        $id_user=Auth::user()->id;
-        $email=Auth::user()->email;
-        $data = DB::select($qSelectByID,[$id_user,$email,$id]);
+         
+        $data = DB::select($q,[Auth::user()->id,$id]);
         return $data;
     }
     public function selectByName($name)
@@ -73,7 +69,9 @@ class JenisPengeluaran extends Model
         ])->get();
     }
     public function GCPengeluaran(){
-        return DB::select("select group_category_id, pendapatan,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pengeluaran=1");
+        return DB::select("select group_category_id, pendapatan,gabung,pengeluaran, note,
+        if(gabung=1,concat(group_category,' -> [Pengeluaran <=> Pendapatan]'),concat(group_category,' -> [Pengeluaran]')) as group_category 
+        from group_category where pengeluaran=1");
     }
 
     public function sumByDate($time)

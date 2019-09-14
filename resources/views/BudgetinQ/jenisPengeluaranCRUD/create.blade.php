@@ -14,18 +14,18 @@
                         {{csrf_field()}}
                         <div class="form-group row">
                             <div class="col-sm-12">
-                                <b>Nama Kategori</b>
+                                <b>Nama Kategori Pengeluaran</b>
                                 <div class="input-group-append ">
                                     <span class="input-group-addon"><i
                                             class="material-icons mr-0">label_outline</i></span>
                                     <input type="text" class="form-control form-control-user" ng-model="selectedTime"
-                                        name="jenis_pengeluaran" required placeholder="Deskripsi Pengeluaran">
+                                        name="jenis_pengeluaran" required placeholder="Nama Kategori Pengeluaran">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <b>Group Kategori</b>
-                            <div class="input-group form-float" ng-init="mGC='1'">
+                            <div class="input-group form-float">
                                 <span class="input-group-addon"><i class="material-icons">dehaze</i></span>
                                 <select class="form-control " name="group_category_id" ng-model="mGC"
                                     ng-change="onChange(mGC)" required>
@@ -36,6 +36,7 @@
                                 </select>
                             </div>
                         </div>
+                        <p>Note : *<%cariNote(gcPengeluaran,mGC)%></p>
                     </form>
                 </div>
             </div>

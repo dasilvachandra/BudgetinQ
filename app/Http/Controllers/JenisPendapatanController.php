@@ -35,12 +35,13 @@ class JenisPendapatanController extends Controller
                     $query->where('id', Auth::user()->id);
                 }),
             ],
-            'group_category_id' => ['required','regex:/^[1-6]+$/u','integer','max:6']
+            'group_category_id' => ['required','exists:group_category']
         );
         $customMessages = [
-            'jenis_pendapatan.required' => 'Nama Kategori - Belum di isi',
-            'jenis_pendapatan.regex' => 'Nama Kategori - karakter tidak diperbolehkan',
-            'group_category_id.required' => 'Group Category invalid'
+            'jenis_pendapatan.required' => '<b>Nama Kategori</b> - Belum di isi',
+            'jenis_pendapatan.regex' => '<b>Nama Kategori</b> - karakter tidak diperbolehkan',
+            'group_category_id.required' => '<b>Group Category</b> Belum di pilih',
+            'group_category_id.exists' => '<b>Group Category</b> Belum di pilih'
         ];
         $validator = $this->validate($request, $rules, $customMessages);
 
@@ -192,8 +193,6 @@ class JenisPendapatanController extends Controller
                 $urlDK="<a href='/danakeluar/kategori/".$validator['id_jenis_pendapatan']."/'>Check ".count($checkTransaksiDK)." Data Pengeluaran</a>";
                 return response()->json(['errors' => ['Kategori <b>'.$checkGroupCategory[0]->jenis_pendapatan."</b> Masih digunakan. $urlDM & $urlDK "]], 422);
             }
-            dd($checkTransaksiDK);
-            
             $katPendapatan->deleteByID($dataPendapatan);
             $katPengeluaran->deleteByID($dataPendapatan);
         }

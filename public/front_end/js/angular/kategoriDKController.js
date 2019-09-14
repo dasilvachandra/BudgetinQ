@@ -1,8 +1,18 @@
 app.controller('kategoriDKController', function ($scope, $rootScope, $routeParams) {
-    console.log($rootScope.pathname);
+    $scope.cariNote = function (dataGC, gcID) {
+        if (dataGC != undefined) {
+            var note = dataGC.filter(function (group_category) {
+                return group_category.group_category_id == gcID;
+            });
+            console.log(note[0].note);
+            return note[0].note;
+        }
+    }
+
     function returnData(data) {
         console.log(data);
         $scope.gcPengeluaran = data['gcPengeluaran'];
+        $scope.mGC = "1";
         $scope.$apply();
         tableJenisPengeluaran(data['list_jenis_pengeluaran']);
     }

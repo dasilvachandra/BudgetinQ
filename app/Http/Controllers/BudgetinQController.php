@@ -122,6 +122,8 @@ class BudgetinQController  extends Controller
         $time = $this->dateFilter($validator['time']);
         return $time;
     }
+
+    // DANAMASUK
     
     public function danamasuk($time=null,$day=null){
         $pendapatan = new Pendapatan;
@@ -140,6 +142,37 @@ class BudgetinQController  extends Controller
         );
         return view('BudgetinQ.danamasuk')->with($data);
     }
+    public function vDMByK($id_jenis_pendapatan=null,$time=null){
+        $pendapatan = new Pendapatan;
+        $jenis_pendapatan = DB::table('jenis_pendapatan')->where('id_jenis_pendapatan', $id_jenis_pendapatan)->first();
+        if($jenis_pendapatan==null){
+             return redirect()->to('/kategori/danakeluar');
+        }
+
+        if($time==null){
+            $transaksi = new Transaksi;
+            $periode = $transaksi->sPeriode()[0];
+            $title = "Periode : ".$periode->awal." s/d ".$periode->akhir;
+            $totalDanaMasuk = $pendapatan->totalDanaMasukByKategori($periode->awal,$periode->akhir,$id_jenis_pendapatan);
+        }else{
+            $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
+            $title = "BULAN $time <a class='btn btn-info' href='/danakeluar/kategori/$id_jenis_pendapatan/' >Lihat semua Periode</a>";
+            $dateRange = $this->timeByMonth($time);
+            $totalDanaMasuk = $pendapatan->totalDanaMasukByKategori($dateRange['start_default'],$dateRange['end_default'],$id_jenis_pendapatan);
+        }
+        $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
+        
+        $data=array(
+            'monthYear' => $time,
+            'title' => $title,
+            'jenis_pendapatan' => DB::table('jenis_pendapatan')->where('id', Auth::user()->id)->get(),
+            'page' => 'kategori',
+            'id_jenis_pendapatan' => $id_jenis_pendapatan,
+            'totalDanaKeluar' => $this->rupiah($totalDanaMasuk)
+        );
+        return view('BudgetinQ.danamasuk')->with($data);
+    }
+
     public function danamasukResponse($time=null,$day=null){
         $time = $time ?: date("F, Y");
         $pendapatan = new Pendapatan;
@@ -149,6 +182,7 @@ class BudgetinQController  extends Controller
             $waktu = $this->timeByMonth($day.' '.$time); 
             $list_pendapatan = $pendapatan->selectRange($waktu['end_default'],$waktu['end_default']);
         }
+        dd($list_pendapatan);
         $data=array(
             'cPendapatan' => DB::table('jenis_pendapatan')->where('id', Auth::user()->id)->get(),
             'gcPendapatan' => $pendapatan->GCPendapatan(),
@@ -156,6 +190,30 @@ class BudgetinQController  extends Controller
         );
         return response()->json($data);
     } 
+    public function danamasukResponseByKategori($id_jenis_pendapatan=null,$time=null){
+        // dd($id_jenis_pendapatan);
+        $transaksi = new Transaksi;
+        // $time = $time ?: date("F, Y");
+        // dd($time);
+        $pendapatan = new Pendapatan;
+        if ($time == null) {
+            $periode = $transaksi->sPeriode()[0];
+            // dd($periode->awal);
+            $list_pendapatan = $pendapatan->selectRangeByKategori($periode->awal,$periode->akhir,$id_jenis_pendapatan);
+        }else{
+            $waktu = $this->timeByMonth($time);
+        $list_pendapatan = $pendapatan->selectRangeByKategori($waktu['start_default'],$waktu['end_default'],$id_jenis_pendapatan);
+        }
+        $data=array(
+            'cPendapatan' => DB::table('jenis_pendapatan')->where('id', Auth::user()->id)->get(),
+            'gcPendapatan' => DB::table('group_category')->where('pendapatan', '1')->get(),
+            'list_pendapatan' => $list_pendapatan
+        );
+        return response()->json($data);
+    }  
+
+
+    // DANAKELUAR
 
     public function danakeluar($time=null,$day=null){
         $pengeluaran = new Pengeluaran;
@@ -280,7 +338,7 @@ class BudgetinQController  extends Controller
         return $data;
     }
 
-    public function categoryDK($a=null){
+    public function kategoriDK($a=null){
         $transaksi = new Transaksi;
         $jenis_pengeluaran = new JenisPengeluaran;
         $time = $a ?: date("F, Y");
@@ -304,7 +362,7 @@ class BudgetinQController  extends Controller
         return view('BudgetinQ.jenisPengeluaranCRUD.view')->with($data);
     }
 
-    public function categoryDKResponse($time=null){
+    public function kategoriDKResponse($time=null){
         $transaksi = new Transaksi;
         $jenis_pengeluaran = new JenisPengeluaran;
         if ($time!=null) {

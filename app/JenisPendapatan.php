@@ -70,13 +70,18 @@ class JenisPendapatan extends Model
 
     public function selectByName($name)
     {
-        $id_user=Auth::user()->id;
-        $email=Auth::user()->email;
-        $data = DB::select($this->qSelectByName,[$id_user,$email,$name]);
-        return $data;
+        return DB::table('pendapatan')
+        ->join('jenis_pendapatan','pendapatan.id_jenis_pendapatan','=','jenis_pendapatan.id_jenis_pendapatan')
+        ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
+        ->where([
+            ['jenis_pendapatan','=',$name],
+            ['id','=',Auth::user()->id]
+        ])->get();
     }
     public function GCPendapatan(){
-        return DB::select("select group_category_id, pendapatan,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pendapatan=1");
+        return DB::select("select group_category_id, pendapatan,gabung,pengeluaran, note,
+        if(gabung=1,concat(group_category,' [Pendapatan <=> Pengeluaran]'),concat(group_category,' -> [Pendapatan]')) as group_category 
+        from group_category where pendapatan=1");
     }
 
     public function insertData($data)

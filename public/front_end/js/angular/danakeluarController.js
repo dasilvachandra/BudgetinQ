@@ -12,6 +12,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         tablePengeluaran(data['list_pengeluaran']);
         $scope.$apply();
     }
+    console.log($rootScope.pathname.length);
     if ($rootScope.pathname.length == 3 || $rootScope.pathname.length == 2) {
         url = '/dkr/' + time
         redirectTimeForm('/danakeluar/');
@@ -38,7 +39,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
             url = '/danakeluar/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
             window.location = url;
         });
-        url = '/dana/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
+        url = '/danaDK/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
         console.log(url);
         ajaxGet(url, returnData);
     }

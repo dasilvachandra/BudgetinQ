@@ -38,6 +38,7 @@
                                 </select>
                             </div>
                         </div>
+                        <p>Note : *<%cariNote(gcPengeluaran,mGC)%></p>
                     </form>
                 </div>
             </div>

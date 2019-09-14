@@ -1,19 +1,22 @@
 app.controller('danamasukController', function ($scope, $rootScope, $routeParams) {
+
     $scope.category = function (data, gcID) {
         a = data.filter(function (b) {
             return b.group_category_id == gcID;
         });
         return a;
     };
+
     time = $("#time").val();
     function returnData(data) {
-        console.log(data);
+        // console.log(data);
         $scope.cPendapatan = data['cPendapatan'];
         $scope.gcPendapatan = data['gcPendapatan'];
         tablePendapatan(data['list_pendapatan']);
         $scope.mGC = "6";
         $scope.$apply();
     }
+    console.log($rootScope.pathname);
     if ($rootScope.pathname.length == 3 || $rootScope.pathname.length == 2) {
         url = '/dmr/' + time
         redirectTimeForm('/danamasuk/');
@@ -40,9 +43,11 @@ app.controller('danamasukController', function ($scope, $rootScope, $routeParams
             url = '/danamasuk/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
             window.location = url;
         });
-        url = '/dana/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
-        console.log(url);
+
+        url = '/danaDM/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
+        // console.log(url);
         ajaxGet(url, returnData);
+
     }
 
 

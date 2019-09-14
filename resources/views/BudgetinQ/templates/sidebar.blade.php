@@ -36,9 +36,8 @@
             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Input Keuangan:</h6>
-                <a class="collapse-item" ng-class="url == 'danamasuk' ? 'active' : ''" href="{{url('/danamasuk')}}">Dana
-                    Masuk</a>
-                <a class="collapse-item" ng-class="url == 'danakeluar' ? 'active' : ''" href="{{url('/danakeluar')}}">Dana Keluar</a>
+                <a class="collapse-item" ng-class="url == 'danamasuk' ? 'active' : ''" href="{{url('/danamasuk')}}">Pendapatan</a>
+                <a class="collapse-item" ng-class="url == 'danakeluar' ? 'active' : ''" href="{{url('/danakeluar')}}">Pengeluaran</a>
             </div>
         </div>
     </li>
@@ -53,8 +52,8 @@
         <div id="collapseUtilities" class="collapse" ng-class="url == 'kategori' ? 'show' : ''" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Manage Category:</h6>
-                <a class="collapse-item " ng-class="path2 == 'danamasuk' ? 'active' : ''" href="{{url('/kategori/danamasuk')}}">Dana Masuk</a>
-                <a class="collapse-item" ng-class="path2 == 'danakeluar' ? 'active' : ''" href="{{url('/kategori/danakeluar')}}">Dana Keluar</a>
+                <a class="collapse-item " ng-class="path2 == 'danamasuk' ? 'active' : ''" href="{{url('/kategori/danamasuk')}}">Pendapatan</a>
+                <a class="collapse-item" ng-class="path2 == 'danakeluar' ? 'active' : ''" href="{{url('/kategori/danakeluar')}}">Pengeluaran</a>
             </div>
         </div>
     </li>
