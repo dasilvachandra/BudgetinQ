@@ -14,7 +14,7 @@
                         {{csrf_field()}}
                         <div class="form-group row">
                             <div class="col-sm-12">
-                                <b>Nama Kategori Pengeluaran</b>
+                                <b>Kategori</b>
                                 <div class="input-group-append ">
                                     <span class="input-group-addon"><i
                                             class="material-icons mr-0">label_outline</i></span>
@@ -24,7 +24,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <b>Group Kategori</b>
+                            <b>Group</b>
                             <div class="input-group form-float">
                                 <span class="input-group-addon"><i class="material-icons">dehaze</i></span>
                                 <select class="form-control " name="group_category_id" ng-model="mGC"

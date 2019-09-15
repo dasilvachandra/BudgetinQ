@@ -34,12 +34,12 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<b>Group Kategori</b>
+							<b>Group</b>
 							<div class="input-group form-float" ng-init="mGC='6'">
 								<span class="input-group-addon"><i class="material-icons">dehaze</i></span>
 								<select class="form-control " name="group_category" ng-model="mGC"
 									ng-change="onChange(mGC)" required>
-									<option>-- Pilih Kategori --</option>
+									<option>-- Pilih Group --</option>
 									<option ng-repeat="s in gcPendapatan" value="<%s.group_category_id%>">
 										<%s.group_category%>
 									</option>

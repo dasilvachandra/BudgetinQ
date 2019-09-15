@@ -139,9 +139,10 @@ class BudgetinQController  extends Controller
         $periode = $transaksi->sPeriode()[0];
         $totalDanaMasuk = $pendapatan->totalDanaMasuk($periode->awal,$this->monthBefore($time));
         $totalDanaKeluar = $pengeluaran->totalDanaKeluar($periode->awal,$this->monthBefore($time));
+        $saldoBulanLalu = $totalDanaMasuk-$totalDanaKeluar;
         $dateRange = $this->timeByMonth($time);
         $totalDanaMasukBulanIni = $pendapatan->totalDanamasuk($dateRange['start_default'],$dateRange['end_default']);
-        $saldoBulanLalu = $totalDanaMasuk-$totalDanaKeluar;
+        
         $data=array(
             'monthYear' => $time,
             'title' => $title,
@@ -154,9 +155,11 @@ class BudgetinQController  extends Controller
     }
     public function vDMByK($id_jenis_pendapatan=null,$time=null){
         $pendapatan = new Pendapatan;
+        $pengeluaran = new Pengeluaran;
+        $transaksi = new Transaksi;
         $jenis_pendapatan = DB::table('jenis_pendapatan')->where('id_jenis_pendapatan', $id_jenis_pendapatan)->first();
         if($jenis_pendapatan==null){
-             return redirect()->to('/kategori/danakeluar');
+             return redirect()->to('/danamasuk/danakeluar');
         }
 
         if($time==null){
@@ -166,13 +169,25 @@ class BudgetinQController  extends Controller
             $totalDanaMasuk = $pendapatan->totalDanaMasukByKategori($periode->awal,$periode->akhir,$id_jenis_pendapatan);
         }else{
             $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
-            $title = "BULAN $time <a class='btn btn-info' href='/danakeluar/kategori/$id_jenis_pendapatan/' >Lihat semua Periode</a>";
+            $title = "BULAN $time <a class='btn btn-info' href='/danamasuk/kategori/$id_jenis_pendapatan/' >Lihat semua Periode</a>";
             $dateRange = $this->timeByMonth($time);
             $totalDanaMasuk = $pendapatan->totalDanaMasukByKategori($dateRange['start_default'],$dateRange['end_default'],$id_jenis_pendapatan);
         }
         $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
+        $dateRange = $this->timeByMonth($time);
+        $totalDanaMasukBulanIni = $pendapatan->totalDanamasuk($dateRange['start_default'],$dateRange['end_default']);
+        
+
+        $periode = $transaksi->sPeriode()[0];
+        $totalDanaMasuk = $pendapatan->totalDanaMasuk($periode->awal,$this->monthBefore($time));
+        $totalDanaKeluar = $pengeluaran->totalDanaKeluar($periode->awal,$this->monthBefore($time));
+        $saldoBulanLalu = $totalDanaMasuk-$totalDanaKeluar;
         
         $data=array(
+            'danamasuk' => $this->rupiah($totalDanaMasukBulanIni),
+            'saldoBulanLalu' => $this->rupiah($saldoBulanLalu),
+            'totalDanaMasuk' => $this->rupiah($totalDanaMasukBulanIni+$saldoBulanLalu),
+            'monthBefore' => date("F, Y", strtotime($this->monthBefore($time))),
             'monthYear' => $time,
             'title' => $title,
             'jenis_pendapatan' => DB::table('jenis_pendapatan')->where('id', Auth::user()->id)->get(),
