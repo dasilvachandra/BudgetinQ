@@ -137,9 +137,4 @@ function monthYear(d) {
     return monthNames[mm] + ", " + yy;
 }
 
-function redirectTimeForm(url) {
-    $('#time').change(function () {
-        time = $('#time').val();
-        window.location = url + time;
-    });
-}
+

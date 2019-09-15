@@ -16,6 +16,7 @@
 </div>
 @stop
 
+
 <div class="card-header py-3 mb-4">
     <h6 class=" font-weight-bold text-primary">DAFTAR PENDAPATAN
         @if (isset($page)=='kategori')

@@ -2,7 +2,6 @@
 <script src="{{asset('front_end/js/angular/angular-route.min.js')}}"></script>
 <script src="{{asset('front_end/vendor/jquery/jquery.min.js')}}"></script>
 <script src="{{asset('front_end/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-
 <!-- Core plugin JavaScript-->
 <script src="{{asset('front_end/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
 
@@ -20,6 +19,10 @@
 <script src="{{asset('front_end/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js')}}"></script>
 <script
     src="{{asset('front_end/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js')}}"></script>
+
+    <!-- Morris Plugin Js -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 
 
 <script>

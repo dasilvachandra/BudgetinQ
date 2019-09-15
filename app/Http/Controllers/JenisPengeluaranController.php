@@ -176,7 +176,7 @@ class JenisPengeluaranController extends Controller
             $checkTransaksiDK = $pengeluaran->selectByIDJPG($validator['id_jenis_pengeluaran']);
             
             if (count($checkTransaksiDK)>=1) {
-                $urlDM="<a href='/danamasuk/kategori/".$validator['id_jenis_pengeluaran']."/'>Lihat ".count($checkTransaksiDK)." Data Pendapatan </a>";
+                $urlDM="<a href='/danakeluar/kategori/".$validator['id_jenis_pengeluaran']."/'>Lihat ".count($checkTransaksiDK)." Data Pengeluaran </a>";
                 return response()->json(['errors' => ['Kategori <b>'.$checkTransaksiDK[0]->jenis_pengeluaran."</b> Masih digunakan. $urlDM"]], 422);
             }
             $katPengeluaran->deleteByID($dataPendapatan);

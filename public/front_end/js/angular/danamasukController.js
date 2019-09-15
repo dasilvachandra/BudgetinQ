@@ -1,5 +1,5 @@
 app.controller('danamasukController', function ($scope, $rootScope, $routeParams) {
-
+    console.log("ok");
     $scope.category = function (data, gcID) {
         a = data.filter(function (b) {
             return b.group_category_id == gcID;
@@ -30,7 +30,7 @@ app.controller('danamasukController', function ($scope, $rootScope, $routeParams
 
     // get data danamasuk by kategori
     if ($rootScope.pathname[2] == 'kategori') {
-        $scope.sjpg = $rootScope.pathname[3];
+        $scope.sjpd = $rootScope.pathname[3];
         $scope.onChangeSJPG = function (value) {
             $rootScope.pathname.splice(3, 1, value);
             url = '/danamasuk/kategori/' + $rootScope.pathname[3] + "/" + $rootScope.pathname[4];
