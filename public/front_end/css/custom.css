@@ -14,3 +14,13 @@ table.dataTable tbody tr.selected a:hover {
 a {
 	text-decoration: none !important;
 }
+/* myPieChart */
+#no-data{
+	display: none;
+	position: absolute;
+	padding: 50px 0;
+	text-align: center;
+	font-size: 3rem;
+	top: 15%;
+	width: 100%;
+  }

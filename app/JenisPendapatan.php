@@ -104,35 +104,60 @@ class JenisPendapatan extends Model
 
 
 
-    public function selectByGroup($group_category_id,$start_default, $end_default)
-    {
-        $data = DB::select("set @time = MONTHNAME(?), @year = DATE_FORMAT(?, '%Y')",[$start_default,$start_default]);
-        $q="
-            SELECT  id_jenis_pendapatan as id_kategori, jenis_pendapatan as kategori, ifnull(count, 0) as count, color, ifnull(total,0) as total, concat(@time,' ',@year) as bulan
-            FROM jenis_pendapatan 
-            LEFT JOIN 
-            (
-                SELECT id_kategori, kategori, count(kategori) as count, waktu, sum(jumlah) as total
-                FROM 
-                (
-                    SELECT id_kategori, kategori, nama_pendapatan,waktu, jumlah 
-                    FROM 
+    // public function selectByGroup($group_category_id,$start_default, $end_default)
+    // {
+    //     $data = DB::select("set @time = MONTHNAME(?), @year = DATE_FORMAT(?, '%Y')",[$start_default,$start_default]);
+    //     $q="
+    //         SELECT  id_jenis_pendapatan as id_kategori, jenis_pendapatan as kategori, ifnull(count, 0) as count, color, ifnull(total,0) as total, concat(@time,' ',@year) as bulan
+    //         FROM jenis_pendapatan 
+    //         LEFT JOIN 
+    //         (
+    //             SELECT id_kategori, kategori, count(kategori) as count, waktu, sum(jumlah) as total
+    //             FROM 
+    //             (
+    //                 SELECT id_kategori, kategori, nama_pendapatan,waktu, jumlah 
+    //                 FROM 
+    //                 (
+    //                     SELECT group_category_id, id_jenis_pendapatan as id_kategori, jenis_pendapatan as kategori, updated_at, color,created_at 
+    //                     FROM jenis_pendapatan 
+    //                     jumlah WHERE group_category_id = ? and id=?
+    //                 ) kategori 
+    //                 INNER join pendapatan on id_kategori = id_jenis_pendapatan 
+    //                 INNER join transaksi on id_pendapatan = jenis_transaksi
+    //             ) a 
+    //                 WHERE waktu between ? and ?
+    //                 GROUP by kategori
+    //         ) b on id_jenis_pendapatan = id_kategori 
+    //         WHERE id=? and group_category_id=?;";
+    //     $id=Auth::user()->id;
+    //     $data = DB::select($q,[$group_category_id,$id,$start_default, $end_default,$id,$group_category_id]);
+    //     return $data;
+    // }
+    public function selectAllByGC($id_user,$start_default, $end_default){
+        $q="select a.group_category_id, a.group_category, ifnull(id_jenis_pendapatan,'0') as id_jenis_pendapatan, 
+        ifnull(jenis_pendapatan,'0') as jenis_pendapatan,ifnull(color,'rgb(78,115,223)') as color, 
+        count(nama_pendapatan) as jt,
+        sum(ifnull(jumlah,0)) as total, 
+        round((sum(ifnull(jumlah,0))/(b.danakeluar))*100,2) persen
+        from group_category as a 
+        left join (
+                    select group_category_id, id_pendapatan, id_jenis_pendapatan,nama_pendapatan, jumlah, waktu, jenis_pendapatan, color, group_category,
                     (
-                        SELECT group_category_id, id_jenis_pendapatan as id_kategori, jenis_pendapatan as kategori, updated_at, color,created_at 
-                        FROM jenis_pendapatan 
-                        jumlah WHERE group_category_id = ? and id=?
-                    ) kategori 
-                    INNER join pendapatan on id_kategori = id_jenis_pendapatan 
-                    INNER join transaksi on id_pendapatan = jenis_transaksi
-                ) a 
-                    WHERE waktu between ? and ?
-                    GROUP by kategori
-            ) b on id_jenis_pendapatan = id_kategori 
-            WHERE id=? and group_category_id=?;";
-        $id=Auth::user()->id;
-        $data = DB::select($q,[$group_category_id,$id,$start_default, $end_default,$id,$group_category_id]);
-        return $data;
+                        SELECT ifnull(sum(jumlah),0) as total 
+                        FROM transaksi 
+                        inner join pendapatan on jenis_transaksi=id_pendapatan 
+                        where id=? and waktu between ? and ?
+                    ) as danakeluar
+                    from transaksi 
+                    inner join pendapatan on jenis_transaksi = id_pendapatan 
+                    inner join jenis_pendapatan using(id_jenis_pendapatan) 
+                    inner join group_category using(group_category_id)
+                    where transaksi.id = ? and waktu between ? and ?
+                ) as b using(group_category_id) 
+        where a.pendapatan = 1
+        group by a.group_category, a.group_category_id 
+        order by total desc, a.group_category desc";
+        return DB::select($q,[$id_user,$start_default,$end_default,$id_user,$start_default,$end_default]);
     }
-
 
 }

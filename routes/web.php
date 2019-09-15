@@ -29,7 +29,7 @@ Route::group(['middleware' => ['auth']], function() {
     // API
     Route::post('/chartArea', 'BudgetinQController@chartArea'); // return labels, totalPerHari
     Route::post('/chartPie', 'BudgetinQController@chartPie'); // return ? on progress.... 
-    // Route::post('/dataGC', 'BudgetinQController@dataGC'); 
+    Route::post('/dashboardResponse', 'BudgetinQController@dashboardResponse'); 
 
     // DANAMASUK VIEW
     Route::get('/danamasuk', 'BudgetinQController@danamasuk'); // view danamasuk by this month latest

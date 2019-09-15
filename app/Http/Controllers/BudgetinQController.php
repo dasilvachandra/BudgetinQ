@@ -26,6 +26,8 @@ class BudgetinQController  extends Controller
         $pengeluaran = new Pengeluaran;
         $transaksi = new Transaksi;
         $pendapatan = new Pendapatan;
+        $jenis_pengeluaran = new JenisPengeluaran;
+        $jenis_pendapatan = new JenisPendapatan;
         $periode = $transaksi->sPeriode()[0];
         $totalDanamasuk = $pendapatan->totalDanaMasuk($periode->awal,$this->monthBefore($time));
         $totalDanaKeluar = $pengeluaran->totalDanaKeluar($periode->awal,$this->monthBefore($time));
@@ -34,9 +36,17 @@ class BudgetinQController  extends Controller
         $danakeluar = $pengeluaran->totalDanakeluar($dateRange['start_default'],$dateRange['end_default']);
         $danamasuk = $saldoBulanLalu+$pendapatan->totalDanaMasuk($dateRange['start_default'],$dateRange['end_default']);
         $saldo=$danamasuk-$danakeluar;
-        $gcPengeluaran = DB::table('group_category')->where('pengeluaran', '1')->get();
-        $gcPendapatan = DB::table('group_category')->where('pendapatan', '1')->get();
+        $gcPengeluaran = $jenis_pengeluaran->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
+        $gcPendapatan = $jenis_pendapatan->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
         $textColor=['#4e73df','#f6c23e','#1cc88a','#e74a3b','#fd7e14','#36b9cc','#6f42c1','#858796'];
+        // $jenis_pengeluaran->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
+        $jmltgldlmsebulan =cal_days_in_month(CAL_GREGORIAN,date("m", strtotime($time)),date("Y", strtotime($time)));
+        $tgl = date("d");
+        $sisaHari = $jmltgldlmsebulan-$tgl;
+        if ($sisaHari==0) {
+            $sisaHari = 1;
+        }
+        $maxperhari = ceil($saldo/$sisaHari);
         $data=array(
             'danakeluar' => $this->rupiah($danakeluar),
             'danamasuk' => $this->rupiah($danamasuk),
@@ -44,10 +54,38 @@ class BudgetinQController  extends Controller
             'monthYear' => $time,
             'gcPengeluaran' => $gcPengeluaran,
             'gcPendapatan' => $gcPendapatan,
-            'textColor' => $textColor
+            'textColor' => $textColor,
+            'maxperhari' => $this->rupiah($maxperhari),
+
         );
         
         return view('BudgetinQ.dashboard')->with($data);
+    }
+
+
+    public function dashboardResponse(Request $request){
+        $pengeluaran = new Pengeluaran;
+        $jenis_pengeluaran = new JenisPengeluaran;
+        $jenis_pendapatan = new JenisPendapatan;
+        $rules = array(
+                'time' => 'required|max:255'
+            );
+        $customMessages = [
+                'time.required' => 'time error'
+            ];
+        $validator = $this->validate($request, $rules, $customMessages);
+        $dateRange = $this->timeByMonth($validator['time']);
+        $gcPengeluaran = $jenis_pengeluaran->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
+        $gcPendapatan = $jenis_pendapatan->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
+        $jenis_pengeluaran = new JenisPengeluaran;
+        $jenis_pendapatan = new JenisPendapatan;
+        $data=array(
+            'cPengeluaran' => DB::table('jenis_pengeluaran')->where('id', Auth::user()->id)->get(),
+            'gcPengeluaran' => $gcPengeluaran,
+            'gcPendapatan' => $gcPendapatan
+        );
+        return $data;
+
     }
     // PER GROUP BY WAKTU
     public function chartArea(Request $request){
@@ -112,15 +150,33 @@ class BudgetinQController  extends Controller
 
     public function chartPie(Request $request){
         $pengeluaran = new Pengeluaran;
+        $jenis_pengeluaran = new JenisPengeluaran;
         $rules = array(
-            'time' => 'required|max:255'
+            'time' => 'required|max:255',
+            'group_category_id' => ['required','exists:group_category']
         );
         $customMessages = [
             'time.required' => 'time error'
         ];
         $validator = $this->validate($request, $rules, $customMessages);
+        $dateRange = $this->timeByMonth($validator['time']);
+        $list_pengeluaran= $jenis_pengeluaran->selectAllByGCID(Auth::user()->id,$dateRange['start_default'],$dateRange['end_default'],$validator['group_category_id']);
+        
+        $dataDonut = array();
+        foreach ($list_pengeluaran as $id=>$data) {
+            $dataDonut[] = array(
+                'label' =>  $data->jenis_pengeluaran,
+                'value' => $data->total,
+                'colors' => $data->color
+            );
+        }
         $time = $this->dateFilter($validator['time']);
-        return $time;
+        $data = array(
+            'time' => $time,
+            'list_pengeluaran' => $list_pengeluaran,
+            'dataDonut' => json_encode($dataDonut)
+        );
+        return $data;
     }
 
     // DANAMASUK

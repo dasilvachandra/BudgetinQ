@@ -30,7 +30,7 @@
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
             aria-controls="collapseTwo">
             <i class="fa fa-plus" aria-hidden="true"></i>
-            <span>ADD</span>
+            <span>APP KEUANGAN</span>
         </a>
         <div id="collapseTwo" class="collapse" ng-class="url == 'danamasuk' ? 'show' : '' || url == 'danakeluar' ? 'show' : ''" aria-labelledby="headingTwo"
             data-parent="#accordionSidebar">
