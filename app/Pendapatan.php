@@ -20,23 +20,13 @@ class Pendapatan extends Model
         where id=? and waktu = ? and nama_pendapatan = ? and jumlah = ? and id_jenis_pendapatan = ?', $data);
     }
     public function selectAll($range_date){
-        
-        $q=" SELECT 
-        id_pendapatan,
-        DATE_FORMAT(waktu, '%d %M, %Y') waktu,
-        nama_pendapatan,
-        jumlah ,
-        jenis_pendapatan,
-        group_category_id,
-        id_jenis_pendapatan
-        from transaksi inner join pendapatan on jenis_transaksi=id_pendapatan 
-        inner join jenis_pendapatan using(id_jenis_pendapatan)
-        where transaksi.id=? and waktu between ? and ? ;
-        ";
-        $id=Auth::user()->id;
-        $start_default = $range_date['start_default'];
-        $end_default = $range_date['end_default'];
-        return DB::select($q,[$id,$start_default,$end_default]);
+        return DB::table('pendapatan')
+        ->join('transaksi','pendapatan.id_pendapatan','=','transaksi.jenis_transaksi')
+        ->join('jenis_pendapatan','jenis_pendapatan.id_jenis_pendapatan','=','pendapatan.id_jenis_pendapatan')
+        ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
+        ->where('transaksi.id','=',Auth::user()->id)
+        ->whereBetween('waktu', [$range_date['start_default'], $range_date['end_default']])
+        ->get();
     }
     public function selectByID($id){
                 

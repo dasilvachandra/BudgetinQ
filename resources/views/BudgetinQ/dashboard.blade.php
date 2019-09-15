@@ -77,8 +77,8 @@
         </div>
     </div>
 </div>
-<!-- Content Row -->
 
+<!-- Content Row -->
 <div class="row">
 
     <!-- Area Chart -->
