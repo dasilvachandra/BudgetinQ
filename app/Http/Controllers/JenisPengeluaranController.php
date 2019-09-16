@@ -195,6 +195,7 @@ class JenisPengeluaranController extends Controller
             $katPengeluaran->deleteByID($dataPendapatan);
         }
         return [
+            'pesan' => '1',
             'url'=>'/kategori/danakeluar',
         ];
     }

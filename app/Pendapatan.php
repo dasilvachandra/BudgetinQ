@@ -21,6 +21,7 @@ class Pendapatan extends Model
     }
     public function selectAll($range_date){
         return DB::table('pendapatan')
+        ->select(DB::raw('*, concat(group_category," [",jenis_pendapatan,"]") as group_category'))
         ->join('transaksi','pendapatan.id_pendapatan','=','transaksi.jenis_transaksi')
         ->join('jenis_pendapatan','jenis_pendapatan.id_jenis_pendapatan','=','pendapatan.id_jenis_pendapatan')
         ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
@@ -191,21 +192,31 @@ class Pendapatan extends Model
         ";
         return DB::select($q,[$id,$start_default,$end_default]);
     }
+    // public function selectRangeByKategori($start_default,$end_default,$id_jenis_pendapatan){
+    //     $id=Auth::user()->id;
+    //     $q=" SELECT 
+    //     id_pendapatan,
+    //     DATE_FORMAT(waktu, '%d %M, %Y') waktu,
+    //     nama_pendapatan,
+    //     jumlah ,
+    //     jenis_pendapatan,
+    //     group_category_id,
+    //     id_jenis_pendapatan
+    //     from transaksi inner join pendapatan on jenis_transaksi=id_pendapatan 
+    //     inner join jenis_pendapatan using(id_jenis_pendapatan)
+    //     where transaksi.id=? and waktu between ? and ? and id_jenis_pendapatan = ? ;
+    //     ";
+    //     // dd($id,$start_default,$end_default,$id_jenis_pendapatan);
+    //     return DB::select($q,[$id,$start_default,$end_default,$id_jenis_pendapatan]);
+    // }
     public function selectRangeByKategori($start_default,$end_default,$id_jenis_pendapatan){
-        $id=Auth::user()->id;
-        $q=" SELECT 
-        id_pendapatan,
-        DATE_FORMAT(waktu, '%d %M, %Y') waktu,
-        nama_pendapatan,
-        jumlah ,
-        jenis_pendapatan,
-        group_category_id,
-        id_jenis_pendapatan
-        from transaksi inner join pendapatan on jenis_transaksi=id_pendapatan 
-        inner join jenis_pendapatan using(id_jenis_pendapatan)
-        where transaksi.id=? and waktu between ? and ? and id_jenis_pendapatan = ? ;
-        ";
-        // dd($id,$start_default,$end_default,$id_jenis_pendapatan);
-        return DB::select($q,[$id,$start_default,$end_default,$id_jenis_pendapatan]);
+        return DB::table('pendapatan')
+        ->select(DB::raw('*, concat(group_category," [",jenis_pendapatan,"]") as group_category'))
+        ->join('transaksi','pendapatan.id_pendapatan','=','transaksi.jenis_transaksi')
+        ->join('jenis_pendapatan','jenis_pendapatan.id_jenis_pendapatan','=','pendapatan.id_jenis_pendapatan')
+        ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
+        ->where([['transaksi.id','=',Auth::user()->id],['jenis_pendapatan.id_jenis_pendapatan','=',$id_jenis_pendapatan]])
+        ->whereBetween('waktu', [$start_default, $end_default])
+        ->get();
     }
 }

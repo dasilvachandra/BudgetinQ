@@ -12,6 +12,7 @@
                 <div class="p-4">
                     <form class="user" id="form_edit_pendapatan" method="POST">
                         {{csrf_field()}}
+                        <input type="hidden" id="id_pendapatan" ng-value="id_pendapatan" name="id_pendapatan" value="">
                         <div class="form-group row">
                             <div class="col-sm-6 mb-3 mb-sm-0">
                                 <b>Tanggal</b>

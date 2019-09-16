@@ -20,23 +20,14 @@ class Pengeluaran extends Model
         where id=? and waktu = ? and nama_pengeluaran = ? and jumlah = ? and id_jenis_pengeluaran = ?', $data);
     }
     public function selectAll($range_date){
-        
-        $q=" SELECT 
-        id_pengeluaran,
-        DATE_FORMAT(waktu, '%d %M, %Y') waktu,
-        nama_pengeluaran,
-        jumlah ,
-        jenis_pengeluaran,
-        group_category_id,
-        id_jenis_pengeluaran
-        from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
-        inner join jenis_pengeluaran using(id_jenis_pengeluaran)
-        where transaksi.id=? and waktu between ? and ? ;
-        ";
-        $id=Auth::user()->id;
-        $start_default = $range_date['start_default'];
-        $end_default = $range_date['end_default'];
-        return DB::select($q,[$id,$start_default,$end_default]);
+        return DB::table('pengeluaran')
+        ->select(DB::raw('*, concat(group_category," [",jenis_pengeluaran,"]") as group_category'))
+        ->join('transaksi','pengeluaran.id_pengeluaran','=','transaksi.jenis_transaksi')
+        ->join('jenis_pengeluaran','jenis_pengeluaran.id_jenis_pengeluaran','=','pengeluaran.id_jenis_pengeluaran')
+        ->join('group_category','jenis_pengeluaran.group_category_id','=','group_category.group_category_id')
+        ->where('transaksi.id','=',Auth::user()->id)
+        ->whereBetween('waktu', [$range_date['start_default'], $range_date['end_default']])
+        ->get();
     }
     public function selectByID($id){
                 
@@ -182,40 +173,44 @@ class Pengeluaran extends Model
         DB::select('UPDATE pengeluaran set nama_pengeluaran = ?, jumlah = ? , picture = ?, id_jenis_pengeluaran = ? WHERE id_pengeluaran = ?', $data);
     }
     
+    // public function selectRange($start_default,$end_default){
+    //     $id=Auth::user()->id;
+    //     $q=" SELECT 
+    //     id_pengeluaran,
+    //     DATE_FORMAT(waktu, '%d %M, %Y') waktu,
+    //     nama_pengeluaran,
+    //     jumlah ,
+    //     jenis_pengeluaran,
+    //     group_category_id,
+    //     id_jenis_pengeluaran
+    //     from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
+    //     inner join jenis_pengeluaran using(id_jenis_pengeluaran)
+    //     where transaksi.id=? and waktu between ? and ? ;
+    //     ";
+    //     return DB::select($q,[$id,$start_default,$end_default]);
+    // }
     public function selectRange($start_default,$end_default){
-        $id=Auth::user()->id;
-        $q=" SELECT 
-        id_pengeluaran,
-        DATE_FORMAT(waktu, '%d %M, %Y') waktu,
-        nama_pengeluaran,
-        jumlah ,
-        jenis_pengeluaran,
-        group_category_id,
-        id_jenis_pengeluaran
-        from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
-        inner join jenis_pengeluaran using(id_jenis_pengeluaran)
-        where transaksi.id=? and waktu between ? and ? ;
-        ";
-        return DB::select($q,[$id,$start_default,$end_default]);
+        return DB::table('pengeluaran')
+        ->select(DB::raw('*, concat(group_category," [",jenis_pengeluaran,"]") as group_category'))
+        ->join('transaksi','pengeluaran.id_pengeluaran','=','transaksi.jenis_transaksi')
+        ->join('jenis_pengeluaran','jenis_pengeluaran.id_jenis_pengeluaran','=','pengeluaran.id_jenis_pengeluaran')
+        ->join('group_category','jenis_pengeluaran.group_category_id','=','group_category.group_category_id')
+        ->where([['transaksi.id','=',Auth::user()->id]])
+        ->whereBetween('waktu', [$start_default, $end_default])
+        ->get();
     }
+
     public function selectRangeByKategori($start_default,$end_default,$id_jenis_pengeluaran){
-        $id=Auth::user()->id;
-        $q=" SELECT 
-        id_pengeluaran,
-        DATE_FORMAT(waktu, '%d %M, %Y') waktu,
-        nama_pengeluaran,
-        jumlah ,
-        jenis_pengeluaran,
-        group_category_id,
-        id_jenis_pengeluaran
-        from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran 
-        inner join jenis_pengeluaran using(id_jenis_pengeluaran)
-        where transaksi.id=? and waktu between ? and ? and id_jenis_pengeluaran = ? ;
-        ";
-        // dd($id,$start_default,$end_default,$id_jenis_pengeluaran);
-        return DB::select($q,[$id,$start_default,$end_default,$id_jenis_pengeluaran]);
+        return DB::table('pengeluaran')
+        ->select(DB::raw('*, concat(group_category," [",jenis_pengeluaran,"]") as group_category'))
+        ->join('transaksi','pengeluaran.id_pengeluaran','=','transaksi.jenis_transaksi')
+        ->join('jenis_pengeluaran','jenis_pengeluaran.id_jenis_pengeluaran','=','pengeluaran.id_jenis_pengeluaran')
+        ->join('group_category','jenis_pengeluaran.group_category_id','=','group_category.group_category_id')
+        ->where([['transaksi.id','=',Auth::user()->id],['jenis_pengeluaran.id_jenis_pengeluaran','=',$id_jenis_pengeluaran]])
+        ->whereBetween('waktu', [$start_default, $end_default])
+        ->get();
     }
     public function GCPengeluaran(){
-        return DB::select("select group_category_id, pendapatan,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pengeluaran=1");
+        return DB::select("select group_category_id, pengeluaran,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pengeluaran=1");
     }
 }

@@ -25,7 +25,7 @@
                 <th>Tanggal</th>
                 <th>Deskripsi</th>
                 <th>Jumlah</th>
-                <th>Kategori</th>
+                <th>Group</th>
             </tr>
         </thead>
         <tbody>
