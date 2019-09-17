@@ -29,9 +29,11 @@ class BudgetinQController  extends Controller
         $jenis_pengeluaran = new JenisPengeluaran;
         $jenis_pendapatan = new JenisPendapatan;
         $periode = $transaksi->sPeriode()[0];
-        $totalDanamasuk = $pendapatan->totalDanaMasuk($periode->awal,$this->monthBefore($time));
+        $totalDanaMasuk = $pendapatan->totalDanaMasuk($periode->awal,$this->monthBefore($time));
+        
         $totalDanaKeluar = $pengeluaran->totalDanaKeluar($periode->awal,$this->monthBefore($time));
-        $saldoBulanLalu=$totalDanamasuk-$totalDanaKeluar;
+        // dd($totalDanaKeluar);
+        $saldoBulanLalu=$totalDanaMasuk-$totalDanaKeluar;
         $dateRange = $this->timeByMonth($time);
         $danakeluar = $pengeluaran->totalDanakeluar($dateRange['start_default'],$dateRange['end_default']);
         $danamasuk = $saldoBulanLalu+$pendapatan->totalDanaMasuk($dateRange['start_default'],$dateRange['end_default']);
@@ -197,7 +199,7 @@ class BudgetinQController  extends Controller
         $totalDanaKeluar = $pengeluaran->totalDanaKeluar($periode->awal,$this->monthBefore($time));
         $saldoBulanLalu = $totalDanaMasuk-$totalDanaKeluar;
         $dateRange = $this->timeByMonth($time);
-        $totalDanaMasukBulanIni = $pendapatan->totalDanamasuk($dateRange['start_default'],$dateRange['end_default']);
+        $totalDanaMasukBulanIni = $pendapatan->totalDanaMasuk($dateRange['start_default'],$dateRange['end_default']);
         
         $data=array(
             'monthYear' => $time,
@@ -231,7 +233,7 @@ class BudgetinQController  extends Controller
         }
         $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
         $dateRange = $this->timeByMonth($time);
-        $totalDanaMasukBulanIni = $pendapatan->totalDanamasuk($dateRange['start_default'],$dateRange['end_default']);
+        $totalDanaMasukBulanIni = $pendapatan->totalDanaMasuk($dateRange['start_default'],$dateRange['end_default']);
         
 
         $periode = $transaksi->sPeriode()[0];
@@ -305,6 +307,7 @@ class BudgetinQController  extends Controller
             $title = "$day $time";
         $dateRange = $this->timeByMonth($time);
         $totalDanaKeluar = $this->rupiah($pengeluaran->totalDanaKeluar($dateRange['start_default'],$dateRange['end_default']));
+        // dd($list_pengeluaran);
         $data=array(
             'monthYear' => $time,
             'title' => $title,
