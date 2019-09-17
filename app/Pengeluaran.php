@@ -132,6 +132,16 @@ class Pengeluaran extends Model
         return $result;
     }
 
+    public function totalPerHariGroup($range_date)
+    {
+        $id=Auth::user()->id;
+        $start_default = $range_date['start_default'];
+        $end_default = $range_date['end_default'];
+        $q = "SELECT waktu, ifnull(sum(jumlah),0) as total from pengeluaran inner join transaksi on id_pengeluaran=jenis_transaksi where waktu BETWEEN ? and ? and id=? group by waktu;";
+        $result = DB::select($q,[$start_default,$end_default,$id]);
+        return $result;
+    }
+
     public function remove($data){
         DB::select('DELETE pengeluaran, transaksi 
             from pengeluaran 
