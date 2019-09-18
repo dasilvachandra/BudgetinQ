@@ -6,7 +6,8 @@
 @section('content')
 <div ng-controller="dashboardController as Ctrl">
     <!-- Content Card Total Pendapatan, Total Pengeluaran, Saldo, Maximum Per Hari -->
-    @include('BudgetinQ.dashboard.card')
+    @include('BudgetinQ.dashboard.card1')
+    @include('BudgetinQ.dashboard.card2')
     <!-- Content Grafik & Diagram Bulat -->
     <div class="row">
         <!-- Area Chart -->

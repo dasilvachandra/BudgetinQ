@@ -22,42 +22,93 @@ class BudgetinQController  extends Controller
 
     public function dashboard($time=null)
     {
-        $time = $time ?: date("F, Y");
-        $pengeluaran = new Pengeluaran;
-        $transaksi = new Transaksi;
-        $pendapatan = new Pendapatan;
-        $jenis_pengeluaran = new JenisPengeluaran;
-        $jenis_pendapatan = new JenisPendapatan;
+        $time = $time ?: date("F, Y");$jenis_pengeluaran = new JenisPengeluaran;$jenis_pendapatan = new JenisPendapatan;$pengeluaran = new Pengeluaran;$pendapatan = new Pendapatan;$transaksi = new Transaksi;
+        // DEKLARASI WAKTU
         $periode = $transaksi->sPeriode()[0];
-        $totalDanaMasuk = $pendapatan->totalDanaMasuk($periode->awal,$this->monthBefore($time));
-        
-        $totalDanaKeluar = $pengeluaran->totalDanaKeluar($periode->awal,$this->monthBefore($time));
-        // dd($totalDanaKeluar);
-        $saldoBulanLalu=$totalDanaMasuk-$totalDanaKeluar;
+        $awalBulan = $periode->awal;
+        $bulanLalu = $this->monthBefore($time);
         $dateRange = $this->timeByMonth($time);
-        $danakeluar = $pengeluaran->totalDanakeluar($dateRange['start_default'],$dateRange['end_default']);
-        $danamasuk = $saldoBulanLalu+$pendapatan->totalDanaMasuk($dateRange['start_default'],$dateRange['end_default']);
+        $start_default = $this->timeByMonth($time)['start_default'];
+        $end_default = $this->timeByMonth($time)['end_default'];
+        
+        // $dateRange['start_default'],$dateRange['end_default']
+
+        // START GET SALDO BULAN LALU
+        $totalDanaMasuk = $pendapatan->totalDanaMasuk($awalBulan,$bulanLalu);
+        $totalDanaKeluar = $pengeluaran->totalDanaKeluar($awalBulan,$bulanLalu);
+        $saldoBulanLalu=$totalDanaMasuk-$totalDanaKeluar;
+
+        // UTANG
+        $dmUtangOld = $pendapatan->qTotalDMGCID($awalBulan,$bulanLalu,[4]);
+        $dkUtangOld = $pengeluaran->qTotalDKGCID($awalBulan,$bulanLalu,[4]);
+        $dmUtangNew = $pendapatan->qTotalDMGCID($start_default,$end_default,[4]);
+        $dkUtangNew = $pengeluaran->qTotalDKGCID($start_default,$end_default,[4]);
+        $saldoUtangOld = $dmUtangOld-$dkUtangOld;
+        $saldoUtangNew = $saldoUtangOld+($dmUtangNew-$dkUtangNew);
+        // PIUTANG
+        $dkPiutangOld = $pengeluaran->qTotalDKGCID($awalBulan,$bulanLalu,[5]);
+        $dmPiutangOld = $pendapatan->qTotalDMGCID($awalBulan,$bulanLalu,[5]);
+        $dkPiutangNew = $pengeluaran->qTotalDKGCID($start_default,$end_default,[5]);
+        $dmPiutangNew = $pendapatan->qTotalDMGCID($start_default,$end_default,[5]);
+        $saldoPiutangOld = $dkPiutangOld-$dmPiutangOld;
+        $saldoPiutangNew = $saldoPiutangOld+($dkPiutangNew-$dmPiutangNew);
+        // Investasi, Tabung & Usaha
+        $dkdll = $pengeluaran->qTotalDKGCID($awalBulan,$end_default,[2,3,7]);
+        $dmdll = $pendapatan->qTotalDMGCID($awalBulan,$end_default,[2,3,7]);
+        $saldodll = $dkdll-$dmdll;
+        // $dkTabung = $pengeluaran->qTotalDKGCID($start_default,$end_default,[2]);
+        // $dmTabung = $pendapatan->qTotalDMGCID($start_default,$end_default,[2]);
+
+
+        // dd($saldoUtangNew);
+        
+        $danamasuk = $saldoBulanLalu+$pendapatan->totalDanaMasuk($start_default,$end_default);
+        $danakeluar = $pengeluaran->totalDanakeluar($start_default,$end_default)+$saldodll;
+        
+        // dd($danakeluar);
+        
+        // $saldoGabung = array_sum([$dkPiutang,$dkInvest,$dkTabung])-array_sum([$dmPiutang,$dmInvest,$dmTabung]);
+        // $saldoUtang = $dmUtang-$dkUtang;
+
+        // END GET SALDO BULAN INI
+        
         $saldo=$danamasuk-$danakeluar;
         $gcPengeluaran = $jenis_pengeluaran->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
         $gcPendapatan = $jenis_pendapatan->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
         $textColor=['#4e73df','#f6c23e','#1cc88a','#e74a3b','#fd7e14','#36b9cc','#6f42c1','#858796'];
         // $jenis_pengeluaran->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
-        $jmltgldlmsebulan =cal_days_in_month(CAL_GREGORIAN,date("m", strtotime($time)),date("Y", strtotime($time)));
+        
+        $jmltgldlmsebulan = cal_days_in_month(CAL_GREGORIAN,date("m"),date("Y"));   
+        // if($time != date("F, Y")){
+        //     $tgl = 0;
+        // }else{
+        //     $tgl = date("d");
+        // }
         $tgl = date("d");
         $sisaHari = $jmltgldlmsebulan-$tgl;
         if ($sisaHari==0) {
             $sisaHari = 1;
         }
+        
+
         $maxperhari = ceil($saldo/$sisaHari);
+        // dd($pengeluaran->totalPiutang());
+        
+        
         $data=array(
+            'sisaHari' =>$sisaHari,
             'danakeluar' => $this->rupiah($danakeluar),
             'danamasuk' => $this->rupiah($danamasuk),
             'saldo' => $this->rupiah($saldo),
-            'monthYear' => $time,
+            'monthYear' => $this->dateFilter($time),
             'gcPengeluaran' => $gcPengeluaran,
             'gcPendapatan' => $gcPendapatan,
             'textColor' => $textColor,
+            'saldoUtang' => $this->rupiah($saldoUtangNew),
+            'saldoPiutang' => $this->rupiah($saldoPiutangNew),
             'maxperhari' => $this->rupiah($maxperhari),
+            'keuntungan' => '',
+            'kerugian' => '',
 
         );
         

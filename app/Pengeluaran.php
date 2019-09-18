@@ -99,10 +99,11 @@ class Pengeluaran extends Model
         ->join('transaksi','pengeluaran.id_pengeluaran','=','transaksi.jenis_transaksi')
         ->join('jenis_pengeluaran','jenis_pengeluaran.id_jenis_pengeluaran','=','pengeluaran.id_jenis_pengeluaran')
         ->join('group_category','jenis_pengeluaran.group_category_id','=','group_category.group_category_id')
+        ->whereIn('group_category.group_category_id', [1, 4])
         ->where([
-            ['transaksi.id','=',Auth::user()->id],
-            ['group_category.gabung','=','0']
-        ])->whereBetween('waktu', [$start_default, $end_default])
+            ['transaksi.id','=',Auth::user()->id]
+        ])
+        ->whereBetween('waktu', [$start_default, $end_default])
         ->first()->total;
     }
 
@@ -181,4 +182,18 @@ class Pengeluaran extends Model
     public function GCPengeluaran(){
         return DB::select("select group_category_id, pengeluaran,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pengeluaran=1");
     }
+
+    public function qTotalDKGCID($start_default, $end_default,$GCID){
+        $raw = "ifnull(sum(jumlah),0) as total";
+        return DB::table('pengeluaran')
+        ->select(DB::raw($raw))
+        ->join('transaksi','transaksi.jenis_transaksi','=','pengeluaran.id_pengeluaran')
+        ->join('jenis_pengeluaran','jenis_pengeluaran.id_jenis_pengeluaran','=','pengeluaran.id_jenis_pengeluaran')
+        ->join('group_category','jenis_pengeluaran.group_category_id','=','group_category.group_category_id')
+        ->whereIn('group_category.group_category_id', $GCID)
+        ->where([['transaksi.id','=',Auth::user()->id]])
+        ->whereBetween('waktu', [$start_default, $end_default])
+        ->first()->total;
+    }
+
 }
