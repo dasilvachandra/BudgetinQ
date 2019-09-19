@@ -57,8 +57,34 @@ class LoginController extends Controller
         $data['time'] = date("d F, Y H:i:s");
         $data="";
         $iduserbaru=DB::select('select max(id)+1 as id from users;')[0]->id;
-        $data=[$iduserbaru,$user->name,$user->email,strtoupper($provider),$user->id,$user->avatar_original,date("Y-m-d H:i:s"),date("Y-m-d H:i:s")];
-        DB::select('INSERT INTO users (id, name, email, provider,provider_id,picture,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?)', $data);
+        DB::table('users')->insert(
+            [
+                [
+                    'id' => $iduserbaru,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'provider' => strtoupper($provider),
+                    'provider_id' => $user->id,
+                    'picture' => $user->avatar,
+                    'created_at' => date("Y-m-d"),
+                    'updated_at' => date("Y-m-d")
+                ],
+
+            ]
+        );
+        // DB::table('group_category')->insert(
+        //     [
+        //         [
+        //             'group_category_id' => '1',
+        //             'group_category' => 'Kebutuhan',
+        //             'pengeluaran' => 1,
+        //             'pendapatan' => 0,
+        //             'gabung' => 0,
+        //             'note' => 'Transaksi segala kebutuhan untuk mempertahankan hidup serta untuk memperoleh kesejahteraan dan kenyamanan'
+        //         ],
+
+        //     ]
+        // );
         $authUser = User::where('provider_id', $user->id)->first();
         return $authUser;
     }
