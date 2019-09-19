@@ -72,7 +72,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
                     { data: 'waktu', name: 'waktu' },
                     { data: 'nama_pengeluaran', name: 'nama_pengeluaran' },
                     { data: 'jumlah', name: 'jumlah' },
-                    { data: 'jenis_pengeluaran', name: 'jenis_pengeluaran' },
+                    { data: 'group_category', name: 'group_category' },
                 ],
                 language: {
                     searchPlaceholder: "Search..."
@@ -95,7 +95,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
                             return "<a href='/danakeluar/kategori/" + row['id_jenis_pengeluaran'] + "/ " + mY + "/'>" + data + "</a>";
                         }
                     },
-                    { width: 200, targets: 0 },
+                    { width: 80, targets: 0 },
                     { width: 400, targets: 1 }
                 ]
             });

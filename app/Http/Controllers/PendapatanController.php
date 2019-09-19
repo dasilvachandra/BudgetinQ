@@ -118,7 +118,8 @@ class PendapatanController extends Controller
         
         $pendapatan->remove([$validator['id'],$id_user,$email]);
         $data = array(
-            'pesan' => '0',
+            'pesan' => '1',
+            'link' =>'/danamasuk',
         );
         return response()->json($data);
     }

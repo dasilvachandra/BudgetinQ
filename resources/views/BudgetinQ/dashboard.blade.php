@@ -5,83 +5,11 @@
 @stop
 @section('content')
 <div ng-controller="dashboardController as Ctrl">
-    <div class="row" >
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Dana Masuk
-                                (Monthly)</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$danamasuk}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class=" fa-2x text-gray-300"><b>Rp</b></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Dana Keluar
-                                (Monthly)</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$danakeluar}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class=" fa-2x text-gray-300"><b>Rp</b></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Saldo
-                                (Monthly)</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$saldo}}</div>
-                        </div>
-                        <div class="col-auto">
-                        <i class=" fa-2x text-gray-300"><b>Rp</b></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pending Requests Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Saran Max Per Hari</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$maxperhari}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class=" fa-2x text-gray-300"><b>Rp</b></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Content Row -->
+    <!-- Content Card Total Pendapatan, Total Pengeluaran, Saldo, Maximum Per Hari -->
+    @include('BudgetinQ.dashboard.card1')
+    @include('BudgetinQ.dashboard.card2')
+    <!-- Content Grafik & Diagram Bulat -->
     <div class="row">
-
         <!-- Area Chart -->
         <div class="col-xl-8 col-lg-7">
             <div class="card shadow mb-4">
@@ -156,16 +84,13 @@
 
     <!-- Content Row -->
     <div class="row">
-
         <!-- Content Column -->
         <div class="col-lg-6 mb-4">
-
             <!-- Project Card Example -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Group Kategori Pendapatan</h6>
                 </div>
-
                 <div class="card-body">
                     @foreach($gcPendapatan as $i => $value)
                     <h4 class="small font-weight-bold">{{$value->group_category}} Rp {{strrev(implode('.',str_split(strrev(strval($value->total)),3)))}} <span class="float-right">{{$value->persen}}%</span>

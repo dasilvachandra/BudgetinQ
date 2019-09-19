@@ -47,11 +47,11 @@ Route::group(['middleware' => ['auth']], function() {
     
 
     // DANAMASUK RESPONSE
-    Route::get('/dmr', 'BudgetinQController@danamasukResponse'); // return cPendapatanta, gcPendapatanta, list_pengeluaran 
-    Route::get('/dmr/{time}', 'BudgetinQController@danamasukResponse'); // return cPendapatanta, gcPendapatanta, list_pengeluaran
-    Route::get('/dmr/{time}/{day}', 'BudgetinQController@danamasukResponse'); // return cPendapatanta, gcPendapatanta, list_pengeluaran
-    Route::get('/danaDM/kategori/{id_jenis_pengeluaran}', 'BudgetinQController@danamasukResponseByKategori'); // return cPendapatanta, gcPendapatanta, list_pengeluaran
-    Route::get('/danaDM/kategori/{id_jenis_pengeluaran}/{time}', 'BudgetinQController@danamasukResponseByKategori'); // return cPendapatanta, gcPendapatanta, list_pengeluaran
+Route::get('/dmr', 'BudgetinQController@danamasukResponse'); // return cPendapatanta, gcPendapatanta, list_pendapatan 
+    Route::get('/dmr/{time}', 'BudgetinQController@danamasukResponse'); // return cPendapatanta, gcPendapatanta, list_pendapatan
+    Route::get('/dmr/{time}/{day}', 'BudgetinQController@danamasukResponse'); // return cPendapatanta, gcPendapatanta, list_pendapatan
+    Route::get('/danaDM/kategori/{id_jenis_pengeluaran}', 'BudgetinQController@danamasukResponseByKategori'); // return cPendapatanta, gcPendapatanta, list_pendapatan
+    Route::get('/danaDM/kategori/{id_jenis_pengeluaran}/{time}', 'BudgetinQController@danamasukResponseByKategori'); // return cPendapatanta, gcPendapatanta, list_pendapatan
 
 
     // DANAKELUAR VIEW

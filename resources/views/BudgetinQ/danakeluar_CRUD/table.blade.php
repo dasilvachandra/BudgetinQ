@@ -41,7 +41,7 @@
                 <th>Tanggal</th>
                 <th>Deskripsi</th>
                 <th>Jumlah</th>
-                <th>Category</th>
+                <th>Group Category</th>
             </tr>
         </thead>
         <tbody>

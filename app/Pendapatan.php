@@ -21,6 +21,7 @@ class Pendapatan extends Model
     }
     public function selectAll($range_date){
         return DB::table('pendapatan')
+        ->select(DB::raw('*, concat(group_category," [",jenis_pendapatan,"]") as group_category'))
         ->join('transaksi','pendapatan.id_pendapatan','=','transaksi.jenis_transaksi')
         ->join('jenis_pendapatan','jenis_pendapatan.id_jenis_pendapatan','=','pendapatan.id_jenis_pendapatan')
         ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
@@ -91,23 +92,21 @@ class Pendapatan extends Model
         return $data;
     }
     public function GCPendapatan(){
-        return DB::select("select group_category_id, pendapatan,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pendapatan=1");
+        return DB::select("select group_category_id, pendapatan,gabung,pendapatan, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pendapatan=1");
     }
 
     public function totalDanaMasuk($start_default,$end_default)
     {
-        // $start_default = $range_date['start_default'];
-        // $end_default = $range_date['end_default'];
-        $id_user=Auth::user()->id;
-        $email=Auth::user()->email;
-        $q='
-        SELECT ifnull(sum(jumlah),0) as total
-            FROM transaksi 
-                inner join users using(id) 
-                inner join pendapatan on id_pendapatan=jenis_transaksi 
-            where id=? and email=? and waktu between ? and ?  ;
-        ';
-        return DB::select($q,[$id_user,$email,$start_default,$end_default])[0]->total;
+        return DB::table('pendapatan')
+        ->select(DB::raw('ifnull(sum(jumlah),0) as total'))
+        ->join('transaksi','pendapatan.id_pendapatan','=','transaksi.jenis_transaksi')
+        ->join('jenis_pendapatan','jenis_pendapatan.id_jenis_pendapatan','=','pendapatan.id_jenis_pendapatan')
+        ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
+        ->whereIn('group_category.group_category_id', [6, 4])
+        ->where([
+            ['transaksi.id','=',Auth::user()->id]
+        ])->whereBetween('waktu', [$start_default, $end_default])
+        ->first()->total;
     }
 
     public function totalDanaMasukByKategori($start_default,$end_default,$id_jenis_pendapatan)
@@ -191,21 +190,29 @@ class Pendapatan extends Model
         ";
         return DB::select($q,[$id,$start_default,$end_default]);
     }
+
     public function selectRangeByKategori($start_default,$end_default,$id_jenis_pendapatan){
-        $id=Auth::user()->id;
-        $q=" SELECT 
-        id_pendapatan,
-        DATE_FORMAT(waktu, '%d %M, %Y') waktu,
-        nama_pendapatan,
-        jumlah ,
-        jenis_pendapatan,
-        group_category_id,
-        id_jenis_pendapatan
-        from transaksi inner join pendapatan on jenis_transaksi=id_pendapatan 
-        inner join jenis_pendapatan using(id_jenis_pendapatan)
-        where transaksi.id=? and waktu between ? and ? and id_jenis_pendapatan = ? ;
-        ";
-        // dd($id,$start_default,$end_default,$id_jenis_pendapatan);
-        return DB::select($q,[$id,$start_default,$end_default,$id_jenis_pendapatan]);
+        return DB::table('pendapatan')
+        ->select(DB::raw('*, concat(group_category," [",jenis_pendapatan,"]") as group_category'))
+        ->join('transaksi','pendapatan.id_pendapatan','=','transaksi.jenis_transaksi')
+        ->join('jenis_pendapatan','jenis_pendapatan.id_jenis_pendapatan','=','pendapatan.id_jenis_pendapatan')
+        ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
+        ->where([['transaksi.id','=',Auth::user()->id],['jenis_pendapatan.id_jenis_pendapatan','=',$id_jenis_pendapatan]])
+        ->whereBetween('waktu', [$start_default, $end_default])
+        ->get();
+    }
+
+    public function qTotalDMGCID($start_default, $end_default,$GCID){
+        // dd($GCID);
+        $raw = "ifnull(sum(jumlah),0) as total";
+        return DB::table('pendapatan')
+        ->select(DB::raw($raw))
+        ->join('transaksi','transaksi.jenis_transaksi','=','pendapatan.id_pendapatan')
+        ->join('jenis_pendapatan','jenis_pendapatan.id_jenis_pendapatan','=','pendapatan.id_jenis_pendapatan')
+        ->join('group_category','jenis_pendapatan.group_category_id','=','group_category.group_category_id')
+        ->whereIn('group_category.group_category_id', $GCID)
+        ->where([['transaksi.id','=',Auth::user()->id]])
+        ->whereBetween('waktu', [$start_default, $end_default])
+        ->first()->total;
     }
 }

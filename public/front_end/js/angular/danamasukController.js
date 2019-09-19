@@ -78,7 +78,7 @@ app.controller('danamasukController', function ($scope, $rootScope, $routeParams
                     { data: 'waktu', name: 'waktu' },
                     { data: 'nama_pendapatan', name: 'nama_pendapatan' },
                     { data: 'jumlah', name: 'jumlah' },
-                    { data: 'jenis_pendapatan', name: 'jenis_pendapatan' },
+                    { data: 'group_category', name: 'group_category' },
                 ],
                 language: {
                     searchPlaceholder: "Search..."
@@ -101,7 +101,7 @@ app.controller('danamasukController', function ($scope, $rootScope, $routeParams
                             return "<a href='/danamasuk/kategori/" + row['id_jenis_pendapatan'] + "/ " + mY + "/'>" + data + "</a>";
                         }
                     },
-                    { width: 200, targets: 0 },
+                    { width: 80, targets: 0 },
                     { width: 400, targets: 1 }
                 ]
             });
