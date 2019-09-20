@@ -33,6 +33,7 @@ class LoginController extends Controller
         $user = Socialite::driver('google')->user();
         $authUser = $this->findOrCreateUser($user,$provider);
         Auth::login($authUser,true);
+        
         return redirect($this->redirectTo);
     }
     public function findOrCreateUser($user, $provider)
@@ -56,7 +57,7 @@ class LoginController extends Controller
         $data['email'] = $user->email;
         $data['time'] = date("d F, Y H:i:s");
         $data="";
-        $iduserbaru=DB::select('select max(id)+1 as id from users;')[0]->id;
+        $iduserbaru=DB::select('select ifnull(max(id),0)+1 as id from users;')[0]->id;
         DB::table('users')->insert(
             [
                 [
@@ -66,25 +67,111 @@ class LoginController extends Controller
                     'provider' => strtoupper($provider),
                     'provider_id' => $user->id,
                     'picture' => $user->avatar,
-                    'created_at' => date("Y-m-d"),
-                    'updated_at' => date("Y-m-d")
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s")
                 ],
 
             ]
         );
+
         DB::table('jenis_pengeluaran')->insert(
             [
                 [
-                    'jenis_pengeluaran_id' => 'KTG_'.uniqid(),
+                    'id_jenis_pengeluaran' => 'KTG_'.uniqid(),
                     'jenis_pengeluaran' => 'Makan & Minum',
-                    'created_at' => date("Y-m-d"),
-                    'updated_at' => date("Y-m-d"),
                     'color' => $this->randomRGB(),
-                    'group_category_id' => 1
+                    'group_category_id' => 1,
+                    'id' => $iduserbaru,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s"),
                 ],
-
+                [
+                    'id_jenis_pengeluaran' => 'KTG_'.uniqid(),
+                    'jenis_pengeluaran' => 'Transportasi',
+                    'color' => $this->randomRGB(),
+                    'group_category_id' => 1,
+                    'id' => $iduserbaru,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s"),
+                ],
+                [
+                    'id_jenis_pengeluaran' => 'KTG_'.uniqid(),
+                    'jenis_pengeluaran' => 'Personal Care',
+                    'color' => $this->randomRGB(),
+                    'group_category_id' => 1,
+                    'id' => $iduserbaru,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s"),
+                ],
+                [
+                    'id_jenis_pengeluaran' => 'KTG_'.uniqid(),
+                    'jenis_pengeluaran' => 'Tak Terduga',
+                    'color' => $this->randomRGB(),
+                    'group_category_id' => 1,
+                    'id' => $iduserbaru,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s"),
+                ],
+                [
+                    'id_jenis_pengeluaran' => 'KTG_'.uniqid(),
+                    'jenis_pengeluaran' => 'Donasi',
+                    'color' => $this->randomRGB(),
+                    'group_category_id' => 1,
+                    'id' => $iduserbaru,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s"),
+                ],
+                [
+                    'id_jenis_pengeluaran' => 'KTG_'.uniqid(),
+                    'jenis_pengeluaran' => 'Lain-lain',
+                    'color' => $this->randomRGB(),
+                    'group_category_id' => 1,
+                    'id' => $iduserbaru,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s"),
+                ],
+                [
+                    'id_jenis_pengeluaran' => 'KTG_'.uniqid(),
+                    'jenis_pengeluaran' => 'BANK BRI',
+                    'color' => $this->randomRGB(),
+                    'group_category_id' => 2,
+                    'id' => $iduserbaru,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s"),
+                ],
+                [
+                    'id_jenis_pengeluaran' => 'KTG_'.uniqid(),
+                    'jenis_pengeluaran' => 'Reksadana',
+                    'color' => $this->randomRGB(),
+                    'group_category_id' => 3,
+                    'id' => $iduserbaru,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s"),
+                ],
+                [
+                    'id_jenis_pengeluaran' => 'KTG_'.uniqid(),
+                    'jenis_pengeluaran' => 'Emas',
+                    'color' => $this->randomRGB(),
+                    'group_category_id' => 3,
+                    'id' => $iduserbaru,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s"),
+                ],
+                [
+                    'id_jenis_pengeluaran' => 'KTG_'.uniqid(),
+                    'jenis_pengeluaran' => 'Bitcoin',
+                    'color' => $this->randomRGB(),
+                    'group_category_id' => 3,
+                    'id' => $iduserbaru,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s"),
+                ],
+                
             ]
         );
+
+
+
 
         $authUser = User::where('provider_id', $user->id)->first();
         return $authUser;

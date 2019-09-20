@@ -67,9 +67,9 @@ class CreateGroupCategoryTable extends Migration
                 [
                     'group_category_id' => '6',
                     'group_category' => 'Gaji',
-                    'pengeluaran' => 1,
+                    'pengeluaran' => 0,
                     'pendapatan' => 1,
-                    'gabung' => 1,
+                    'gabung' => 0,
                     'note' => 'Honor dan Upah'
                 ],
                 [
@@ -80,15 +80,6 @@ class CreateGroupCategoryTable extends Migration
                     'gabung' => 1,
                     'note' => 'Transaksi keuangan untuk modal usaha'
                 ],
-                [
-                    'group_category_id' => '8',
-                    'group_category' => 'Piutang',
-                    'pengeluaran' => 1,
-                    'pendapatan' => 1,
-                    'gabung' => 1,
-                    'note' => 'Transaksi amal secara sukarela'
-                ],
-
             ]
         );
     }

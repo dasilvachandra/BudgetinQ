@@ -187,20 +187,18 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         }
     }
 
-    $scope.ConChange = function (val) {
-        if (val == '1') {
-            window.location = "/kategori/danakeluar";
-        }
-    }
-
-
     function redirectTimeForm(url) {
         $('#time').change(function () {
             time = $('#time').val();
             window.location = url + time;
-        });
+        })
+        ;
     }
 
-
+    $scope.mKategori = function (val){
+        if (val==1) {
+            window.location = "/kategori/danakeluar";
+        }
+    }
 
 });

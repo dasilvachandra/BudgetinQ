@@ -24,22 +24,22 @@
                                 </div>
                             </div>
                             <div class="col-sm-6">
-                                <b>Deskripsi Pengeluaran</b>
+                                <b>Nama Pengeluaran</b>
                                 <div class="input-group-append ">
                                     <span class="input-group-addon"><i
                                             class="material-icons mr-0">label_outline</i></span>
                                     <input type="text" class="form-control form-control-user" ng-model="selectedTime"
-                                        name="nama_pengeluaran" required placeholder="Deskripsi Pengeluaran">
+                                        name="nama_pengeluaran" required placeholder="Nama Pengeluaran">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <b>Group</b>
+                            <b>Jenis Transaksi</b>
                             <div class="input-group form-float" ng-init="mGC='1'">
                                 <span class="input-group-addon"><i class="material-icons">dehaze</i></span>
                                 <select class="form-control " name="group_category" ng-model="mGC"
                                     ng-change="onChange(mGC)" required>
-                                    <option>-- Pilih Kategori --</option>
+                                    <option>-- Pilih Jenis Transaksi --</option>
                                     <option ng-repeat="s in gcPengeluaran" value="<%s.group_category_id%>">
                                         <%s.group_category%>
                                     </option>
@@ -51,13 +51,12 @@
                                 <b>Kategori</b>
                                 <div class="input-group form-float">
                                     <span class="input-group-addon"><i class="material-icons">dehaze</i></span>
-                                    <select ng-repeat='row in gcPengeluaran' ng-if="mGC==row.group_category_id"
-                                        class="form-control " id="" name="id_jenis_pengeluaran" required>
+                                    <select ng-repeat='row in gcPengeluaran' ng-if="mGC==row.group_category_id" class="form-control" ng-model="katVal" ng-change="mKategori(katVal)" name="id_jenis_pengeluaran" required>
                                         <option value="">-- Pilih Kategori --</option>
                                         <option ng-repeat="s in category(cPengeluaran,row.group_category_id)"
                                             value="<%s.id_jenis_pengeluaran%>">
                                             <%s.jenis_pengeluaran%></option>
-                                        <option value="1" style="font-weight:bold;">ADD/EDIT Category</option>
+                                        <option value="1" style="font-weight:bold;">-- Tambah/Ubah Kategori --</option>
                                     </select>
                                 </div>
                             </div>

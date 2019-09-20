@@ -180,7 +180,16 @@ class Pengeluaran extends Model
         ->get();
     }
     public function GCPengeluaran(){
-        return DB::select("select group_category_id, pengeluaran,gabung,pengeluaran, if(gabung=1,concat(group_category,' -> Synchronize'),concat(group_category,' -> Not Synchronize')) as group_category from group_category where pengeluaran=1");
+        return DB::select("SELECT group_category_id, pengeluaran,gabung,pengeluaran,
+                            case 
+                                when group_category_id = 2 then concat('Menabung [',upper(left(group_category,2)),']')
+                                when group_category_id = 4 then concat('Bayar Utang [',upper(left(group_category,2)),']')
+                                when group_category_id = 5 then concat('Meminjamkan Uang [',upper(left(group_category,2)),']')
+                                when group_category_id = 7 then concat('Belanja Modal [',upper(left(group_category,2)),']')
+                                ELSE concat(group_category, ' [',upper(left(group_category,2)),']')
+                            END as group_category
+                            from group_category where pengeluaran=1
+                        ");
     }
 
     public function qTotalDKGCID($start_default, $end_default,$GCID){
