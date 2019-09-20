@@ -72,19 +72,20 @@ class LoginController extends Controller
 
             ]
         );
-        // DB::table('group_category')->insert(
-        //     [
-        //         [
-        //             'group_category_id' => '1',
-        //             'group_category' => 'Kebutuhan',
-        //             'pengeluaran' => 1,
-        //             'pendapatan' => 0,
-        //             'gabung' => 0,
-        //             'note' => 'Transaksi segala kebutuhan untuk mempertahankan hidup serta untuk memperoleh kesejahteraan dan kenyamanan'
-        //         ],
+        DB::table('jenis_pengeluaran')->insert(
+            [
+                [
+                    'jenis_pengeluaran_id' => 'KTG_'.uniqid(),
+                    'jenis_pengeluaran' => 'Makan & Minum',
+                    'created_at' => date("Y-m-d"),
+                    'updated_at' => date("Y-m-d"),
+                    'color' => $this->randomRGB(),
+                    'group_category_id' => 1
+                ],
 
-        //     ]
-        // );
+            ]
+        );
+
         $authUser = User::where('provider_id', $user->id)->first();
         return $authUser;
     }
