@@ -22,6 +22,7 @@ class BudgetinQController  extends Controller
 
     public function dashboard($time=null)
     {
+        $transaksi = new Transaksi;
         $time = $time ?: date("F, Y");$jenis_pengeluaran = new JenisPengeluaran;$jenis_pendapatan = new JenisPendapatan;$pengeluaran = new Pengeluaran;$pendapatan = new Pendapatan;$transaksi = new Transaksi;
         // DEKLARASI WAKTU
         $periode = $transaksi->sPeriode()[0];
@@ -405,6 +406,7 @@ class BudgetinQController  extends Controller
     public function danakeluarResponse($time=null,$day=null){
         $time = $time ?: date("F, Y");
         $pengeluaran = new Pengeluaran;
+        $transaksi = new Transaksi;
         $waktu = $this->timeByMonth($time);
         $list_pengeluaran = $pengeluaran->selectAll($waktu);
         if ($day) {
@@ -413,7 +415,7 @@ class BudgetinQController  extends Controller
         }
         $data=array(
             'cPengeluaran' => DB::table('jenis_pengeluaran')->where('id', Auth::user()->id)->get(),
-            'gcPengeluaran' => $pengeluaran->GCPengeluaran(),
+            'gcPengeluaran' => $transaksi->GCPengeluaran(),
             'list_pengeluaran' => $list_pengeluaran
         );
         return response()->json($data);
@@ -435,7 +437,7 @@ class BudgetinQController  extends Controller
         }
         $data=array(
             'cPengeluaran' => DB::table('jenis_pengeluaran')->where('id', Auth::user()->id)->get(),
-            'gcPengeluaran' => DB::table('group_category')->where('pengeluaran', '1')->get(),
+            'gcPengeluaran' => $transaksi->GCPengeluaran(),
             'list_pengeluaran' => $list_pengeluaran
         );
         return response()->json($data);
@@ -446,6 +448,7 @@ class BudgetinQController  extends Controller
     public function dataGC(Request $request){
         $pengeluaran = new Pengeluaran;
         $pendapatan = new Pendapatan;
+        $transaksi = new Transaksi;
         $id=Auth::user()->id;
         $rules = array(
             'time' => 'required|max:255'
@@ -457,7 +460,7 @@ class BudgetinQController  extends Controller
         $validator = $this->validate($request, $rules, $customMessages);
         $time = $this->timeByMonth($validator['time']);
         
-        $gcPengeluaran = DB::table('group_category')->where('pengeluaran', '1')->get();
+        $gcPengeluaran = $transaksi->GCPengeluaran();
         $gcPendapatan = DB::table('group_category')->where('pendapatan', '1')->get();
         $cPendapatan = DB::table('jenis_pendapatan')->where('id', $id)->get();
         $cPengeluaran = DB::table('jenis_pengeluaran')->where('id', $id)->get();
@@ -518,7 +521,7 @@ class BudgetinQController  extends Controller
         $data=array(
             'monthYear' => $time,
             'list_jenis_pengeluaran' => $list_pengeluaran,
-            'gcPengeluaran' => $jenis_pengeluaran->GCPengeluaran()
+            'gcPengeluaran' => $transaksi->GCPengeluaran()
         );
         return response()->json($data);
     }

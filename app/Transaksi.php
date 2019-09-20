@@ -36,4 +36,16 @@ class Transaksi extends Model
 		$q='select max(waktu) akhir, min(waktu) awal,  period_diff(date_format(max(waktu),"%Y%m"),date_format(min(waktu),"%Y%m")) as periode from transaksi where id=?';
 		return DB::select($q,[$id]);
 	}
+
+	public function GCPengeluaran(){
+	    return DB::select("SELECT group_category_id, pengeluaran,gabung,pengeluaran, note,
+	                        case 
+	                            when group_category_id = 2 then concat('Menabung [',upper(left(group_category,2)),']')
+	                            when group_category_id = 4 then concat('Bayar Utang [',upper(left(group_category,2)),']')
+	                            when group_category_id = 5 then concat('Meminjamkan Uang [',upper(left(group_category,2)),']')
+	                            when group_category_id = 7 then concat('Belanja Modal [',upper(left(group_category,2)),']')
+	                            ELSE concat(group_category, ' [',upper(left(group_category,2)),']')
+	                        END as group_category
+	                        from group_category where pengeluaran=1");
+	}
 }

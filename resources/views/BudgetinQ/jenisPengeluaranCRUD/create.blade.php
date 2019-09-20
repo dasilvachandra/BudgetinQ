@@ -24,7 +24,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <b>Group</b>
+                            <b>Jenis Transaksi</b>
                             <div class="input-group form-float">
                                 <span class="input-group-addon"><i class="material-icons">dehaze</i></span>
                                 <select class="form-control " name="group_category_id" ng-model="mGC"
