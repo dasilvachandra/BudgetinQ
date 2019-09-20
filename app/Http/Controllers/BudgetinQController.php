@@ -56,6 +56,11 @@ class BudgetinQController  extends Controller
         $dkdll = $pengeluaran->qTotalDKGCID($awalBulan,$end_default,[2,3,7]);
         $dmdll = $pendapatan->qTotalDMGCID($awalBulan,$end_default,[2,3,7]);
         $saldodll = $dkdll-$dmdll;
+        $keuntungan = 0;
+        if($saldodll<0){
+            $keuntungan = abs($saldodll);
+            $saldodll = abs($dkdll-$dmdll);
+        }
         // $dkTabung = $pengeluaran->qTotalDKGCID($start_default,$end_default,[2]);
         // $dmTabung = $pendapatan->qTotalDMGCID($start_default,$end_default,[2]);
 
@@ -107,7 +112,7 @@ class BudgetinQController  extends Controller
             'saldoUtang' => $this->rupiah($saldoUtangNew),
             'saldoPiutang' => $this->rupiah($saldoPiutangNew),
             'maxperhari' => $this->rupiah($maxperhari),
-            'keuntungan' => '',
+            'keuntungan' => $this->rupiah($keuntungan),
             'kerugian' => '',
 
         );
