@@ -16,7 +16,7 @@
 </div>
 @stop
 
-<div class="card-header py-3 mb-4">
+<div class="card-header py-3 ">
     <h6 class=" font-weight-bold text-primary">DAFTAR PENGELUARAN
         @if (isset($page)=='kategori')
             KATEGORI 
@@ -35,6 +35,21 @@
 </div>
 
 <div class="table-responsive">
+    <div class="mb-3 ml-2 mt-3">
+        <a href="#" class="btn-circle btn-primary" data-toggle="modal" data-target="#danakeluarCreateModal">
+            <i class="fas fa-plus"></i>
+        </a>
+        <a href="#" class="btn-circle btn-info " ng-click="danakeluarEdit()">
+            <i class="fa fa-pencil-square-o"></i>
+        </a>
+        <button class="danakeluarEditModal" data-toggle="modal" data-target="#danakeluarEditModal"
+            style="display: none;"></button>
+        <a href="#" class="btn-circle btn-danger" ng-click="danakeluarDelete()">
+            <i class="fas fa-trash"></i>
+        </a>
+    </div>
+
+
     <table class="table table-bordered table-hover" id="tablePengeluaran" width="100%" cellspacing="0">
         <thead>
             <tr>
