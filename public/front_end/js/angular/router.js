@@ -125,7 +125,12 @@ app.run(function ($rootScope, $location) {
     $rootScope.pathname = pathname;
     $rootScope.url = pathname[1];
     $rootScope.path2 = pathname[2];
+
+    // Template Form
+    $rootScope.opsi_add_or_edit = "-- Tambah/Ubah Kategori --";
+
     datePickerForm('.datepickerForm');
+    
     // input_rupiah("input_rupiah");
     $rootScope.$on("$routeChangeSuccess", function (event, next, current) {
         // $rootScope.url = $location.$$path.replace('/', '');

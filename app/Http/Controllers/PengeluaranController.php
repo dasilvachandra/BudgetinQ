@@ -53,14 +53,14 @@ class PengeluaranController extends Controller
             'id_jenis_pengeluaran.required' => 'Kategori masih kosong',
         ];
         $validator = $this->validate($request, $rules, $customMessages);
-        $id_pengeluaran = 'PENG_'.uniqid();
+        $id_pengeluaran = 'PENG_'.base_convert(microtime(false), 10, 36); 
         $nama_pengeluaran = $validator['nama_pengeluaran'];
         $jumlah = intval(preg_replace('/[^0-9]+/', '', $validator['jumlah']));
         $picture = "";
         $id_jenis_pengeluaran = $validator['id_jenis_pengeluaran'];
 
         // select nama_pengeluaran, id_jenis_pengeluaran, waktu,jumlah from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran where id=1;
-        $id_transaksi = "TR_".uniqid();
+        $id_transaksi = 'TR_'.base_convert(microtime(false), 10, 36); 
         $jenis_transaksi = $id_pengeluaran;
         $waktu = date("Y-m-d", strtotime($this->dateFilter($validator['time'])));
         $checkDuplicate=$pengeluaran->checkDuplicate([$id,$waktu,$nama_pengeluaran,$jumlah,$id_jenis_pengeluaran]);
@@ -75,7 +75,7 @@ class PengeluaranController extends Controller
             );
             return response()->json($data);
         }else{
-            return response()->json(['errors' => ['Data sudah ada']], 422);
+            return response()->json(['errors' => ['Data sudah ada di hari yang sama']], 422);
         }
         
         // return redirect()->to('/danakeluar');

@@ -45,7 +45,7 @@
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary" > GROUP
+                    <h6 class="m-0 font-weight-bold text-primary" >Transaksi
                     <select ng-model="mGC"  ng-change="onChangeChartPie(mGC)">
                         <option disabled>-- Pilih Group --</option>
                         <option ng-repeat="s in gcPengeluaran" value="<%s.group_category_id%>">

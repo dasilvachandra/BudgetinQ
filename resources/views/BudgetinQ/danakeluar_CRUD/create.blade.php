@@ -9,28 +9,26 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="p-4">
+                <div class="p-3">
                     <form class="user" id="form_create_pengeluaran" method="POST">
                         {{csrf_field()}}
-                        <div class="form-group row">
-                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                <b>Tanggal</b>
-                                <div class="input-group-append ">
-                                    <span class="input-group-addon"><i class="material-icons">date_range</i></span>
-                                    <input id="createSelectedTimePend" type="text" value="{{date('d F, Y')}}"
-                                        autoComplete="off" value=""
-                                        class=" datepickerForm form-control form-control-user" name="time" required
-                                        placeholder="Please choose a date...">
-                                </div>
+                        <div class="form-group">
+                            <b>Tanggal</b>
+                            <div class="input-group-append ">
+                                <span class="input-group-addon"><i class="material-icons">date_range</i></span>
+                                <input id="createSelectedTimePend" type="text" value="{{date('d F, Y')}}"
+                                    autoComplete="off" value=""
+                                    class=" datepickerForm form-control form-control-user" name="time" required
+                                    placeholder="Please choose a date...">
                             </div>
-                            <div class="col-sm-6">
-                                <b>Nama Pengeluaran</b>
-                                <div class="input-group-append ">
-                                    <span class="input-group-addon"><i
-                                            class="material-icons mr-0">label_outline</i></span>
-                                    <input type="text" class="form-control form-control-user" ng-model="selectedTime"
-                                        name="nama_pengeluaran" required placeholder="Nama Pengeluaran">
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <b>Nama Pengeluaran</b>
+                            <div class="input-group-append ">
+                                <span class="input-group-addon"><i
+                                        class="material-icons mr-0">label_outline</i></span>
+                                <input type="text" class="form-control form-control-user" ng-model="selectedTime"
+                                    name="nama_pengeluaran" required placeholder="Nama Pengeluaran">
                             </div>
                         </div>
                         <div class="form-group">
@@ -51,12 +49,12 @@
                                 <b>Kategori</b>
                                 <div class="input-group form-float">
                                     <span class="input-group-addon"><i class="material-icons">dehaze</i></span>
-                                    <select ng-repeat='row in gcPengeluaran' ng-if="mGC==row.group_category_id" class="form-control" ng-model="katVal" ng-change="mKategori(katVal)" name="id_jenis_pengeluaran" required>
+                                    <select ng-repeat='row in gcPengeluaran' ng-if="mGC==row.group_category_id" class="form-control" ng-model="mC" ng-change="ConChange(mC)" name="id_jenis_pengeluaran" required>
                                         <option value="">-- Pilih Kategori --</option>
                                         <option ng-repeat="s in category(cPengeluaran,row.group_category_id)"
                                             value="<%s.id_jenis_pengeluaran%>">
                                             <%s.jenis_pengeluaran%></option>
-                                        <option value="1" style="font-weight:bold;">-- Tambah/Ubah Kategori --</option>
+                                        <option value="1" style="font-weight:bold;"><%opsi_add_or_edit%></option>
                                     </select>
                                 </div>
                             </div>

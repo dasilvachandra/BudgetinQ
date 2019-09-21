@@ -195,10 +195,11 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         ;
     }
 
-    $scope.mKategori = function (val){
-        if (val==1) {
+    $scope.ConChange = function (val) {
+        if (val == '1') {
             window.location = "/kategori/danakeluar";
         }
     }
+
 
 });

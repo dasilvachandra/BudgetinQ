@@ -199,14 +199,12 @@ app.controller('danamasukController', function ($scope, $rootScope, $routeParams
         }
     }
 
-
     function redirectTimeForm(url) {
         $('#time').change(function () {
             time = $('#time').val();
             window.location = url + time;
         });
     }
-
 
 
 });

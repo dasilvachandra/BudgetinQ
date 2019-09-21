@@ -38,14 +38,27 @@ class Transaksi extends Model
 	}
 
 	public function GCPengeluaran(){
-	    return DB::select("SELECT group_category_id, pengeluaran,gabung,pengeluaran, note,
-	                        case 
-	                            when group_category_id = 2 then concat('Menabung [',upper(left(group_category,2)),']')
-	                            when group_category_id = 4 then concat('Bayar Utang [',upper(left(group_category,2)),']')
-	                            when group_category_id = 5 then concat('Meminjamkan Uang [',upper(left(group_category,2)),']')
-	                            when group_category_id = 7 then concat('Belanja Modal [',upper(left(group_category,2)),']')
-	                            ELSE concat(group_category, ' [',upper(left(group_category,2)),']')
-	                        END as group_category
+		$group_category = "case 
+        when group_category_id = 2 then concat('Menabung [',upper(left(group_category,2)),']')
+        when group_category_id = 4 then concat('Bayar Utang [',upper(left(group_category,2)),']')
+        when group_category_id = 5 then concat('Meminjamkan Uang [',upper(left(group_category,2)),']')
+        when group_category_id = 7 then concat('Belanja Modal [',upper(left(group_category,2)),']')
+        ELSE concat(group_category, ' [',upper(left(group_category,2)),']')
+    	END as group_category";
+	    return DB::select("SELECT group_category_id, pengeluaran,gabung,pengeluaran, note, $group_category
 	                        from group_category where pengeluaran=1");
 	}
+
+	public function GCPendapatan(){
+		$group_category = "case 
+        when group_category_id = 2 then concat('Ambil Tabungan [',upper(left(group_category,2)),']')
+        when group_category_id = 4 then concat('Pinjam Uang [',upper(left(group_category,2)),']')
+        when group_category_id = 5 then concat('Tagih Utang [',upper(left(group_category,2)),']')
+        when group_category_id = 7 then concat('Hasil Usaha [',upper(left(group_category,2)),']')
+        ELSE concat(group_category, ' [',upper(left(group_category,2)),']')
+    	END as group_category";
+	    return DB::select("SELECT group_category_id, pendapatan,gabung,pendapatan, note, $group_category
+	                        from group_category where pendapatan=1");
+	}
+
 }

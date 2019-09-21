@@ -147,65 +147,65 @@ class BudgetinQController  extends Controller
 
     }
     // PER GROUP BY WAKTU
-    public function chartArea(Request $request){
-            $pengeluaran = new Pengeluaran;
-            $rules = array(
-                'time' => 'required|max:255'
-            );
-            $customMessages = [
-                'time.required' => 'time error'
-            ];
-            $validator = $this->validate($request, $rules, $customMessages);
-            $time = $this->dateFilter($validator['time']);
-            $y = date("Y", strtotime($time));
-            $m = date("m", strtotime($time));
-            $d=cal_days_in_month(CAL_GREGORIAN,$m,$y);
-            $labels = [];
-            $totalPerHari = [];
-            $getTotalPerHari = $pengeluaran->totalPerHariGroup($this->timeByMonth($time));
-            foreach ($getTotalPerHari as $key => $value) {
-                array_push($labels,$value->waktu);
-                array_push($totalPerHari,$value->total);
-            }
-            if(empty($labels) && empty($totalPerHari)){
-                $labels= [date("Y-m-d")];
-                $totalPerHari = [0]; 
-            }
-            $data = array(
-                'labels' => $labels,
-                'totalPerHari' => $totalPerHari,
-            );
-            return $data;
-    }
+    // public function chartArea(Request $request){
+    //         $pengeluaran = new Pengeluaran;
+    //         $rules = array(
+    //             'time' => 'required|max:255'
+    //         );
+    //         $customMessages = [
+    //             'time.required' => 'time error'
+    //         ];
+    //         $validator = $this->validate($request, $rules, $customMessages);
+    //         $time = $this->dateFilter($validator['time']);
+    //         $y = date("Y", strtotime($time));
+    //         $m = date("m", strtotime($time));
+    //         $d=cal_days_in_month(CAL_GREGORIAN,$m,$y);
+    //         $labels = [];
+    //         $totalPerHari = [];
+    //         $getTotalPerHari = $pengeluaran->totalPerHariGroup($this->timeByMonth($time));
+    //         foreach ($getTotalPerHari as $key => $value) {
+    //             array_push($labels,$value->waktu);
+    //             array_push($totalPerHari,$value->total);
+    //         }
+    //         if(empty($labels) && empty($totalPerHari)){
+    //             $labels= [date("Y-m-d")];
+    //             $totalPerHari = [0]; 
+    //         }
+    //         $data = array(
+    //             'labels' => $labels,
+    //             'totalPerHari' => $totalPerHari,
+    //         );
+    //         return $data;
+    // }
 
     // PER HARI 01-31
-    // public function chartArea(Request $request){
-    //     $pengeluaran = new Pengeluaran;
-    //     $rules = array(
-    //         'time' => 'required|max:255'
-    //     );
-    //     $customMessages = [
-    //         'time.required' => 'time error'
-    //     ];
-    //     $validator = $this->validate($request, $rules, $customMessages);
-    //     $time = $this->dateFilter($validator['time']);
-    //     $y = date("Y", strtotime($time));
-    //     $m = date("m", strtotime($time));
-    //     $d=cal_days_in_month(CAL_GREGORIAN,$m,$y);
-    //     $labels = [];
-    //     $totalPerHari = [];
-    //     for ($i=1; $i <= $d ; $i++) { 
-    //         $i = str_pad($i, 2, '0', STR_PAD_LEFT);
-    //         $date = "$y-$m-$i";
-    //         array_push($labels,$date);
-    //         array_push($totalPerHari,$pengeluaran->totalPerHari($date));
-    //     }
-    //     $data = array(
-    //         'labels' => $labels,
-    //         'totalPerHari' => $totalPerHari,
-    //     );
-    //     return $data;
-    // }
+    public function chartArea(Request $request){
+        $pengeluaran = new Pengeluaran;
+        $rules = array(
+            'time' => 'required|max:255'
+        );
+        $customMessages = [
+            'time.required' => 'time error'
+        ];
+        $validator = $this->validate($request, $rules, $customMessages);
+        $time = $this->dateFilter($validator['time']);
+        $y = date("Y", strtotime($time));
+        $m = date("m", strtotime($time));
+        $d=cal_days_in_month(CAL_GREGORIAN,$m,$y);
+        $labels = [];
+        $totalPerHari = [];
+        for ($i=1; $i <= $d ; $i++) { 
+            $i = str_pad($i, 2, '0', STR_PAD_LEFT);
+            $date = "$y-$m-$i";
+            array_push($labels,$date);
+            array_push($totalPerHari,$pengeluaran->totalPerHari($date));
+        }
+        $data = array(
+            'labels' => $labels,
+            'totalPerHari' => $totalPerHari,
+        );
+        return $data;
+    }
 
     public function chartPie(Request $request){
         $pengeluaran = new Pengeluaran;
@@ -316,6 +316,7 @@ class BudgetinQController  extends Controller
     public function danamasukResponse($time=null,$day=null){
         $time = $time ?: date("F, Y");
         $pendapatan = new Pendapatan;
+        $transaksi = new Transaksi;
         $waktu = $this->timeByMonth($time);
         $list_pendapatan = $pendapatan->selectAll($waktu);
         if ($day) {
@@ -324,7 +325,7 @@ class BudgetinQController  extends Controller
         }
         $data=array(
             'cPendapatan' => DB::table('jenis_pendapatan')->where('id', Auth::user()->id)->get(),
-            'gcPendapatan' => $pendapatan->GCPendapatan(),
+            'gcPendapatan' => $transaksi->GCPendapatan(),
             'list_pendapatan' => $list_pendapatan
         );
         return response()->json($data);

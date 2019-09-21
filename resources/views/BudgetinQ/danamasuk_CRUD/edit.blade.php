@@ -61,7 +61,7 @@
                                         <option ng-repeat="s in category(cPendapatan,row.group_category_id)"
                                             value="<%s.id_jenis_pendapatan%>">
                                             <%s.jenis_pendapatan%></option>
-                                        <option value="1" style="font-weight:bold;">ADD/EDIT Category</option>
+                                        <option value="1" style="font-weight:bold;"><%opsi_add_or_edit%></option>
                                     </select>
                                 </div>
                             </div>

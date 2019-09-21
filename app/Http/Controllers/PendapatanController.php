@@ -53,14 +53,13 @@ class PendapatanController extends Controller
             'id_jenis_pendapatan.required' => 'Kategori masih kosong',
         ];
         $validator = $this->validate($request, $rules, $customMessages);
-        $id_pendapatan = 'PENG_'.uniqid();
+        $id_pendapatan = 'PEND_'.base_convert(microtime(false), 10, 36); 
         $nama_pendapatan = $validator['nama_pendapatan'];
         $jumlah = intval(preg_replace('/[^0-9]+/', '', $validator['jumlah']));
         $picture = "";
         $id_jenis_pendapatan = $validator['id_jenis_pendapatan'];
 
-        // select nama_pendapatan, id_jenis_pendapatan, waktu,jumlah from transaksi inner join pendapatan on jenis_transaksi=id_pendapatan where id=1;
-        $id_transaksi = "TR_".uniqid();
+        $id_transaksi = 'TR_'.base_convert(microtime(false), 10, 36); 
         $jenis_transaksi = $id_pendapatan;
         $waktu = date("Y-m-d", strtotime($this->dateFilter($validator['time'])));
         $checkDuplicate=$pendapatan->checkDuplicate([$id,$waktu,$nama_pendapatan,$jumlah,$id_jenis_pendapatan]);
