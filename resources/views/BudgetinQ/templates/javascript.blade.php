@@ -1,4 +1,5 @@
 <script src="{{asset('front_end/js/angular/angular.min.js')}}"></script>
+
 <script src="{{asset('front_end/js/angular/angular-route.min.js')}}"></script>
 <script src="{{asset('front_end/vendor/jquery/jquery.min.js')}}"></script>
 <script src="{{asset('front_end/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>

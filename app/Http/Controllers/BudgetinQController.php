@@ -22,100 +22,35 @@ class BudgetinQController  extends Controller
 
     public function dashboard($time=null)
     {
+        $time = $time ?: date("F, Y");
+        $data = $this->freshCalculate($time);
         $transaksi = new Transaksi;
-        $time = $time ?: date("F, Y");$jenis_pengeluaran = new JenisPengeluaran;$jenis_pendapatan = new JenisPendapatan;$pengeluaran = new Pengeluaran;$pendapatan = new Pendapatan;$transaksi = new Transaksi;
-        // DEKLARASI WAKTU
-        $periode = $transaksi->sPeriode()[0];
-        $awalBulan = $periode->awal;
-        $bulanLalu = $this->monthBefore($time);
-        $dateRange = $this->timeByMonth($time);
-        $start_default = $this->timeByMonth($time)['start_default'];
-        $end_default = $this->timeByMonth($time)['end_default'];
-        
-        // $dateRange['start_default'],$dateRange['end_default']
-
-        // START GET SALDO BULAN LALU
-        $totalDanaMasuk = $pendapatan->totalDanaMasuk($awalBulan,$bulanLalu);
-        $totalDanaKeluar = $pengeluaran->totalDanaKeluar($awalBulan,$bulanLalu);
-        $saldoBulanLalu=$totalDanaMasuk-$totalDanaKeluar;
-
-        // UTANG
-        $dmUtangOld = $pendapatan->qTotalDMGCID($awalBulan,$bulanLalu,[4]);
-        $dkUtangOld = $pengeluaran->qTotalDKGCID($awalBulan,$bulanLalu,[4]);
-        $dmUtangNew = $pendapatan->qTotalDMGCID($start_default,$end_default,[4]);
-        $dkUtangNew = $pengeluaran->qTotalDKGCID($start_default,$end_default,[4]);
-        $saldoUtangOld = $dmUtangOld-$dkUtangOld;
-        $saldoUtangNew = $saldoUtangOld+($dmUtangNew-$dkUtangNew);
-        // PIUTANG
-        $dkPiutangOld = $pengeluaran->qTotalDKGCID($awalBulan,$bulanLalu,[5]);
-        $dmPiutangOld = $pendapatan->qTotalDMGCID($awalBulan,$bulanLalu,[5]);
-        $dkPiutangNew = $pengeluaran->qTotalDKGCID($start_default,$end_default,[5]);
-        $dmPiutangNew = $pendapatan->qTotalDMGCID($start_default,$end_default,[5]);
-        $saldoPiutangOld = $dkPiutangOld-$dmPiutangOld;
-        $saldoPiutangNew = $saldoPiutangOld+($dkPiutangNew-$dmPiutangNew);
-        // Investasi, Tabung & Usaha
-        $dkdll = $pengeluaran->qTotalDKGCID($awalBulan,$end_default,[2,3,7]);
-        $dmdll = $pendapatan->qTotalDMGCID($awalBulan,$end_default,[2,3,7]);
-        $saldodll = $dkdll-$dmdll;
-        $keuntungan = 0;
-        if($saldodll<0){
-            $keuntungan = abs($saldodll);
-            $saldodll = abs($dkdll-$dmdll);
-        }
-        // $dkTabung = $pengeluaran->qTotalDKGCID($start_default,$end_default,[2]);
-        // $dmTabung = $pendapatan->qTotalDMGCID($start_default,$end_default,[2]);
-
-
-        // dd($saldoUtangNew);
-        
-        $danamasuk = $saldoBulanLalu+$pendapatan->totalDanaMasuk($start_default,$end_default);
-        $danakeluar = $pengeluaran->totalDanakeluar($start_default,$end_default)+$saldodll;
-        
-        // dd($danakeluar);
-        
-        // $saldoGabung = array_sum([$dkPiutang,$dkInvest,$dkTabung])-array_sum([$dmPiutang,$dmInvest,$dmTabung]);
-        // $saldoUtang = $dmUtang-$dkUtang;
-
-        // END GET SALDO BULAN INI
-        
-        $saldo=$danamasuk-$danakeluar;
+        $jenis_pengeluaran = new JenisPengeluaran;
+        $jenis_pendapatan = new JenisPendapatan;
+        $dateRange = $this->timeByMonth($time); 
         $gcPengeluaran = $jenis_pengeluaran->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
         $gcPendapatan = $jenis_pendapatan->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
-        $textColor=['#4e73df','#f6c23e','#1cc88a','#e74a3b','#fd7e14','#36b9cc','#6f42c1','#858796'];
-        // $jenis_pengeluaran->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
         
         $jmltgldlmsebulan = cal_days_in_month(CAL_GREGORIAN,date("m"),date("Y"));   
-        // if($time != date("F, Y")){
-        //     $tgl = 0;
-        // }else{
-        //     $tgl = date("d");
-        // }
         $tgl = date("d");
         $sisaHari = $jmltgldlmsebulan-$tgl;
         if ($sisaHari==0) {
             $sisaHari = 1;
         }
-        
 
-        $maxperhari = ceil($saldo/$sisaHari);
-        // dd($pengeluaran->totalPiutang());
-        
-        
+        $maxperhari = ceil($data['saldoDompet']/$sisaHari);
+
         $data=array(
             'sisaHari' =>$sisaHari,
-            'danakeluar' => $this->rupiah($danakeluar),
-            'danamasuk' => $this->rupiah($danamasuk),
-            'saldo' => $this->rupiah($saldo),
+            'danakeluar' => $data['danakeluar'],
+            'danamasuk' => $data['danamasuk'],
+            'saldo' => $data['saldoDompet'],
             'monthYear' => $this->dateFilter($time),
-            'gcPengeluaran' => $gcPengeluaran,
+            'saldoUtang' => $data['saldoUtang'],
+            'saldoPiutang' => $data['saldoPiutang'],
             'gcPendapatan' => $gcPendapatan,
-            'textColor' => $textColor,
-            'saldoUtang' => $this->rupiah($saldoUtangNew),
-            'saldoPiutang' => $this->rupiah($saldoPiutangNew),
+            'gcPengeluaran' => $gcPengeluaran,
             'maxperhari' => $this->rupiah($maxperhari),
-            'keuntungan' => $this->rupiah($keuntungan),
-            'kerugian' => '',
-
         );
         
         return view('BudgetinQ.dashboard')->with($data);
@@ -369,16 +304,37 @@ class BudgetinQController  extends Controller
         $data=array(
             'monthYear' => $time,
             'title' => $title,
-            'totalDana' => $totalDanaKeluar,
             'titleTransaksi' => "Pengeluaran",
             'controller' => 'danakeluarController',
             'page' => 'keluar'
 
         );
-        return view('BudgetinQ.viewDana')->with($data);
+        return view('BudgetinQ.danaView')->with($data);
     }
 
-    public function vDKByK($id_jenis_pengeluaran=null,$time=null){
+    public function danakeluarResponse($time=null,$day=null){
+        $time = $time ?: date("F, Y");
+        $pengeluaran = new Pengeluaran;
+        $transaksi = new Transaksi;
+        $jenis_pengeluaran = new JenisPengeluaran;
+        $waktu = $this->timeByMonth($time);
+        $list_pengeluaran = $pengeluaran->selectAll($waktu);
+        if ($day) {
+            $waktu = $this->timeByMonth($day.' '.$time); 
+            $list_pengeluaran = $pengeluaran->selectRange($waktu['end_default'],$waktu['end_default']);
+        }
+        $dateRange = $this->timeByMonth($time);
+        $data=array(
+            'totalDana' => $this->rupiah($pengeluaran->totalDanaKeluar($dateRange['start_default'],$dateRange['end_default'])),
+            'cPengeluaran' => $jenis_pengeluaran->selectAll(),
+            'gcPengeluaran' => $transaksi->GCPengeluaran(),
+            'list_pengeluaran' => $list_pengeluaran
+        );
+        return response()->json($data);
+    } 
+
+
+    public function danakeluarByKategori($id_jenis_pengeluaran=null,$time=null){
         $pengeluaran = new Pengeluaran;
         $jenis_pengeluaran = DB::table('jenis_pengeluaran')->where('id_jenis_pengeluaran', $id_jenis_pengeluaran)->first();
         if($jenis_pengeluaran==null){
@@ -407,24 +363,6 @@ class BudgetinQController  extends Controller
         );
         return view('BudgetinQ.danakeluar')->with($data);
     }
-
-    public function danakeluarResponse($time=null,$day=null){
-        $time = $time ?: date("F, Y");
-        $pengeluaran = new Pengeluaran;
-        $transaksi = new Transaksi;
-        $waktu = $this->timeByMonth($time);
-        $list_pengeluaran = $pengeluaran->selectAll($waktu);
-        if ($day) {
-            $waktu = $this->timeByMonth($day.' '.$time); 
-            $list_pengeluaran = $pengeluaran->selectRange($waktu['end_default'],$waktu['end_default']);
-        }
-        $data=array(
-            'cPengeluaran' => DB::table('jenis_pengeluaran')->where('id', Auth::user()->id)->get(),
-            'gcPengeluaran' => $transaksi->GCPengeluaran(),
-            'list_pengeluaran' => $list_pengeluaran
-        );
-        return response()->json($data);
-    } 
 
     public function danakeluarResponseByKategori($id_jenis_pengeluaran=null,$time=null){
         // dd($id_jenis_pengeluaran);

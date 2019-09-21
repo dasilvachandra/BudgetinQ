@@ -8,6 +8,7 @@ use App\JenisPengeluaran;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use PDF;
 use Auth;
 
 class PengeluaranController extends Controller
@@ -54,7 +55,7 @@ class PengeluaranController extends Controller
         ];
         $validator = $this->validate($request, $rules, $customMessages);
         $id_pengeluaran = 'PENG_'.base_convert(microtime(false), 10, 36); 
-        $nama_pengeluaran = $validator['nama_pengeluaran'];
+        $nama_pengeluaran = $validator['title'];
         $jumlah = intval(preg_replace('/[^0-9]+/', '', $validator['jumlah']));
         $picture = "";
         $id_jenis_pengeluaran = $validator['id_kategori'];
@@ -151,19 +152,19 @@ class PengeluaranController extends Controller
             'time' => 'required|max:255',
             'jumlah' => 'required|max:255',
             'id_pengeluaran' => 'required|exists:pengeluaran|max:255',
-            'nama_pengeluaran' => 'required|min:2|max:255',
+            'title' => 'required|min:2|max:255',
             'id_jenis_pengeluaran' => 'required|exists:jenis_pengeluaran|max:100',
         );
         $customMessages = [
             'id_pengeluaran.exists' => 'ID Pengeluaran not match',
             'price.required' => 'Jumlah dana masih kosong',
-            'nama_pengeluaran.required' => 'Nama pengeluaran masih kosong',
+            'title.required' => 'Nama pengeluaran masih kosong',
             'id_jenis_pengeluaran.required' => 'Kategori masih kosong',
         ];
 
         $validator = $this->validate($request, $rules, $customMessages);
         $id_pengeluaran = $validator['id_pengeluaran'];
-        $nama_pengeluaran = $validator['nama_pengeluaran'];
+        $nama_pengeluaran = $validator['title'];
         $jumlah = intval(preg_replace('/[^0-9]+/', '', $validator['jumlah']));
         $picture = "";
         $id_jenis_pengeluaran = $validator['id_jenis_pengeluaran'];
@@ -202,6 +203,31 @@ class PengeluaranController extends Controller
             unlink($destination_path.$filename);
         }
         return response()->json("Picture has removed");
+    }
+
+
+    public function generatePDF($time=null,$day=null){
+        $pengeluaran = new Pengeluaran;
+        $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
+        if($day==null)
+            $title = "Pengeluaran @$time";
+        else
+            $day = $day ?: date("d");
+            $title = "Pengeluaran @$day $time";
+        $dateRange = $this->timeByMonth($time);
+        $totalDanaKeluar = $this->rupiah($pengeluaran->totalDanaKeluar($dateRange['start_default'],$dateRange['end_default']));
+        // dd($list_pengeluaran);
+        $data=array(
+            'monthYear' => $time,
+            'title' => $title,
+            'titleTransaksi' => "Pengeluaran",
+            'controller' => 'danakeluarController',
+            'page' => 'keluar'
+
+        );
+        $pdf = PDF::loadView('BudgetinQ.reportPengeluaran', $data);
+        return $pdf->download("reportPengeluaran$time.pdf");
+
     }
 
 }

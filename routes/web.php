@@ -57,17 +57,18 @@ Route::get('/dmr', 'BudgetinQController@danamasukResponse'); // return cPendapat
     // DANAKELUAR VIEW
     Route::get('/danakeluar', 'BudgetinQController@danakeluar'); // view danakeluar by this month latest
     Route::get('/danakeluar/{time}', 'BudgetinQController@danakeluar'); // view danakeluar by other month
-    
-    Route::get('/danakeluar/kategori/{id_jenis_pengeluaran}', 'BudgetinQController@vDKByK'); // view danakeluar by kategori
-    Route::get('/danakeluar/kategori/{id_jenis_pengeluaran}/{time}', 'BudgetinQController@vDKByK'); // view danakeluar by kategori
     Route::get('/danakeluar/{time}/{day}', 'BudgetinQController@danakeluar'); // view danakeluar by day
+    
+    Route::get('/danakeluar/kategori/{id_jenis_pengeluaran}', 'BudgetinQController@danakeluarByKategori'); // view danakeluar by kategori
+    Route::get('/danakeluar/kategori/{id_jenis_pengeluaran}/{time}', 'BudgetinQController@danakeluarByKategori'); // view danakeluar by kategori
+    
 
     // DANAKELUAR CRUD
     Route::post('/danakeluar/store', 'PengeluaranController@store'); // CREATE danakeluar
     Route::post('/danakeluar/edit', 'PengeluaranController@edit'); // EDIT danakeluar
     Route::post('/danakeluar/update', 'PengeluaranController@update'); //UPDATE danakeluar
     Route::post('/danakeluar/delete', 'PengeluaranController@delete'); // DELETE danakeluar
-    
+    Route::get('/generatePengeluaranPDF/{time}', 'PengeluaranController@generatePDF');
 
     // DANAKELUAR RESPONSE
     Route::get('/dkr', 'BudgetinQController@danakeluarResponse'); // return cPengeluaran, gcPengeluaran, list_pengeluaran 

@@ -1,14 +1,26 @@
 app.controller('danakeluarController', function ($scope, $rootScope, $routeParams) {
-    $scope.category = function (data, gcID) {
+    setTimeout(function () { $('.spinner-grow').fadeOut(); }, 50);
+    setTimeout(function () {
+        $('.half').removeClass('d-none').addClass('d-block');
+    }, 50);
+
+    $scope.findCategoryByID = function (data, gcID) {
         a = data.filter(function (b) {
             return b.group_category_id == gcID;
         });
         return a;
     };
+
+
+
     time = $("#time").val();
     function returnData(data) {
+        // view 
+        $rootScope.totalDana = data['totalDana'];
+        // create
         $scope.kategori = data['cPengeluaran'];
         console.log(data['cPengeluaran']);
+        // console.log(totalDana);
         $scope.jenis_transaksi = data['gcPengeluaran'];
         tablePengeluaran(data['list_pengeluaran']);
         $scope.mGC = "1";
@@ -48,7 +60,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
 
 
     function danakeluarRefresh(data) {
-        // console.log(data);
+        console.log(data);
         if (data['pesan'] == '1') {
             // url = '/danakeluar/' + $rootScope.pathname[2] + "/" + data['day'];
             // window.location = window.location.href;
@@ -58,6 +70,10 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
 
     $scope.store = function (formID) {
         url = '/danakeluar/store';
+        ajaxPost(url, $(formID).serialize(), danakeluarRefresh);
+    };
+    $scope.update = function (formID) {
+        url = '/danakeluar/update';
         ajaxPost(url, $(formID).serialize(), danakeluarRefresh);
     };
     // TABLE

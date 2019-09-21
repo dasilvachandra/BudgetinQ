@@ -26,12 +26,18 @@ class JenisPengeluaran extends Model
             from pengeluaran inner join transaksi on jenis_transaksi = id_pengeluaran 
             where id=? and waktu=?),"0") as jumlah
     ';
+    // public function selectAll(){
+    //     $q="SELECT id_jenis_pengeluaran as id_kategori, jenis_pengeluaran, count(jumlah) as jt, sum(jumlah) as total, group_category, group_category_id from jenis_pengeluaran inner join group_category using(group_category_id) inner join pengeluaran using (id_jenis_pengeluaran) inner join transaksi on id_pengeluaran = jenis_transaksi where transaksi.id=? group by jenis_pengeluaran;";
+    //     $id=Auth::user()->id;
+    //     dd(DB::select($q,[$id]));
+    //     return DB::select($q,[$id]);
+    // }
+
     public function selectAll(){
-        $q="SELECT id_jenis_pengeluaran, jenis_pengeluaran, count(jumlah) as jt, sum(jumlah) as total, group_category, group_category_id from jenis_pengeluaran inner join group_category using(group_category_id) inner join pengeluaran using (id_jenis_pengeluaran) inner join transaksi on id_pengeluaran = jenis_transaksi where transaksi.id=? group by jenis_pengeluaran;";
+        $q="SELECT id_jenis_pengeluaran as id_kategori, jenis_pengeluaran, group_category_id from jenis_pengeluaran where id = ? ";
         $id=Auth::user()->id;
         return DB::select($q,[$id]);
     }
-    
     public function selectRange($start_default,$end_default){
         $q="SELECT a.id_jenis_pengeluaran, a.jenis_pengeluaran, ifnull(jt,0) as jt, ifnull(total,0) as total, a.group_category, a.group_category_id 
         from (
@@ -182,7 +188,6 @@ class JenisPengeluaran extends Model
         order by total desc, a.group_category desc";
         return DB::select($q,[$id_user,$start_default,$end_default,$id_user,$start_default,$end_default]);
     }
-    
     public function selectAllByGCID($id,$start_default,$end_default,$group_category_id){
         $q="SELECT a.color,a.id_jenis_pengeluaran, a.jenis_pengeluaran, ifnull(jt,0) as jt, ifnull(total,0) as total, ifnull(round((total/danakeluar)*100,2),0) as persen, a.group_category, a.group_category_id
         from (

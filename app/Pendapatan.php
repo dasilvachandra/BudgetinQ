@@ -214,5 +214,6 @@ class Pendapatan extends Model
         ->where([['transaksi.id','=',Auth::user()->id]])
         ->whereBetween('waktu', [$start_default, $end_default])
         ->first()->total;
+        
     }
 }

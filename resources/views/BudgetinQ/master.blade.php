@@ -7,6 +7,22 @@
 </head>
 
 <body id="page-top">
+  <!-- <div class="page-loader-wrapper">
+    <div class="loader">
+      <div class="preloader">
+        <div class="spinner-layer pl-red">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+        </div>
+      </div>
+      <p>Please wait...</p>
+    </div>
+  </div> -->
+
 
   <!-- Page Wrapper -->
   <div id="wrapper">
@@ -40,7 +56,7 @@
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <!-- Topbar Select Month-->
-            
+
             @yield('topbar1')
             @yield('topbar2')
 
