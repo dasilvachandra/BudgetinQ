@@ -359,19 +359,23 @@ class BudgetinQController  extends Controller
         $pengeluaran = new Pengeluaran;
         $time = date("F, Y", strtotime($this->dateFilter($time))) ? : date("F, Y");
         if($day==null)
-            $title = "$time";
+            $title = "Pengeluaran @$time";
         else
             $day = $day ?: date("d");
-            $title = "$day $time";
+            $title = "Pengeluaran @$day $time";
         $dateRange = $this->timeByMonth($time);
         $totalDanaKeluar = $this->rupiah($pengeluaran->totalDanaKeluar($dateRange['start_default'],$dateRange['end_default']));
         // dd($list_pengeluaran);
         $data=array(
             'monthYear' => $time,
             'title' => $title,
-            'totalDanaKeluar' => $totalDanaKeluar
+            'totalDana' => $totalDanaKeluar,
+            'titleTransaksi' => "Pengeluaran",
+            'controller' => 'danakeluarController',
+            'page' => 'keluar'
+
         );
-        return view('BudgetinQ.danakeluar')->with($data);
+        return view('BudgetinQ.viewDana')->with($data);
     }
 
     public function vDKByK($id_jenis_pengeluaran=null,$time=null){

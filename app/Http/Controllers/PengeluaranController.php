@@ -43,21 +43,21 @@ class PengeluaranController extends Controller
             'picture' => 'image|mimes:jpeg,png,jpg|max:2048',
             'time' => 'required|max:255',
             'jumlah' => 'required|max:255',
-            'nama_pengeluaran' => 'required|min:2|max:255',
-            'id_jenis_pengeluaran' => 'required|max:100',
+            'title' => 'required|min:2|max:255',
+            'id_kategori' => 'required|max:100',
         );
         // dd($request);
         $customMessages = [
             'price.required' => 'Jumlah dana masih kosong',
-            'nama_pengeluaran.required' => 'Deskripsi pengeluaran masih kosong',
-            'id_jenis_pengeluaran.required' => 'Kategori masih kosong',
+            'title.required' => 'Nama pengeluaran masih kosong',
+            'id_kategori.required' => 'Kategori masih kosong',
         ];
         $validator = $this->validate($request, $rules, $customMessages);
         $id_pengeluaran = 'PENG_'.base_convert(microtime(false), 10, 36); 
         $nama_pengeluaran = $validator['nama_pengeluaran'];
         $jumlah = intval(preg_replace('/[^0-9]+/', '', $validator['jumlah']));
         $picture = "";
-        $id_jenis_pengeluaran = $validator['id_jenis_pengeluaran'];
+        $id_jenis_pengeluaran = $validator['id_kategori'];
 
         // select nama_pengeluaran, id_jenis_pengeluaran, waktu,jumlah from transaksi inner join pengeluaran on jenis_transaksi=id_pengeluaran where id=1;
         $id_transaksi = 'TR_'.base_convert(microtime(false), 10, 36); 

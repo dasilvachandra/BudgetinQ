@@ -7,9 +7,11 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
     };
     time = $("#time").val();
     function returnData(data) {
-        $scope.cPengeluaran = data['cPengeluaran'];
-        $scope.gcPengeluaran = data['gcPengeluaran'];
+        $scope.kategori = data['cPengeluaran'];
+        console.log(data['cPengeluaran']);
+        $scope.jenis_transaksi = data['gcPengeluaran'];
         tablePengeluaran(data['list_pengeluaran']);
+        $scope.mGC = "1";
         $scope.$apply();
     }
     console.log($rootScope.pathname.length);
@@ -54,7 +56,8 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         }
     }
 
-    $scope.danakeluarStore = function (url, formID) {
+    $scope.store = function (formID) {
+        url = '/danakeluar/store';
         ajaxPost(url, $(formID).serialize(), danakeluarRefresh);
     };
     // TABLE
@@ -109,7 +112,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
         selectCell(id);
     }
 
-    $scope.danakeluarDelete = function () {
+    $scope.danaDelete = function () {
         var table = $('#tablePengeluaran').DataTable();
         var data = table.row('.selected').data();
         if (data == null) {
@@ -135,7 +138,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
 
     }
 
-    $scope.danakeluarEdit = function () {
+    $scope.edit = function () {
         function getDataEdit(data) {
             // console.log(data['editData']);
             var mydate = new Date(data['editData'][0]['waktu']);
@@ -155,7 +158,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
             $scope.m_jenis_pengeluaran = data['editData'][0]['id_jenis_pengeluaran'];
             $scope.$apply();
             input_rupiah("editInputRupiah");
-            document.getElementsByClassName("danakeluarEditModal")[0].click();
+            document.getElementsByClassName("editModal")[0].click();
             // datePickerForm('.datepickerForm');
 
             // tablePengeluaran(data['pengeluaran']);
@@ -192,7 +195,7 @@ app.controller('danakeluarController', function ($scope, $rootScope, $routeParam
             time = $('#time').val();
             window.location = url + time;
         })
-        ;
+            ;
     }
 
     $scope.ConChange = function (val) {
