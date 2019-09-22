@@ -10,6 +10,7 @@
 </script>
 
 <body id="page-top">
+  
 <div class="fixed-top load-page-master progress">
     <div class="load-page progress-bar progress-bar-striped bg-info" role="progressbar" ng-model="persenBar" style="width: 0% ; z-index: 9999;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
   </div>

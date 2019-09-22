@@ -1,4 +1,5 @@
 
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
 <script src="{{asset('front_end/js/angular/angular.min.js')}}"></script>
 
 <script src="{{asset('front_end/js/angular/angular-route.min.js')}}"></script>
