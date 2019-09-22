@@ -22,7 +22,7 @@
 
     <!-- Heading -->
     <div class="sidebar-heading">
-        APP KEUANGAN
+        CRUD
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->

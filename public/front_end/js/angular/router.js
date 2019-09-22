@@ -132,6 +132,8 @@ app.run(function ($rootScope, $location) {
     datePickerForm('.datepickerForm');
 
     // input_rupiah("input_rupiah");
+
+
     $rootScope.$on("$routeChangeSuccess", function (event, next, current) {
         // $rootScope.url = $location.$$path.replace('/', '');
 
@@ -194,6 +196,3 @@ app.run(function ($rootScope, $location) {
     });
 });
 
-
-
-setTimeout(function () { $('.page-loader-wrapper').fadeOut(); }, 50);

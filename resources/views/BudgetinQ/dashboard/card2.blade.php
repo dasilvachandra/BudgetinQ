@@ -5,8 +5,8 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Sisa Utang</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{$saldoUtang}}</div>
+                        <div class="text-xs font-weight-bold text-Info text-uppercase mb-1">Sisa Utang</div>
+                        <div class="half d-none h5 mb-0 font-weight-bold text-gray-800"><%utangSaldo%></div>
                     </div>
                     <div class="col-auto">
                         <i class=" fa-2x text-gray-300"><b>Rp</b></i>
@@ -22,8 +22,8 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Sisa Piutang</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{$saldoPiutang}}</div>
+                        <div class="text-xs font-weight-bold text-Info text-uppercase mb-1">Sisa Piutang</div>
+                        <div class="half d-none h5 mb-0 font-weight-bold text-gray-800"><%piutangSaldo%></div>
                     </div>
                     <div class="col-auto">
                         <i class=" fa-2x text-gray-300"><b>Rp</b></i>

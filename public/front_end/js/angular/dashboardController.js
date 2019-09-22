@@ -1,24 +1,34 @@
 app.controller('dashboardController', function ($scope, $rootScope, $routeParams) {
-    // console.log($rootScope.pathname);
-    $scope.category = function (data, gcID) {
-        a = data.filter(function (b) {
-            return b.group_category_id == gcID;
-        });
-        // console.log(a);
-        return a;
-    };
-    $('#time').change(function () {
-        time = $("#time").val();
-        url = '/dashboard/' + time;
-        window.location = url;
-    });
     function returnData(data) {
-        // console.log(data);
+        console.log(data);
+        $scope.danakeluar = formatRupiah(data['danakeluar']);
+        $scope.danamasuk = formatRupiah(data['danamasuk']);
+        $scope.dompetSaldo = formatRupiah(data['dompetSaldo']);
+        $scope.maxperhari = formatRupiah(data['maxperhari']);
+        $scope.utangSaldo = formatRupiah(data['utangSaldo']);
+        $scope.piutangSaldo = formatRupiah(data['piutangSaldo']);
+        // $scope.maxperhari = formatRupiah(data['maxperhari']);
+
         $scope.cPengeluaran = data['cPengeluaran'];
         $scope.gcPengeluaran = data['gcPengeluaran'];
         $scope.mGC = '1';
         $scope.$apply();
     }
+
+    // console.log($rootScope.pathname);
+    // $scope.category = function (data, gcID) {
+    //     a = data.filter(function (b) {
+    //         return b.group_category_id == gcID;
+    //     });
+    //     // console.log(a);
+    //     return a;
+    // };
+    $('#time').change(function () {
+        time = $("#time").val();
+        url = '/dashboard/' + time;
+        window.location = url;
+    });
+
     data = {
         "_token": $('meta[name="csrf-token"]').attr('content'),
         "time": $("#time").val()

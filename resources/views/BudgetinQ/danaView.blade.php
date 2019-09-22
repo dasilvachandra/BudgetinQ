@@ -69,19 +69,19 @@
                             <tbody>
                                 <tr>
                                     <td>
-                                        <div class="spinner-grow" role="status">
+                                        <div class="spinner-grow text-success" role="status">
                                             <span class="sr-only">Loading...</span>
                                         </div>
                                         <div class="half d-none"><% totalDana %></div>
                                     </td>
                                     <td>
-                                        <div class="spinner-grow" role="status">
+                                        <div class="spinner-grow text-danger" role="status">
                                             <span class="sr-only">Loading...</span>
                                         </div>
                                         <div class="half d-none"><% totalDana %></div>
                                     </td>
                                     <td>
-                                        <div class="spinner-grow" role="status">
+                                        <div class="spinner-grow text-warning" role="status">
                                             <span class="sr-only">Loading...</span>
                                         </div>
                                         <div class="half d-none"><% totalDana %></div>

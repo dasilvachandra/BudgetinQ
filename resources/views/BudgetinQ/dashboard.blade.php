@@ -8,6 +8,7 @@
     <!-- Content Card Total Pendapatan, Total Pengeluaran, Saldo, Maximum Per Hari -->
     @include('BudgetinQ.dashboard.card1')
     @include('BudgetinQ.dashboard.card2')
+
     <!-- Content Grafik & Diagram Bulat -->
     <div class="row">
         <!-- Area Chart -->
@@ -44,40 +45,52 @@
         <div class="col-xl-4 col-lg-5">
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary" >Transaksi
-                    <select ng-model="mGC"  ng-change="onChangeChartPie(mGC)">
-                        <option disabled>-- Pilih Group --</option>
-                        <option ng-repeat="s in gcPengeluaran" value="<%s.group_category_id%>">
-                            <%s.group_category%>
-                        </option>
-                    </select>
-                    </h6>
-                    <div class="dropdown no-arrow">
-                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                            aria-labelledby="dropdownMenuLink">
-                            <div class="dropdown-header">Dropdown Header:</div>
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
+                
+                
+                    <div class=" card-header py-3 d-flex flex-row align-items-center justify-content-between">
+
+                        <h6 class="m-0 font-weight-bold text-primary" >Transaksi</h6>
+                        <select class='half d-none'  ng-model="mGC"  ng-change="onChangeChartPie(mGC)" >
+                            <option disabled>-- Pilih Group --</option>
+                            <option ng-repeat="s in gcPengeluaran" value="<%s.group_category_id%>">
+                                <%s.group_category%>
+                            </option>
+                        </select>
+                        
+                        <div class="dropdown no-arrow">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                aria-labelledby="dropdownMenuLink">
+                                <div class="dropdown-header">Dropdown Header:</div>
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- Card Body -->
-                <div class="card-body">
-                    <div id="donut_chart" class="mt-0 dashboard-donut-chart"></div>
-                    <div class="mt-4 text-center small" ng-repeat='row in gcPengeluaran' ng-if="mGC==row.group_category_id">
-                        <span class="mr-2"  ng-repeat="s in category(cPengeluaran,row.group_category_id)" >
-                                <i class="fas fa-circle" style="color:<%s.color%>;"></i> 
-                                <a href=''><%s.jenis_pengeluaran%></a>
-                        </span>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-grow justify-content-center" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <div id="donut_chart" class="mt-0 dashboard-donut-chart"></div>
+                        <div class='half d-none'>
+                            <div class=" mt-4 text-center small " ng-repeat='row in gcPengeluaran' ng-if="mGC==row.group_category_id">
+                                <span class="mr-2"  ng-repeat="s in category(cPengeluaran,row.group_category_id)" >
+                                        <i class="fas fa-circle" style="color:<%s.color%>;"></i> 
+                                        <a href=''><%s.jenis_pengeluaran%></a>
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                </div>
+               
+
             </div>
         </div>
     </div>
@@ -92,14 +105,13 @@
                     <h6 class="m-0 font-weight-bold text-primary">Group Kategori Pendapatan</h6>
                 </div>
                 <div class="card-body">
-                    @foreach($gcPendapatan as $i => $value)
-                    <h4 class="small font-weight-bold">{{$value->group_category}} Rp {{strrev(implode('.',str_split(strrev(strval($value->total)),3)))}} <span class="float-right">{{$value->persen}}%</span>
+                    
+                    <h4 class="small font-weight-bold">0%</span>
                     </h4>
                     <div class="progress mb-4">
-                        <div style="background-color:{{$value->color}};width: {{$value->persen}}%" class="progress-bar" role="progressbar"
-                            aria-valuenow="{{$value->persen}}" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div style="background-color:#88888;width: 5%" class="progress-bar" role="progressbar"
+                            aria-valuenow="5" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    @endforeach
                 </div>
             </div>
 
@@ -166,14 +178,13 @@
                 </div>
 
                 <div class="card-body">
-                    @foreach($gcPengeluaran as $i => $value)
-                    <h4 class="small font-weight-bold">{{$value->group_category}} <span class="float-right">{{$value->persen}}%</span>
+                    
+                    <h4 class="small font-weight-bold"> <span class="float-right">5%</span>
                     </h4>
                     <div class="progress mb-4">
-                        <div style="background-color:{{$value->color}};width: {{$value->persen}}%" class="progress-bar" role="progressbar"
-                            aria-valuenow="{{$value->persen}}" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div style="background-color:#67576;width: 5%" class="progress-bar" role="progressbar"
+                            aria-valuenow="5" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    @endforeach
                 </div>
             </div>
 

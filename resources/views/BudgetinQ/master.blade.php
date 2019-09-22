@@ -5,25 +5,14 @@
   @include('BudgetinQ.templates.head')
   @include('BudgetinQ.templates.css')
 </head>
+<script type="text/javascript">
+    var timerStart = Date.now();
+</script>
 
 <body id="page-top">
-  <!-- <div class="page-loader-wrapper">
-    <div class="loader">
-      <div class="preloader">
-        <div class="spinner-layer pl-red">
-          <div class="circle-clipper left">
-            <div class="circle"></div>
-          </div>
-          <div class="circle-clipper right">
-            <div class="circle"></div>
-          </div>
-        </div>
-      </div>
-      <p>Please wait...</p>
-    </div>
-  </div> -->
-
-
+<div class="fixed-top load-page-master progress">
+    <div class="load-page progress-bar progress-bar-striped bg-info" role="progressbar" ng-model="persenBar" style="width: 0% ; z-index: 9999;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
   <!-- Page Wrapper -->
   <div id="wrapper">
 
@@ -52,6 +41,7 @@
         <!-- End of Topbar -->
         <!-- Begin Page Content -->
         <div class="container-fluid">
+          
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">

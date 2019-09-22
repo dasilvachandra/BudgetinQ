@@ -1,3 +1,4 @@
+
 <script src="{{asset('front_end/js/angular/angular.min.js')}}"></script>
 
 <script src="{{asset('front_end/js/angular/angular-route.min.js')}}"></script>
@@ -27,6 +28,96 @@
 
 
 <script>
+    $(document).ready(function () {
+        setTimeout(function () { $('.spinner-grow').fadeOut(); }, 100);
+        totalTimeLoad = Date.now() - timerStart;
+        console.log("Time until DOMready: ", Date.now() - timerStart);
+        $('.half').removeClass('d-none').addClass('d-block');
+    });
+
+// PAGE LOAD
+    var pageStatus = null;
+    var progress = null;
+    var animationInterval = 33;
+
+    window.document.addEventListener("readystatechange", function () {
+        if (document.readyState == "complete") {
+            pageStatus = "complete";
+        }
+    }, false);
+
+    function updateProgress() {
+        // console.log(progress);
+        // $('.load-page').css({ 'width': progress + '%' });
+
+        if (pageStatus == "complete") {
+            $('.load-page').css({ 'width':  '100%' });
+            setTimeout(function () {
+                // $('.load-page').css({ 'width':  '0%' });
+                $('.load-page-master').addClass('d-none');
+                // document.getElementById("pageLoader").style.display = "none";
+            }, 700);
+        }
+        else {
+            if (progress == null) {
+                progress = 1;
+            }
+
+            progress = progress + 1;
+            if (progress >= 0 && progress <= 30) {
+                animationInterval += 1;
+
+                $('.load-page').css({ 'width': progress + '%' });
+            }
+            else if (progress > 30 && progress <= 60) {
+                animationInterval += 2;
+                console.log(progress);
+                // $('.progress').css({ 'width': progress + '%' });
+
+                $('.load-page').css({ 'width': progress + '%' });
+            }
+            else if (progress > 60 && progress <= 80) {
+                animationInterval += 3;
+                $('.load-page').css({ 'width': progress + '%' });
+            }
+            else if (progress > 80 && progress <= 90) {
+                animationInterval += 4;
+                $('.load-page').css({ 'width': progress + '%' });
+            }
+            else if (progress > 90 && progress <= 95) {
+                animationInterval += 80;
+                $('.load-page').css({ 'width': progress + '%' });
+            }
+            else if (progress > 95 && progress <= 99) {
+                animationInterval += 150;
+                $('.load-page').css({ 'width': progress + '%' });
+            }
+            else if (progress >= 100) {
+                $('.load-page').css({ 'width': progress + '%' });
+            }
+            setTimeout(updateProgress, animationInterval);
+        }
+    }
+
+    var intervalObject_1 = setInterval(function () {
+        var element = document.querySelector("body");
+
+        if (element != undefined) {
+            clearInterval(intervalObject_1);
+            $('.load-page').css({ 'width': progress + '%' });
+            updateProgress();
+        }
+    }, 50);
+// END PAGE LOAD
+
+
+
+
+
+
+
+
+
     $('#selectMonth').datepicker({
         autoclose: true,
         container: '#selectMonth',

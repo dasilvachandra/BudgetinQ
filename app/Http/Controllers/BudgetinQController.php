@@ -24,36 +24,44 @@ class BudgetinQController  extends Controller
     {
         $time = $time ?: date("F, Y");
         $data = $this->freshCalculate($time);
-        $transaksi = new Transaksi;
-        $jenis_pengeluaran = new JenisPengeluaran;
-        $jenis_pendapatan = new JenisPendapatan;
-        $dateRange = $this->timeByMonth($time); 
-        $gcPengeluaran = $jenis_pengeluaran->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
-        $gcPendapatan = $jenis_pendapatan->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
+        // dd($data);
+        // $jenis_pengeluaran = new JenisPengeluaran;
+        // $jenis_pendapatan = new JenisPendapatan;
+        // $dateRange = $this->timeByMonth($time); 
+        // $gcPengeluaran = $jenis_pengeluaran->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
+        // $gcPendapatan = $jenis_pendapatan->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
         
-        $jmltgldlmsebulan = cal_days_in_month(CAL_GREGORIAN,date("m"),date("Y"));   
-        $tgl = date("d");
-        $sisaHari = $jmltgldlmsebulan-$tgl;
-        if ($sisaHari==0) {
-            $sisaHari = 1;
-        }
+        // $jmltgldlmsebulan = cal_days_in_month(CAL_GREGORIAN,date("m"),date("Y"));   
+        // $tgl = date("d");
+        // $sisaHari = $jmltgldlmsebulan-$tgl;
+        // if ($sisaHari==0) {
+        //     $sisaHari = 1;
+        // }
 
-        $maxperhari = ceil($data['saldoDompet']/$sisaHari);
-
+        // $data = $this->freshCalculate($time);
+        // $data['sisaHari']= $sisaHari;
+        // $data['maxperhari']= ceil($data['saldoDompet']/$sisaHari);
+        // $data['gcPendapatan']= $gcPendapatan;
+        // $data['gcPengeluaran']= $gcPengeluaran;
+        // $data['monthYear']= $this->dateFilter($time);
+        // $data=array(
+        //     'sisaHari' =>$sisaHari,
+        //     'danakeluar' => $data['danakeluar'],
+        //     'danamasuk' => $data['danamasuk'],
+        //     'saldo' => $data['saldoDompet'],
+        //     'monthYear' => $this->dateFilter($time),
+        //     'saldoUtang' => $data['saldoUtang'],
+        //     'saldoPiutang' => $data['saldoPiutang'],
+        //     'gcPendapatan' => $gcPendapatan,
+        //     'gcPengeluaran' => $gcPengeluaran,
+        //     'maxperhari' => $this->rupiah($maxperhari),
+        // );
+        // dd($data);
         $data=array(
-            'sisaHari' =>$sisaHari,
-            'danakeluar' => $data['danakeluar'],
-            'danamasuk' => $data['danamasuk'],
-            'saldo' => $data['saldoDompet'],
             'monthYear' => $this->dateFilter($time),
-            'saldoUtang' => $data['saldoUtang'],
-            'saldoPiutang' => $data['saldoPiutang'],
-            'gcPendapatan' => $gcPendapatan,
-            'gcPengeluaran' => $gcPengeluaran,
-            'maxperhari' => $this->rupiah($maxperhari),
         );
-        
         return view('BudgetinQ.dashboard')->with($data);
+        // return view('BudgetinQ.dashboard');
     }
 
 
@@ -68,16 +76,30 @@ class BudgetinQController  extends Controller
                 'time.required' => 'time error'
             ];
         $validator = $this->validate($request, $rules, $customMessages);
-        $dateRange = $this->timeByMonth($validator['time']);
+        $time = $validator['time'];
+        $dateRange = $this->timeByMonth($time); 
         $gcPengeluaran = $jenis_pengeluaran->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
         $gcPendapatan = $jenis_pendapatan->selectAllByGC(Auth::user()->id,$dateRange['start_default'], $dateRange['end_default']);
-        $jenis_pengeluaran = new JenisPengeluaran;
-        $jenis_pendapatan = new JenisPendapatan;
-        $data=array(
-            'cPengeluaran' => DB::table('jenis_pengeluaran')->where('id', Auth::user()->id)->get(),
-            'gcPengeluaran' => $gcPengeluaran,
-            'gcPendapatan' => $gcPendapatan
-        );
+
+        $jmltgldlmsebulan = cal_days_in_month(CAL_GREGORIAN,date("m"),date("Y"));   
+        $tgl = date("d");
+        $sisaHari = $jmltgldlmsebulan-$tgl;
+        if ($sisaHari==0) {
+            $sisaHari = 1;
+        }
+
+        $data = $this->freshCalculate($time);
+        $data['sisaHari']= $sisaHari;
+        $data['maxperhari']= ceil($data['dompetSaldo']/$sisaHari);
+        $data['gcPendapatan']= $gcPendapatan;
+        $data['gcPengeluaran']= $gcPengeluaran;
+        $data['monthYear']= $this->dateFilter($time);
+
+        // $data=array(
+        //     'cPengeluaran' => $jenis_pengeluaran->selectAll(),
+        //     'gcPengeluaran' => $gcPengeluaran,
+        //     'gcPendapatan' => $gcPendapatan
+        // );
         return $data;
 
     }

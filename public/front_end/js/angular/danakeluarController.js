@@ -1,8 +1,5 @@
 app.controller('danakeluarController', function ($scope, $rootScope, $routeParams) {
-    setTimeout(function () { $('.spinner-grow').fadeOut(); }, 50);
-    setTimeout(function () {
-        $('.half').removeClass('d-none').addClass('d-block');
-    }, 50);
+
 
     $scope.findCategoryByID = function (data, gcID) {
         a = data.filter(function (b) {

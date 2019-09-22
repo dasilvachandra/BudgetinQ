@@ -9,6 +9,5 @@
                     autoComplete="off" placeholder="Please choose a date...">
             </div>
         </div>
-
     </div>
 </div>
